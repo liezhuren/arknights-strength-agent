@@ -11,6 +11,18 @@ if (!fs.existsSync(DB)) {
 export const db = new DatabaseSync(DB)
 db.exec('PRAGMA foreign_keys = ON')
 
+// 幂等建表：软件演进新增的表在这里 IF NOT EXISTS 建立
+// （自制干员/评测历史是用户数据，不能依赖 build-db.mjs 的 DROP 重建）
+db.exec(`
+CREATE TABLE IF NOT EXISTS mechanism_parses (
+  op_id TEXT, skill_idx INTEGER, form TEXT, patches TEXT, reasoning TEXT,
+  confidence TEXT, provider TEXT, model TEXT, source TEXT DEFAULT 'llm',
+  created_at TEXT DEFAULT (datetime('now')), updated_at TEXT,
+  PRIMARY KEY (op_id, skill_idx)
+);
+CREATE INDEX IF NOT EXISTS idx_parse_updated ON mechanism_parses(updated_at DESC);
+`)
+
 const parse = (s, dflt) => { try { return s ? JSON.parse(s) : dflt } catch { return dflt } }
 
 /** 把一行 operators 还原成评测管线需要的干员对象（形状与 data/operators.json 一致）。 */
@@ -142,6 +154,43 @@ export const recentEvaluations = (limit = 20) =>
 export const getEvaluation = (id) => {
   const r = db.prepare(`SELECT * FROM evaluations WHERE id=?`).get(id)
   return r ? { ...r, payload: parse(r.payload, null) } : null
+}
+
+// ---- 机制解析沉淀（AI 产出的长尾机制补丁）----
+// 定位：AI **提议**、人工**审核**、审核后手工并入 tools/overrides.mjs。
+// 绝不自动注入引擎 —— 未经审核的模型输出不能影响数值。
+export function saveParse({ opId, skillIdx, form, patches, reasoning, confidence, provider, model, source = 'llm' }) {
+  db.prepare(
+    `INSERT INTO mechanism_parses (op_id, skill_idx, form, patches, reasoning, confidence, provider, model, source, updated_at)
+     VALUES (?,?,?,?,?,?,?,?,?,datetime('now'))
+     ON CONFLICT(op_id, skill_idx) DO UPDATE SET
+       form=excluded.form, patches=excluded.patches, reasoning=excluded.reasoning,
+       confidence=excluded.confidence, provider=excluded.provider, model=excluded.model,
+       source=excluded.source, updated_at=datetime('now')`,
+  ).run(opId, skillIdx, form ?? null, JSON.stringify(patches ?? {}), reasoning ?? null,
+    confidence ?? null, provider ?? null, model ?? null, source)
+  return getParse(opId, skillIdx)
+}
+export const getParse = (opId, skillIdx) => {
+  const r = db.prepare(`SELECT * FROM mechanism_parses WHERE op_id=? AND skill_idx=?`).get(opId, skillIdx)
+  return r ? { ...r, patches: parse(r.patches, {}) } : null
+}
+export const listParses = (limit = 100) => db.prepare(
+  `SELECT p.*, o.name AS op_name FROM mechanism_parses p LEFT JOIN operators o ON o.id = p.op_id
+   ORDER BY p.updated_at DESC LIMIT ?`,
+).all(limit).map((r) => ({ ...r, patches: parse(r.patches, {}) }))
+export const deleteParse = (opId, skillIdx) => db.prepare(`DELETE FROM mechanism_parses WHERE op_id=? AND skill_idx=?`).run(opId, skillIdx)
+
+/** 导出为 tools/overrides.mjs 的 SKILL_OVERRIDES 片段（供人工审核后手工并入）。 */
+export function exportOverrides(limit = 100) {
+  const rows = listParses(limit).filter((r) => r.patches && Object.keys(r.patches).length)
+  const lines = rows.map((r) => {
+    const name = r.op_name ?? r.op_id
+    return `  // ${name} · 技能${r.skill_idx + 1} · 置信度 ${r.confidence ?? '?'} · 来源 ${r.provider ?? '?'}/${r.model ?? '?'}\n` +
+      `  // 依据：${(r.reasoning ?? '').slice(0, 90)}\n` +
+      `  '${name}': { ${r.skill_idx}: ${JSON.stringify(r.patches)} },`
+  })
+  return `// ⚠ 由软件导出（AI 提议），**必须人工审核**后再并入 SKILL_OVERRIDES。\n// 生成时间：${new Date().toISOString()}\n// 共 ${rows.length} 条\nconst _GENERATED_CANDIDATES = {\n${lines.join('\n')}\n}\n`
 }
 
 export { hydrateOperator, withSp }

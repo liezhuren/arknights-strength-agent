@@ -66,6 +66,18 @@ try {
   ok('请求体形状（model + messages + json 模式）', seen?.body.model === 'mock-1' && Array.isArray(seen.body.messages) && seen.body.response_format?.type === 'json_object')
   ok('system 提示已下发（机制解析器角色）', /机制解析器/.test(seen?.body.messages?.[0]?.content ?? ''), (seen?.body.messages?.[0]?.content ?? '').slice(0, 24))
   ok('技能原文与 blackboard 已随请求下发', /望/.test(seen?.body.messages?.[1]?.content ?? '') && /blackboard/.test(seen?.body.messages?.[1]?.content ?? ''))
+
+  // ---- 4. 解析结果沉淀（AI 提议 → 入库 → 可复用 → 可导出供人工审核）----
+  const list1 = await get('/api/llm/parses')
+  ok('解析结果已沉淀入库', list1.some((x) => x.op_id && x.form === '单次窗口爆发'), `共 ${list1.length} 条`)
+  seen = null
+  const pr2 = await post('/api/llm/parse', { query: '望', skillIndex: 2 })
+  ok('二次解析命中缓存（不再调模型）', pr2.cached === true && seen === null, pr2.cached ? '来自沉淀库' : '仍调用了模型')
+  ok('  缓存返回的补丁与首次一致', pr2.patches?.burstPatch?.perDeployHits === 5)
+  const exp = await get('/api/llm/export')
+  ok('可导出 overrides.mjs 审核片段', exp.snippet.includes('必须人工审核') && exp.snippet.includes('burstPatch') && exp.count >= 1, `${exp.count} 条`)
+  await fetch(API + '/api/llm/parses?opId=' + encodeURIComponent('char_2027_wang') + '&skillIdx=2', { method: 'DELETE' })
+  ok('  可删除沉淀条目', !(await get('/api/llm/parses')).some((x) => x.form === '单次窗口爆发'))
 } finally {
   if (backup !== null) fs.writeFileSync(CONFIG, backup, 'utf8')  // 还原用户配置
   mock.close()

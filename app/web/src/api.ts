@@ -92,6 +92,15 @@ export const api = {
   llmPing: () => post<{ ok: boolean; ms?: number; reply?: string; error?: string }>('/api/llm/ping', {}),
   llmParse: (query: string, skillIndex: number) => post<{
     ok: boolean; disabled?: boolean; error?: string; form?: string; confidence?: string
-    reasoning?: string; patches?: Record<string, unknown>; provider?: string; model?: string; ms?: number
+    reasoning?: string; patches?: Record<string, unknown>; provider?: string; model?: string; ms?: number; cached?: boolean
   }>('/api/llm/parse', { query, skillIndex }),
+  // 解析沉淀（AI 提议入库；是否并入 overrides.mjs 由人工审核决定）
+  listParses: (limit = 100) => req<{
+    op_id: string; op_name: string | null; skill_idx: number; form: string | null
+    patches: Record<string, unknown>; reasoning: string | null; confidence: string | null
+    provider: string | null; model: string | null; updated_at: string
+  }[]>(`/api/llm/parses?limit=${limit}`),
+  exportOverrides: () => req<{ snippet: string; count: number }>('/api/llm/export'),
+  deleteParse: (opId: string, skillIdx: number) =>
+    req<{ ok: boolean }>(`/api/llm/parses?opId=${encodeURIComponent(opId)}&skillIdx=${skillIdx}`, { method: 'DELETE' }),
 }

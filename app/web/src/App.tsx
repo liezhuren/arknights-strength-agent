@@ -294,6 +294,38 @@ function CustomPanel({ onError }: { onError: (s: string) => void }) {
   )
 }
 
+/** 解析沉淀：AI 提议入库的机制补丁，可导出 overrides.mjs 片段供人工审核 */
+function ParseSink({ onError }: { onError: (s: string) => void }) {
+  const [rows, setRows] = useState<{ op_id: string; op_name: string | null; skill_idx: number; form: string | null; patches: Record<string, unknown>; reasoning: string | null; confidence: string | null; provider: string | null; model: string | null; updated_at: string }[]>([])
+  const [snippet, setSnippet] = useState('')
+  const refresh = () => api.listParses().then(setRows).catch((e) => onError((e as Error).message))
+  useEffect(() => { refresh() }, [])
+  return (
+    <>
+      <h3>解析沉淀（{rows.length}）</h3>
+      <p className="muted">
+        AI 的解析结果会自动入库，二次请求直接命中缓存（不再耗额度）。
+        <b>导出片段必须人工审核后才能并入 `tools/overrides.mjs`</b> —— 未经审核的模型输出不会影响任何数值。
+      </p>
+      <div className="bar">
+        <button onClick={() => api.exportOverrides().then((r) => setSnippet(r.snippet)).catch((e) => onError((e as Error).message))}>导出审核片段</button>
+        <button onClick={refresh}>刷新</button>
+      </div>
+      <ul className="list">
+        {rows.map((r) => (
+          <li key={`${r.op_id}-${r.skill_idx}`}>
+            <b>{r.op_name ?? r.op_id}</b>
+            <span className="muted">S{r.skill_idx + 1} · {r.form ?? '—'} · {r.confidence ?? '?'} · {r.provider}/{r.model} · {r.updated_at}</span>
+            <button onClick={async () => { await api.deleteParse(r.op_id, r.skill_idx); refresh() }}>删除</button>
+          </li>
+        ))}
+        {!rows.length && <li className="muted">暂无 —— 在「评测面板」点「AI 解析技能描述」后会自动沉淀</li>}
+      </ul>
+      {snippet && <><h3>审核片段（复制进 tools/overrides.mjs）</h3><pre className="panel">{snippet}</pre></>}
+    </>
+  )
+}
+
 /** 模型设置（BYOK 多 provider；不填 Key 时走纯规则层，功能完整） */
 function SettingsPanel({ onError }: { onError: (s: string) => void }) {
   const [cfg, setCfg] = useState<ConfigView | null>(null)
@@ -331,6 +363,10 @@ function SettingsPanel({ onError }: { onError: (s: string) => void }) {
           ))}
         </tbody>
       </table>
+      <div className="bar">
+        <button onClick={async () => { try { const r = await api.llmPing(); onError(r.ok ? '' : `连通失败：${r.error}`); if (r.ok) alert(`连通正常（${r.ms}ms）`) } catch (e) { onError((e as Error).message) } }}>测试连接</button>
+      </div>
+      <ParseSink onError={onError} />
     </section>
   )
 }

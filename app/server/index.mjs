@@ -12,6 +12,7 @@ import { URL } from 'node:url'
 import {
   getOperator, searchOperators, facets, getScenarios, getThreats, getBaseline,
   saveCustom, listCustom, deleteCustom, recordEvaluation, recentEvaluations, getEvaluation,
+  saveParse, getParse, listParses, deleteParse, exportOverrides,
 } from '../db/index.mjs'
 import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
@@ -201,7 +202,12 @@ const routes = {
     const si = Number(body.skillIndex ?? 2)
     const lv = op.skills?.[si]?.levels?.[9]
     if (!lv) throw new Error('该干员无此技能')
-    return parseMechanism({
+    // 命中已沉淀的解析 → 直接返回缓存（不再重复调模型、省额度且结果稳定）
+    if (body.useCache !== false) {
+      const cached = getParse(op.id, si)
+      if (cached) return { ok: true, ...cached, patches: cached.patches, cached: true }
+    }
+    const r = await parseMechanism({
       operator: op.name,
       skillName: lv.name ?? '—',
       description: lv.description ?? '',
@@ -209,7 +215,18 @@ const routes = {
       trait: op.trait?.description ?? undefined,
       talent: op.talents?.[0]?.description ?? undefined,
     })
+    // 成功则**沉淀入库**（AI 提议；是否并入 overrides.mjs 由人工审核决定）
+    if (r.ok) {
+      saveParse({ opId: op.id, skillIdx: si, form: r.form, patches: r.patches, reasoning: r.reasoning, confidence: r.confidence, provider: r.provider, model: r.model })
+    }
+    return r
   },
+  'GET /api/llm/parses': ({ url }) => listParses(Math.min(Number(url.searchParams.get('limit')) || 100, 500)),
+  'DELETE /api/llm/parses': async ({ url }) => {
+    deleteParse(url.searchParams.get('opId'), Number(url.searchParams.get('skillIdx') ?? 2))
+    return { ok: true }
+  },
+  'GET /api/llm/export': () => ({ snippet: exportOverrides(), count: listParses(500).filter((r) => Object.keys(r.patches ?? {}).length).length }),
   'POST /api/llm/ping': async () => {
     const p = activeProvider()
     if (!p) return { ok: false, error: '未启用模型' }
