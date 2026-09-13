@@ -188,7 +188,46 @@ function ownSkillMods(tokenChar) {
   const best = modeled.sort(
     (a, b) => (b.atkMult ?? 1) / (b.intervalMult ?? 1) - (a.atkMult ?? 1) / (a.intervalMult ?? 1),
   )[0] ?? null
-  return { mods: best, all, modeledCount: modeled.length }
+  return { mods: best, all, burst: burstCandidate(tokenChar, seen), modeledCount: modeled.length }
+}
+
+// ---- 召唤物"一次性入场/触发伤害"（burst 层，§19）----
+//
+// 这类伤害**不吃普攻倍率**（§18 已排除），但它是真实输出：傀影「夜幕突袭」3 倍、W 2.8 倍、
+// 蜜蜡「沙之碑召唤」3 倍、温蒂「液氮大炮」3.5 倍…**按次结算**，与既有 `burst` 通道形态一致。
+// 口径：报告"**每次触发**的伤害"，**不给 DPS**（触发次数依赖操作/部署位/回收节奏，属玩法层，
+//       与望「天下劫」用理想轴同理）—— 强给频率会把假设伪装成事实。
+// 排除：周期伤害（描述含"每秒"，形态不同）、概率型（描述含"概率"或 bb 有 prob）。
+function burstCandidate(tokenChar, seen) {
+  const val_ = val
+  const out = []
+  for (const sk of tokenChar.skills ?? []) {
+    const t = skills[sk.skillId]
+    if (!t) continue
+    const lv = t.levels[t.levels.length - 1]
+    const name = t.levels[0]?.name ?? sk.skillId
+    const desc = cleanDesc(lv.description)
+    const bb = (lv.blackboard ?? []).map((b) => ({ key: b.key, value: val_(b.value) }))
+    // 一击倍率：`atk_scale`（不带 attack@ 前缀，那是按次/每秒攻击的倍率）
+    const scaleEntry = bb.find((b) => b.key === 'atk_scale' && typeof b.value === 'number' && b.value > 1)
+    if (!scaleEntry) continue
+    if (/每秒/.test(desc)) continue // 周期伤害，不属 burst
+    if (/概率/.test(desc) || bb.some((b) => b.key === 'prob')) continue // 概率触发
+    // 多次命中（"造成两次"）→ 乘上次数
+    const timesEntry = bb.find((b) => b.key === 'times' && typeof b.value === 'number' && b.value > 0)
+    const hits = timesEntry ? timesEntry.value : 1
+    out.push({
+      name,
+      mult: scaleEntry.value,
+      hits,
+      total: scaleEntry.value * hits,
+      spCost: lv.spData?.spCost ?? null,
+      duration: lv.duration,
+      desc: desc.slice(0, 80),
+    })
+  }
+  if (!out.length) return null
+  return out.sort((a, b) => b.total - a.total)[0]
 }
 
 // ---- "限时"时长：只认黑匣子键 attack@tokenduration（夕天赋「小自在」持续25秒）----
@@ -361,7 +400,7 @@ for (const [id, c] of Object.entries(chars)) {
       return { durationSec: bbDur ?? semDur, durationSource: bbDur ? 'blackboard' : semDur ? 'text' : null }
     })(),
     skillIds: (c.skills ?? []).map((s) => s.skillId),
-    // 自身技能里可建模的伤害改量（攻击力倍率 / 攻击间隔）与未能建模的条数
+    // 自身技能里可建模的伤害改量（攻击力倍率 / 攻击间隔）、未能建模的条数、一次性触发伤害
     ownSkill: ownSkillMods(c),
   })
 }

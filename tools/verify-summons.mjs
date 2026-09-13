@@ -101,5 +101,28 @@ assert('trap 通道排除名单有 5 条', excludedByTrapChannel().length === 5)
   assert('弦惊 第二形态 `2.` 前缀未被套到基础形态', Math.abs(summonDps(makeOperator({ damageType: 'magical', summon: summonFor('令') })) - 823 / 1.5) < 1e-9)
 }
 
+// ---- ⑥ 一次性触发伤害（burst 层，§19）----
+{
+  // 梅尔「爆破回收」6 倍：444×6 = 2664（一次性，不吃普攻倍率）
+  const m = summonFor('梅尔')
+  assert('梅尔 触发伤害 每次 2664', Math.abs(m.meta.burst.perTrigger - 444 * 6) < 1e-9, `${m.meta.burst?.perTrigger}`)
+  assert('梅尔 触发伤害来自「爆破回收」', m.meta.burst.name === '爆破回收')
+  // 傀影「夜幕突袭」3 倍：548×3 = 1644（与它的持续线 ×1.2 是**两条不同输出线**）
+  const p = summonFor('傀影')
+  assert('傀影 触发伤害 每次 1644', Math.abs(p.meta.burst.perTrigger - 548 * 3) < 1e-9)
+  assert('傀影 触发与持续互不混算（持续仍 707.1）',
+    Math.abs(summonDps(makeOperator({ damageType: 'physical', summon: p })) - (548 * 1.2) / 0.93) < 1e-6)
+  // 陷阱类已归 trap 通道 → **不得**再出现在 summon 的 burst 里（防双算）
+  for (const n of ['罗宾', '霜华', '多萝西', '钼铅', '望']) {
+    const s = summonFor(n)
+    assert(`${n} 无 summon 通道（含 burst 字段）`, s === null || !s.meta.burst, `${n}`)
+  }
+  // 周期伤害不算 burst（死芒 S3「每秒造成」是 DoT，形态不同）
+  assert('死芒 周期伤害未误判为 burst', !summonFor('死芒')?.meta?.burst, JSON.stringify(summonFor('死芒')?.meta?.burst))
+  // 触发伤害**不得**并进 summonDps（频率属玩法层）
+  const before = summonDps(makeOperator({ damageType: 'physical', summon: p }))
+  assert('触发伤害不进 summonDps', Math.abs(before - 707.1) < 0.1, `${before}`)
+}
+
 console.log(`\n===== 召唤物验证：PASS=${pass} FAIL=${fail} =====`)
 process.exit(fail === 0 ? 0 : 1)

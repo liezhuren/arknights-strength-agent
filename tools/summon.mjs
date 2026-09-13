@@ -30,6 +30,9 @@ const TRAP_CHANNEL_IDS = new Set([
 ])
 export const excludedByTrapChannel = () => [...TRAP_CHANNEL_IDS]
 
+/** 该召唤物是否已由 `trap`/`burst` 通道结算（防双算） */
+export const isTrapChannel = (id) => TRAP_CHANNEL_IDS.has(id)
+
 let _cache = null
 export function loadSummons() {
   if (!_cache) {
@@ -94,6 +97,21 @@ export function summonFor(opName) {
         : null,
       // 未能建模的技能条数（一次性入场伤害/周期伤害/概率型/无描述）→ 报告标注
       unmodeledSkills: (mode.src.ownSkill?.all ?? []).filter((x) => !x.modeled).length,
+      // 一次性触发伤害（burst 层，§19）：只报"每次触发"的伤害，不给 DPS（频率属玩法层）
+      burst: (() => {
+        const b = mode.src.ownSkill?.burst
+        if (!b) return null
+        const perTrigger = mode.src.atk * b.total
+        return {
+          name: b.name,
+          mult: b.mult,
+          hits: b.hits,
+          total: b.total,
+          perTrigger,
+          damageType: /法术/.test(b.desc) ? 'magical' : 'physical',
+          desc: b.desc,
+        }
+      })(),
       baseAtk: mode.src.atk,
       baseInterval: mode.src.interval,
       maxCopies: concurrency,
@@ -133,7 +151,13 @@ export function formatSummonSection(r) {
   lines.push(`        ${m.modeCount > 1 ? `${m.modeCount} 种召唤物形态（同一时刻只存在 1 种，按最强形态计）· ` : ''}基准按 1 个在场 → 召唤物 ${r.summonDps.toFixed(1)} DPS`)
   lines.push(`        取数口径：${conf}`)
   if (m.unmodeledSkills > 0) {
-    lines.push(`        ⚠ 另有 ${m.unmodeledSkills} 个自身技能**未折入**持续 DPS（一次性入场伤害/周期伤害/概率型/无描述可判定 → 不计比硬套更安全），故为持续输出的下限`)
+    lines.push(`        ⚠ 另有 ${m.unmodeledSkills} 个自身技能**未折入**持续 DPS（周期伤害/概率型/无描述可判定 → 不计比硬套更安全）`)
+  }
+  // 一次性触发伤害（burst 层）：只报每次触发的伤害，**不给 DPS**
+  if (m.burst) {
+    const b = m.burst
+    lines.push(`一次性触发伤害（⚠未折入 DPS，按次结算）：${b.name} 每次 ${b.perTrigger.toFixed(0)}（${b.damageType === 'magical' ? '法术' : '物理'}，atk${m.baseAtk} × ${b.total}${b.hits > 1 ? `（${b.mult}×${b.hits} 次）` : ''}）`)
+    lines.push(`          ⚠ 上面"单体 ${single.toFixed(1)} DPS"（普攻）与"每次 ${b.perTrigger.toFixed(0)}"是**两条不同的输出线**：触发次数依赖部署位/回收节奏（属玩法层），故不给 DPS —— 与「天下劫」用理想轴同理`)
   }
   if (m.maxCopies > 1) {
     lines.push(`        ⚠ 该召唤物表述为「最多存在 ${m.maxCopies} 个」→ 铺满时上限约 ${(r.summonDps * m.maxCopies).toFixed(0)} DPS（受部署位限制，默认口径不取）`)

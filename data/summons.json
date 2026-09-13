@@ -60,6 +60,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -90,6 +91,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -121,6 +123,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -152,6 +155,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -212,6 +216,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "爆破回收",
+     "mult": 6,
+     "hits": 1,
+     "total": 6,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "引爆所有配置的机械水獭，爆炸时对周围敌人造成角色攻击力{atk_scale:0%}的法术伤害并晕眩{stun}秒\\n被引爆的机械水獭会被回收"
+    },
     "modeledCount": 0
    }
   },
@@ -256,6 +269,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -300,6 +314,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -344,6 +359,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -390,6 +406,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -485,6 +502,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "夜幕突袭",
+     "mult": 3,
+     "hits": 1,
+     "total": 3,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "部署后立即对周围所有敌人造成相当于攻击力{atk_scale:0%}的物理伤害，将其小力地推开并随机施加以下任意一个状态（停顿、束缚、晕眩）{sluggish}"
+    },
     "modeledCount": 1
    }
   },
@@ -532,6 +558,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "受害者启动模式",
+     "mult": 2.8,
+     "hits": 1,
+     "total": 2.8,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "敌人经过时会爆炸，爆炸后对周围所有敌人造成物理伤害并令其晕眩"
+    },
     "modeledCount": 0
    }
   },
@@ -584,6 +619,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "液氮大炮",
+     "mult": 3.5,
+     "hits": 1,
+     "total": 3.5,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "立即发射一个压缩液氮炮，造成相当于攻击力{atk_scale:0%}的群体法术伤害并将敌人大力地推开，令其{duration}秒内移动时受到正比于距离的真实伤害"
+    },
     "modeledCount": 0
    }
   },
@@ -630,6 +674,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -676,6 +721,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "沙之碑召唤",
+     "mult": 3,
+     "hits": 1,
+     "total": 3,
+     "spCost": 25,
+     "duration": 0,
+     "desc": "出现时会对附近的敌人造成相当于攻击力{atk_scale:0%}的法术伤害，并使其晕眩{stun}秒"
+    },
     "modeledCount": 0
    }
   },
@@ -727,6 +781,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -790,6 +845,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "弹射“夹子”",
+     "mult": 3.8,
+     "hits": 1,
+     "total": 3.8,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "陷阱触发时对目标造成相当于攻击力的{atk_scale:0%}的物理伤害，并将其较大力地推动"
+    },
     "modeledCount": 0
    }
   },
@@ -820,6 +884,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -851,6 +916,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -914,6 +980,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "陷阱部署",
+     "mult": 3.5,
+     "hits": 1,
+     "total": 3.5,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "触发时对目标造成相当于攻击力的{atk_scale:0%}的物理伤害，并使其晕眩{stun}秒"
+    },
     "modeledCount": 0
    }
   },
@@ -993,6 +1068,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1036,6 +1112,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1083,6 +1160,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "“耀阳”",
+     "mult": 1.1,
+     "hits": 1,
+     "total": 1.1,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "部署时对周围四格敌人造成{atk_scale:0%}耀骑士临光攻击力的真实伤害并晕眩{stun}秒，上一名部署干员势力为【卡西米尔】时额外造成一次伤害"
+    },
     "modeledCount": 0
    }
   },
@@ -1127,6 +1213,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1174,6 +1261,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1225,6 +1313,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1269,6 +1358,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1315,6 +1405,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1362,6 +1453,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1417,6 +1509,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1447,6 +1540,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1526,6 +1620,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "可靠电池",
+     "mult": 2.5,
+     "hits": 1,
+     "total": 2.5,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "掠风释放技能时，使装备者回复{attack@sp}点技力"
+    },
     "modeledCount": 1
    }
   },
@@ -1581,6 +1684,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1611,6 +1715,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1658,6 +1763,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "闪回",
+     "mult": 2.45,
+     "hits": 1,
+     "total": 2.45,
+     "spCost": 0,
+     "duration": 0,
+     "desc": "敌人接近时会激活，激活后对周围所有敌人造成法术伤害并令以中等力度拖拽敌人至自身中心"
+    },
     "modeledCount": 0
    }
   },
@@ -1742,6 +1856,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "危险目标清除",
+     "mult": 4.5,
+     "hits": 1,
+     "total": 4.5,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "触发时对目标造成相当于攻击力的{atk_scale:0%}的物理伤害，并使其防御力-{-def:0%}，持续{duration}秒"
+    },
     "modeledCount": 0
    }
   },
@@ -1834,6 +1957,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "点题",
+     "mult": 2.3,
+     "hits": 1,
+     "total": 2.3,
+     "spCost": 0,
+     "duration": -1,
+     "desc": ""
+    },
     "modeledCount": 1
    }
   },
@@ -1880,6 +2012,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1927,6 +2060,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -1975,6 +2109,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "铁钳号·原型机",
+     "mult": 3,
+     "hits": 1,
+     "total": 3,
+     "spCost": 5,
+     "duration": 0,
+     "desc": "技能开启时自身流失{hp_ratio:0.0%}的生命，对一名敌人造成相当于白铁攻击力{atk_scale:0%}的物理伤害，周围小范围内敌人造成相当于白铁攻击"
+    },
     "modeledCount": 0
    }
   },
@@ -2045,6 +2188,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2091,6 +2235,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2162,6 +2307,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2210,6 +2356,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2241,6 +2388,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2285,6 +2433,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2375,6 +2524,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2421,6 +2571,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2452,6 +2603,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2507,6 +2659,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2580,6 +2733,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 2
    }
   },
@@ -2611,6 +2765,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2641,6 +2796,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2712,6 +2868,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2776,6 +2933,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "“驱兽专用”",
+     "mult": 2.5,
+     "hits": 1,
+     "total": 2.5,
+     "spCost": 8,
+     "duration": -1,
+     "desc": "引爆时对范围内所有目标造成相当于钼铅攻击力{atk_scale:0%}的物理伤害，并使其晕眩{stun}秒"
+    },
     "modeledCount": 0
    }
   },
@@ -2844,6 +3010,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2912,6 +3079,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -2965,6 +3133,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "本能的召唤",
+     "mult": 1.5,
+     "hits": 1,
+     "total": 1.5,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "诱导至多{max_target}名进入范围的可达敌人（优先选择精英或领袖）在10秒内走向其所在位置，首个目标到达后撤退并使周围所有敌人在{buff_time}秒"
+    },
     "modeledCount": 0
    }
   },
@@ -3009,6 +3186,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3081,6 +3259,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3153,6 +3332,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3225,6 +3405,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3256,6 +3437,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3304,6 +3486,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3355,6 +3538,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3412,6 +3596,7 @@
       ]
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3491,6 +3676,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "连星",
+     "mult": 5.8,
+     "hits": 1,
+     "total": 5.8,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "触发时对连线方向上两侧3格范围内的敌人造成相当于攻击力的{atk_scale:0%}的法术伤害，并使其{duration}秒内移动速度降低{display_mo"
+    },
     "modeledCount": 0
    }
   },
@@ -3522,6 +3716,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3590,6 +3785,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3658,6 +3854,7 @@
       "keys": []
      }
     ],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3685,6 +3882,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3755,6 +3953,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "工程学十字星",
+     "mult": 3,
+     "hits": 1,
+     "total": 3,
+     "spCost": 0,
+     "duration": -1,
+     "desc": "向前方冲锋，碰到敌人或高台时对范围内所有敌人造成机械师攻击力{atk_scale:0%}的物理伤害并停下，周围的敌人获得逐渐衰减的50%的虚弱效果"
+    },
     "modeledCount": 0
    }
   },
@@ -3786,6 +3993,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3817,6 +4025,7 @@
    "ownSkill": {
     "mods": null,
     "all": [],
+    "burst": null,
     "modeledCount": 0
    }
   },
@@ -3862,6 +4071,15 @@
       ]
      }
     ],
+    "burst": {
+     "name": "冲锋",
+     "mult": 2,
+     "hits": 1,
+     "total": 2,
+     "spCost": 4,
+     "duration": 0,
+     "desc": "下次攻击造成相当于攻击力200%的物理伤害，并大力地弹开目标"
+    },
     "modeledCount": 0
    }
   }

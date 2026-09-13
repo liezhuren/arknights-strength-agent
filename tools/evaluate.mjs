@@ -31,6 +31,7 @@ import { formatRotationSection } from './rotation.mjs'
 import { formatVersatilitySection } from './versatility.mjs'
 import { formatDifficultySection } from './difficulty.mjs'
 import { summonFor, formatSummonSection } from './summon.mjs'
+import { extractConditional, formatConditionalSection } from './conditional.mjs'
 
 const DATA = JSON.parse(
   fs.readFileSync(path.resolve(import.meta.dirname, '../data/operators.json'), 'utf8'),
@@ -480,6 +481,7 @@ export function evaluateEngine(eng, meta = {}) {
     moduleApplied: meta.moduleApplied ?? eng._module ?? null,
     skillIndexAdjusted: meta.skillIndexAdjusted ?? null,
     descDiscoveries: meta.descDiscoveries ?? [],
+    conditional: meta.conditional ?? null,
     penetrate: eng.penetrate,
     talentPenetrate: eng._talentPen ?? null,
     enemyDebuff: eng.enemyDebuff,
@@ -536,6 +538,9 @@ export function evaluate(op, opts = {}) {
     moduleList: modulesOf(op).map((m) => `${m.name}(${m.type}${m.isSpecial ? '·特限' : ''}${m.hasCombatData ? '' : '·无数值'})`),
     moduleApplied: eng._module,
     descDiscoveries,
+    // 条件型加成与索敌（对空加成/优先攻击/蓄力两态）：**只标注，不进 DPS**
+    // 用 eng 解析后的技能下标（低星回退后可能不是请求值）与专精等级取值
+    conditional: extractConditional(eop, eng._skillIndex ?? skillIndex, eng._masteryAdjusted ?? opts.masteryLevel ?? 9),
   })
 }
 
@@ -610,6 +615,8 @@ export function formatReport(r) {
       lines.push(`        基准口径（${bk}）：召唤物 ${r.summonDpsBench.toFixed(1)} DPS —— **独立于上方本体数值，不相加**`)
     }
   }
+  // 条件型加成与索敌（对空/优先攻击/蓄力两态）—— 只标注，不进 DPS
+  if (r.conditional) for (const l of formatConditionalSection(r.conditional)) lines.push(l)
   const b = r.benchmark
   if (r.nextAttack) {
     const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
