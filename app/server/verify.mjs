@@ -26,6 +26,19 @@ const ev = await post('/api/evaluate', { query: '银灰', skillIndex: 2, damageT
 const dps = ev.result?.benchmark?.skillDpsVs400Def
 ok('POST /api/evaluate（含五栏）', Math.abs(dps - 5524.6) < 0.1, `技能期 ${dps?.toFixed(1)}（锚点 5524.6）`)
 ok('  评测返回五栏文本', ['versatilitySection', 'difficultySection', 'rotationSection', 'survivalSection'].every((k) => !!ev.result[k]))
+
+// ---- 结构化数据（前端图表用）：口径必须与文本同源 ----
+const c = ev.charts
+ok('  返回 charts 结构化数据', !!c && !!c.versatility && !!c.rotation && !!c.survival && !!c.difficulty)
+ok('  泛用性：六场景 + 可用线齐全', c.versatility.rows.length === 6 && c.versatility.rows.every((x) => x.value >= 0 && x.p25 > 0 && x.p50 > 0),
+  `tier=${c.versatility.tier} 稳健线 ${c.versatility.coverageP50}/6 衰减 ${c.versatility.decayPct.toFixed(0)}%`)
+ok('  泛用性：图表值与文本报告一致', c.versatility.coverageP50 === 6 && Math.abs(c.versatility.worstOverMedian - 0.54) < 0.02)
+ok('  回转：首轮/周期与文本一致', Math.abs(c.rotation.firstUse - 15) < 0.1 && Math.abs(c.rotation.downtime - 15) < 0.1,
+  `首轮 ${c.rotation.firstUse}s 周期 ${c.rotation.cycle}s 覆盖率 ${(c.rotation.coverage * 100).toFixed(1)}%`)
+ok('  生存：五档来袭画像', c.survival.normal.length === 5 && c.survival.normal.every((x) => x.perHit > 0),
+  c.survival.normal.map((x) => `${x.hitsToDie}击`).join('/'))
+ok('  难度/衰减：因素与曲线可用', c.difficulty.factors.length >= 1 && c.decay.length === 5,
+  `${c.difficulty.tier} · 衰减 ${c.decay.map((d) => `${d.x}→${Math.round(d.value)}`).join(' ')}`)
 ok('  评测写入历史', (await get('/api/evaluations?limit=3')).some((e) => e.op_name === '银灰'))
 
 const cmp = await post('/api/compare', { queries: ['银灰', '史尔特尔', '能天使'], skillIndex: 2 })

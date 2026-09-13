@@ -9,10 +9,30 @@ export interface OperatorRow {
 export interface SearchResult { total: number; rows: OperatorRow[] }
 export interface ModuleInfo { id: string; name: string; type: string; isSpecial: boolean; hasCombatData: boolean }
 
+export interface Charts {
+  versatility: {
+    rows: { id: string; name: string; def: number; res: number; value: number; p25: number; p50: number; ok25: boolean; ok50: boolean }[]
+    coverageP25: number; coverageP50: number; worstOverMedian: number; decayPct: number; phys: boolean; tier: string
+  }
+  rotation: {
+    spLabel: string; spCost: number; initSp: number; rate: number | null; firstUse: number | null
+    duration: number; cycle: number | null; coverage: number; downtime: number | null
+    permanent: boolean; casts60: number; casts90: number; ammo: boolean
+  } | null
+  survival: {
+    normal: { id: string; dps: number; perHit: number; hitsToDie: number | null; seconds: number | null; sustained: boolean }[]
+    skill: { id: string; dps: number; perHit: number; hitsToDie: number | null; seconds: number | null; sustained: boolean }[] | null
+    stateNote: string | null; immune: string[]; healPerSec: number; dodge: { physical: number; magical: number }
+  }
+  difficulty: { tier: string; score: number; factors: { kind: string; level: number; text: string }[] }
+  decay: { x: number; value: number }[]
+}
+
 export interface EvaluationResult {
   operator: { id: string; name: string; rarity: string; profession: string; subProfessionId: string }
   modules: ModuleInfo[]
   report: string
+  charts: Charts
   result: {
     skill: string; damageType: string; coverage: number
     benchmark: Record<string, number>

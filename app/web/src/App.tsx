@@ -3,6 +3,7 @@
 // 设计原则：前端只消费 API，不含任何评测逻辑（数值一律来自 app/server → tools/ → engine/）
 import { useEffect, useMemo, useState } from 'react'
 import { api, type CompareRow, type ConfigView, type EvaluationResult, type OperatorRow } from './api'
+import ChartsView from './Charts'
 
 const RARITY_LABEL: Record<string, string> = {
   TIER_1: '1★', TIER_2: '2★', TIER_3: '3★', TIER_4: '4★', TIER_5: '5★', TIER_6: '6★',
@@ -179,6 +180,7 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
             </p>
           )}
           {r.moduleApplied?.warnings?.map((w, i) => <p key={i} className="warn">⚠ {w}</p>)}
+          {data.charts && <ChartsView charts={data.charts} />}
           <div className="sections">
             {sections.filter(([, s]) => s).map(([title, s]) => (
               <div className="panel" key={title}>

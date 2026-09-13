@@ -239,8 +239,8 @@ function hasSurvivalDelta(e) {
   return ['defPct', 'defFlat', 'resPct', 'resFlat', 'hpPct', 'drPct', 'drFlat', 'healPctMax', 'healFlat', 'shieldPctMax', 'dodgeP', 'dodgeM'].some((k) => (e[k] ?? 0) !== 0)
 }
 
-/** 对全部来袭画像做生存计算。 */
-function runProfiles(p) {
+/** 对全部来袭画像做生存计算（导出：软件层的图表直接复用同一口径）。 */
+export function runProfiles(p) {
   return THREAT_PROFILES.map((t) => ({
     threat: t,
     ...survival(t, {

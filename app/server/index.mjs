@@ -17,6 +17,10 @@ import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
 import { modulesOf } from '../../tools/modules.mjs'
 import { parseMechanism, chat, activeProvider } from './llm.mjs'
+import { extractVersatility, scenarioValue } from '../../tools/versatility.mjs'
+import { extractRotation } from '../../tools/rotation.mjs'
+import { extractSurvival, runProfiles } from '../../tools/survival.mjs'
+import { extractDifficulty } from '../../tools/difficulty.mjs'
 
 const ROOT = path.resolve(import.meta.dirname, '../..')
 const WEB_DIST = path.join(ROOT, 'app/web/dist')
@@ -61,16 +65,51 @@ const readBody = (req) => new Promise((resolve, reject) => {
 })
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' }
 
-/** 核心：跑一次评测（数据集干员），返回结构化结果 + 文本报告。 */
+/** 核心：跑一次评测（数据集干员），返回结构化结果 + 文本报告。
+ *  除格式化文本外，另给**结构化数据**（charts），供前端画图 —— 口径与文本完全同源，不重复计算。 */
 function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageType = 'auto' }) {
   const op = getOperator(query)
   if (!op) throw new Error(`未找到干员：${query}`)
-  const r = evaluate(op, { damageType, skillIndex: Number(skillIndex), moduleSpec, moduleLevel })
+  const si = Number(skillIndex)
+  const r = evaluate(op, { damageType, skillIndex: si, moduleSpec, moduleLevel })
+  // 结构化：泛用性六场景 / 回转身周期 / 生存分档 / 操作难度因素
+  const v = extractVersatility(r.engine)
+  const rot = extractRotation(op, si, r.engine)
+  const sv = extractSurvival(op, si)
+  const normalRows = runProfiles(sv.normal.panel)
+  const skillRows = sv.skill.active ? runProfiles(sv.skill.panel) : null
+  const diff = extractDifficulty(op, r.engine, si)
+  const slim = (rows) => rows.map((x) => ({
+    id: x.threat.id, dps: x.threat.dps, perHit: x.perHit,
+    hitsToDie: x.hitsToDie, seconds: x.seconds, sustained: x.sustained,
+  }))
   return {
     result: r,
     report: formatReport(r),
     operator: { id: op.id, name: op.name, rarity: op.rarity, profession: op.profession, subProfessionId: op.subProfessionId },
     modules: modulesOf(op).map((m) => ({ id: m.id, name: m.name, type: m.type, isSpecial: !!m.isSpecial, hasCombatData: !!m.hasCombatData })),
+    charts: {
+      versatility: {
+        rows: v.rows.map((x) => ({ id: x.id, name: x.name, def: x.def, res: x.res, value: x.value, p25: x.p25, p50: x.p50, ok25: x.ok25, ok50: x.ok50 })),
+        coverageP25: v.coverageP25, coverageP50: v.coverageP50, worstOverMedian: v.worstOverMedian,
+        decayPct: v.decayPct, phys: v.phys, tier: v.tier,
+      },
+      rotation: rot
+        ? { spLabel: rot.spLabel, spCost: rot.spCost, initSp: rot.initSp, rate: rot.rate, firstUse: rot.firstUse, duration: rot.duration, cycle: rot.cycle, coverage: rot.coverage, downtime: rot.downtime, permanent: rot.permanent, casts60: rot.casts60, casts90: rot.casts90, ammo: rot.ammo }
+        : null,
+      survival: {
+        normal: slim(normalRows),
+        skill: skillRows ? slim(skillRows) : null,
+        stateNote: sv.stateNote,
+        immune: sv.immune,
+        healPerSec: sv.normal.panel.healPerSec,
+        dodge: sv.normal.panel.dodge,
+      },
+      difficulty: { tier: diff.tier, score: diff.score, factors: diff.factors.map((f) => ({ kind: f.kind, level: f.level, text: f.text })) },
+      // 属性衰减曲线（物理看 DEF，法术看 RES）
+      decay: (r.damageType === 'physical' ? [0, 200, 400, 800, 1200] : [0, 20, 50, 80, 95])
+        .map((x) => ({ x, value: scenarioValue(r.engine, r.damageType === 'physical' ? x : 0, r.damageType === 'physical' ? 0 : x) })),
+    },
   }
 }
 

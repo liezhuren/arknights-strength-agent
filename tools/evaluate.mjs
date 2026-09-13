@@ -482,6 +482,8 @@ export function evaluateEngine(eng, meta = {}) {
     coverage: eng.skill ? skillCoverage(eng) : 0,
     benchmark,
     profile,
+    // 引擎对象：供软件层（app/server 的图表）复用同一口径，避免重复计算或口径漂移
+    engine: eng,
   }
 }
 
