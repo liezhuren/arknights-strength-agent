@@ -14,6 +14,8 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { survival } from '../engine/survival.mjs'
+import { analyzeDescription } from './patterns.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const DATA = join(HERE, '..', 'data', 'summons.json')
@@ -50,6 +52,62 @@ export function summonsOf(opName) {
 /** 干员的功能型/无伤害召唤物（不进 DPS，但要在报告里说明"有但没算"） */
 export function supportSummonsOf(opName) {
   return loadSummons().filter((s) => s.owner === opName && s.combat && !s.dealsDamage)
+}
+
+/**
+ * 召唤物技能的**范围/索敌/目标数**（§23）。复用第一层模式库（`patterns.mjs`）而不是另写一套解析 ——
+ * "额外攻击N个目标"/"同时攻击N个"/"N连击"这些表述在召唤物技能里同样出现，语义与干员侧一致。
+ *
+ * ⚠ **为什么目标数不并进 `summonDps`**：`目标数`与`段数`是**空间量**（打几个敌人），
+ *   而我们报告的是"**对单个目标**的 DPS"。并进去等于假设永远有 N 个敌人在范围内，
+ *   是场景依赖的乐观假设（与"额外目标数"在干员侧只作标注同理）。
+ *   引擎**支持** `units[].hits` / `mult`（`summonDps` 会相乘），需要时可显式传。
+ *
+ * 同时抽取 `rangeId`（技能攻击范围 id）—— 数据层有 id 但**范围几何仍未建模**，只作标注。
+ */
+function summonSkillSpace(opName, skillIds = []) {
+  const table = loadTokenSkills()
+  // 取"信息最多"的那条召唤物技能（有 rangeId 或能解析出目标数/段数）
+  let best = null
+  for (const sid of skillIds) {
+    const t = table.get(sid)
+    if (!t) continue
+    const lv = t.levels?.[t.levels.length - 1]
+    if (!lv) continue
+    const { mods, discoveries } = analyzeDescription(lv, { knownKeys: new Set(Object.keys(lv.blackboard ?? {})) })
+    const extra = mods.extraTargets
+    const total = mods.targetCount
+    const hits = mods.hits
+    const rangeId = lv.rangeId ?? null
+    const targets = extra !== undefined ? 1 + extra : (total ?? 1)
+    const info = {
+      targets,
+      extraTargets: extra ?? 0,
+      hits: hits ?? 1,
+      rangeId,
+      notes: (discoveries ?? []).slice(0, 4),
+      name: t.levels[0]?.name ?? sid,
+      source: `召唤物自身技能「${t.levels[0]?.name ?? sid}」`,
+    }
+    // 评分：有 rangeId +1，目标数>1 +2，段数>1 +1，有条目 +1
+    info._score = (rangeId ? 1 : 0) + (targets > 1 ? 2 : 0) + ((hits ?? 1) > 1 ? 1 : 0) + (info.notes.length ? 1 : 0)
+    if (!best || info._score > best._score) best = info
+  }
+  if (!best || best._score === 0) return null
+  delete best._score
+  return best
+}
+
+let _tokenSkills = null
+/** 召唤物自身技能表（skill_table 子集）：只在需要时读一次 */
+function loadTokenSkills() {
+  if (_tokenSkills) return _tokenSkills
+  _tokenSkills = new Map()
+  try {
+    const raw = JSON.parse(readFileSync(join(HERE, '..', 'data', 'summon-skills.json'), 'utf8'))
+    _tokenSkills = new Map(Object.entries(raw.skills ?? {}))
+  } catch { /* 无该文件时静默跳过（可选增强） */ }
+  return _tokenSkills
 }
 
 /**
@@ -97,6 +155,8 @@ export function summonFor(opName) {
         : null,
       // 未能建模的技能条数（一次性入场伤害/周期伤害/概率型/无描述）→ 报告标注
       unmodeledSkills: (mode.src.ownSkill?.all ?? []).filter((x) => !x.modeled).length,
+      // 召唤物技能的范围/索敌/目标数（§23）：**只标注，不并进对单目标 DPS**
+      space: summonSkillSpace(opName, mode.src.skillIds ?? []),
       // 一次性触发伤害（burst 层，§19）：只报"每次触发"的伤害，不给 DPS（频率属玩法层）
       burst: (() => {
         const b = mode.src.ownSkill?.burst
@@ -125,6 +185,45 @@ export function summonFor(opName) {
       allModes: all.map((s) => ({ name: s.name, atk: s.atk, interval: s.interval, perUnitDps: s.atk / (s.interval ?? 1.5) })),
       support: supportSummonsOf(opName).map((s) => ({ name: s.name, atk: s.atk })),
     },
+  }
+}
+
+/**
+ * 渲染召唤物自身的生存行（§23）—— 让召唤物的抗伤能力能被独立评估。
+ *
+ * 口径要点：
+ *  1. **不并入本体 ④ 生存栏**：召唤物是独立实体，本体挨打不等于召唤物挨打。
+ *  2. 用与本体同一套来袭画像（5 档真实敌人统计）与**离散受击模型**，只换面板。
+ *  3. 召唤物**不能**享受本体的天赋/模组加成（那是本体属性），但**享受自己的阻挡数与技能**。
+ *  4. ⚠ 召唤物自身技能里的防御/生命强化**未建模**（`ownSkill` 只提取了伤害改量）→ 标注。
+ *  5. 治疗支援：召唤物通常也无法被普通医疗覆盖（部分可被本体治疗，如凯尔希→Mon3tr）→ 标注。
+ * @param {object} op - 干员（用于判断是否有"治疗召唤物"的天赋）
+ */
+export function formatSummonSurvival(opName, threatProfiles = null) {
+  const s = loadSummons().find((x) => x.owner === opName && x.dealsDamage && !isTrapChannel(x.id))
+  if (!s || !(s.maxHp > 0)) return []
+  const profiles = threatProfiles ?? loadThreatProfiles()
+  if (!profiles.length) return []
+  const lines = [`召唤物生存（④ 的补充；**独立实体，不与本体合并**）：生命 ${s.maxHp} · 防御 ${s.def ?? 0} · 阻挡 ${s.blockCnt ?? 0}`]
+  const rows = profiles.map((t) => {
+    const r = survival({ atk: t.atk, interval: t.interval, damageType: t.damageType }, { maxHp: s.maxHp, def: s.def ?? 0, res: s.res ?? 0 })
+    const sec = r.sustained ? '站得住' : `${r.seconds.toFixed(1)}s`
+    return `${t.id} 每击 ${r.perHit} · 可挨 ${r.hitsToDie ?? '∞'} 击 · ${sec}`
+  })
+  lines.push(`        ${rows.slice(0, 3).join(' ｜ ')}`)
+  if (rows.length > 3) lines.push(`        ${rows.slice(3).join(' ｜ ')}`)
+  lines.push(`        ⚠ 召唤物自身技能里的防御/生命强化**未建模**（只提取了伤害改量）；`)
+  lines.push(`          能否被医疗覆盖取决于机制（如凯尔希可治疗 Mon3tr，多数召唤物不行），未计入治疗支援`)
+  return lines
+}
+
+/** 读来袭画像（懒加载，避免循环依赖） */
+function loadThreatProfiles() {
+  try {
+    const raw = JSON.parse(readFileSync(join(HERE, '..', 'data', 'threat-scenarios.json'), 'utf8'))
+    return raw.profiles ?? []
+  } catch {
+    return []
   }
 }
 
@@ -166,6 +265,16 @@ export function formatSummonSection(r) {
   if (m.support.length) {
     lines.push(`        另有不计入 DPS 的无伤害召唤物：${m.support.map((x) => x.name).join('、')}（治疗/减益/装置）`)
   }
-  if (m.blockCnt || m.maxHp) lines.push(`        生存面：阻挡 ${m.blockCnt} · 生命 ${m.maxHp}（召唤物自身生存未参与本体 ④ 生存栏）`)
+  if (m.blockCnt || m.maxHp) lines.push(`        生存面：阻挡 ${m.blockCnt} · 生命 ${m.maxHp}（见下方「召唤物生存」）`)
+  // 召唤物技能的范围/索敌/目标数（§23）：**只标注**（打几个敌人是空间量，报告口径是对单目标）
+  if (m.space) {
+    const bits = []
+    if (m.space.targets > 1) bits.push(`目标数 ${m.space.targets}`)
+    if (m.space.hits > 1) bits.push(`段数 ${m.space.hits}`)
+    if (m.space.rangeId) bits.push(`攻击范围 ${m.space.rangeId}`)
+    if (bits.length) lines.push(`        召唤物技能空间（${m.space.name}）：${bits.join(' · ')} —— **只标注，不并进对单目标 DPS**`)
+    if (m.space.notes.length) lines.push(`          描述解析：${m.space.notes.join('；')}`)
+    lines.push(`          ⚠ 多目标能力主要由**射程几何**表达，而射程形状未建模 → 群攻召唤物的实际总输出高于此处的对单值`)
+  }
   return lines
 }

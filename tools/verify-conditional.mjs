@@ -82,5 +82,48 @@ const byName = new Map(ops.map((o) => [o.name, o]))
   assert('银灰 技能期 DPS 仍为 5524.6', Math.abs(yh.benchmark.skillDpsVs400Def - 5524.6) < 0.05, `${yh.benchmark.skillDpsVs400Def}`)
 }
 
+// ---- ⑤ 模组/基础特性的条件型攻击倍率（§21）----
+{
+  const ev = (name, spec) => evaluate(byName.get(name), { damageType: 'auto', skillIndex: 2, moduleSpec: spec })
+  // 对空型（能天使「杰作」atk_scale 1.1）
+  const ex = ev('能天使', 'default')
+  assert('能天使 杰作 → 对空条件型 ×1.1', ex.conditionalTraits?.[0]?.kind === 'air' && ex.conditionalTraits[0].value === 1.1,
+    JSON.stringify(ex.conditionalTraits))
+  assert('对空条件型未进基准（基准仍是 1994.6）', Math.abs(ex.benchmark.skillDpsVs400Def - 1994.6) < 0.05, `${ex.benchmark.skillDpsVs400Def}`)
+  assert('条件化数值 = 基准 × 1.1', Math.abs(ex.conditionalSkillDps - ex.benchmark.skillDpsVs400Def * 1.1) < 0.05)
+  // override 语义：帕拉斯基础 1.2 被模组 1.3 覆盖 → 只取 1.3（错误做法会得 1.56）
+  const pa = ev('帕拉斯', 'default')
+  assert('帕拉斯 override → 只取模组 1.3', pa.conditionalTraits?.length === 1 && pa.conditionalTraits[0].value === 1.3,
+    JSON.stringify(pa.conditionalTraits?.map((x) => x.value)))
+  assert('帕拉斯 条件化数值 = 基准 × 1.3（非 ×1.56）', Math.abs(pa.conditionalSkillDps - pa.benchmark.skillDpsVs400Def * 1.3) < 0.05)
+  // add 语义：耀骑士临光 → ×1.15
+  const nr = ev('耀骑士临光', 'default')
+  assert('耀骑士临光 add → ×1.15', nr.conditionalTraits?.[0]?.kind === 'blocked' && nr.conditionalTraits[0].value === 1.15,
+    JSON.stringify(nr.conditionalTraits))
+  // 距离型（damage_scale 0.1 → ×1.1），且走 override
+  const ifr = ev('伊芙利特', 'default')
+  assert('伊芙利特 距离型 ×1.1', ifr.conditionalTraits?.[0]?.kind === 'distance' && Math.abs(ifr.conditionalTraits[0].value - 1.1) < 1e-9,
+    JSON.stringify(ifr.conditionalTraits))
+  // 领主降伤（0.8）是**降伤**不是加成 → 不得出现在条件型加成里
+  const yh = ev('银灰', undefined)
+  assert('银灰 领主 0.8 降伤不进条件型加成', !(yh.conditionalTraits ?? []).some((t) => t.value < 1),
+    JSON.stringify(yh.conditionalTraits))
+  assert('银灰 基准仍 5524.6（零漂移）', Math.abs(yh.benchmark.skillDpsVs400Def - 5524.6) < 0.05)
+  // 无模组时不引入条件型
+  assert('未启用模组 → 无条件型加成', (ev('能天使', undefined).conditionalTraits ?? []).length === 0)
+}
+
+// ---- ⑥ 召唤物自身生存（§23）----
+{
+  const { formatSummonSurvival } = await import('./summon.mjs')
+  const kl = formatSummonSurvival('凯尔希')
+  assert('凯尔希 有召唤物生存行', kl.length > 0 && /Mon3tr|生命 5433/.test(kl[0]), JSON.stringify(kl[0]))
+  assert('召唤物生存注明"不与本体合并"', kl[0].includes('不与本体合并'))
+  assert('召唤物生存给出 5 档画像', (() => { const j = kl.join(' '); return /物理·清杂/.test(j) && /物理·精英/.test(j) && /物理·狂暴/.test(j) && /法术·中压/.test(j) && /法术·高压/.test(j) })())
+  assert('召唤物生存标注"自身技能防御/生命未建模"', kl.some((l) => /防御\/生命强化\*\*未建模/.test(l)))
+  // 无召唤物干员 → 空
+  assert('银灰 无召唤物生存行', formatSummonSurvival('银灰').length === 0)
+}
+
 console.log(`\n===== 条件型验证：PASS=${pass} FAIL=${fail} =====`)
 process.exit(fail === 0 ? 0 : 1)

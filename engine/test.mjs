@@ -22,7 +22,7 @@ import {
   burstDeployDamage,
   summonDps,
 } from './dps-engine.mjs'
-import { incomingHit, incomingDps, dodgeMultiplier, surviveSim, survival } from './survival.mjs'
+import { incomingHit, incomingDps, dodgeMultiplier, surviveSim, survival, surviveGroup, surviveGroupTiers } from './survival.mjs'
 
 let pass = 0
 let fail = 0
@@ -361,6 +361,32 @@ const mgllan = makeOperator({
   summon: { units: [{ name: '龙腾.L', atk: 509, interval: 1, damageType: 'magical' }], concurrency: 1 },
 })
 assert('召唤物·单位自带伤害类型优先', Math.abs(summonDps(mgllan, { mitigation: { def: 9999, res: 0 } }) - 509) < 1e-9)
+
+// ---- 多敌人集火（§22）：同时命中 = perHit×N 保持间隔，**不能** interval/N ----
+{
+  const def = { maxHp: 1758, def: 356 }
+  const one = surviveGroup({ atk: 550, interval: 3, damageType: 'physical' }, def, 1)
+  const two = surviveGroup({ atk: 550, interval: 3, damageType: 'physical' }, def, 2)
+  assert('集火×1 = 单敌人口径', one.perHit === 194 && one.hitsToDie === 10, `${one.perHit}/${one.hitsToDie}`)
+  assert('集火×2 每击 = 550×2−356 = 744', two.perHitGroup === 744, `${two.perHitGroup}`)
+  assert('集火×2 间隔不变（仍是 3s）', two.seconds === two.hitsToDie * 3, `${two.seconds}`)
+  assert('集火×2 可挨 3 击（1758/744）', two.hitsToDie === 3, `${two.hitsToDie}`)
+  // 若错用 interval/N（平滑化）会得到 11 击 / 16.5s —— 必须**不是**这个结果
+  const wrong = surviveSim({ pool: 1758, perHit: 194, interval: 1.5 })
+  assert('集火×2 ≠ 平滑化口径（防回归）', two.hitsToDie !== wrong.hits, `平滑化会给 ${wrong.hits} 击`)
+  // 集火比"线性放大"更致命：2 个同时命中 ≠ 承伤翻倍那么简单（离散性吃掉自回窗口）
+  assert('集火×2 的秒数 < 单敌人秒数', two.seconds < one.seconds)
+  // 集火档位表
+  const tiers = surviveGroupTiers({ atk: 550, interval: 3, damageType: 'physical' }, def)
+  assert('集火档位 4 档', tiers.length === 4 && tiers[0].enemies === 1 && tiers[3].enemies === 5)
+  assert('集火档 单调递减', tiers.every((t, i) => i === 0 || (t.hitsToDie ?? 1e9) <= (tiers[i - 1].hitsToDie ?? 1e9)))
+  // N=1 时与 survival 完全一致（不引入漂移）
+  const single = survival({ atk: 550, interval: 3, damageType: 'physical' }, def)
+  assert('集火 N=1 与 survival 一致', one.perHit === single.perHit && one.hitsToDie === single.hitsToDie && Math.abs(one.ehp - single.ehp) < 1e-9)
+  // 泥岩式：×2 狂暴宿主组长
+  const ny = surviveGroup({ atk: 1750, interval: 1.3, damageType: 'physical' }, { maxHp: 3928, def: 602, drPct: 0.3 }, 2)
+  assert('泥岩 ×2 狂暴 每击 (3500−602)×0.7 = 2028', ny.perHitGroup === 2028, `${ny.perHitGroup}`)
+}
 
 // ---- 输出画像 ----
 console.log('\n===== 法术歼灭 输出画像（平均DPS，物理行看DEF / 法术列看RES） =====')

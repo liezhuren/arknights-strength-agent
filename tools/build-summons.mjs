@@ -387,6 +387,8 @@ for (const [id, c] of Object.entries(chars)) {
     interval: d.baseAttackTime ?? null,
     blockCnt: d.blockCnt ?? 0,
     maxHp: d.maxHp ?? 0,
+    def: d.def ?? 0,
+    res: d.magicResistance ?? 0,
     cost: d.cost ?? null,
     // 同时存在数：只采信"点名了这个召唤物"的数量表述，否则 1（报告须转述这是下限假设）
     concurrency: conc.value,
@@ -430,6 +432,30 @@ const payload = {
 }
 await writeFile(OUT, JSON.stringify(payload, null, 1), 'utf8')
 console.log(`✅ 写入 ${OUT}`)
+
+// ---- 召唤物自身技能表（供 §23 范围/索敌/目标数解析；只收 TOKEN 实际引用的技能）----
+const tokenSkillIds = []
+for (const [id, c] of Object.entries(chars)) {
+  if (c.profession !== 'TOKEN') continue
+  for (const s of c.skills ?? []) if (s.skillId && skills[s.skillId]) tokenSkillIds.push(s.skillId)
+}
+const skillSubset = {}
+for (const sid of new Set(tokenSkillIds)) skillSubset[sid] = skills[sid]
+await writeFile(
+  'E:/github/arknights-strength-agent/data/summon-skills.json',
+  JSON.stringify({
+    builtAt: new Date().toISOString().slice(0, 10),
+    source: 'ArknightsGameData(zh_CN) skill_table.json（只含 TOKEN 职业引用的技能）',
+    notes: [
+      '召唤物自身技能表（§18 伤害改量 / §19 触发伤害 / §23 范围与目标数都从这里取）',
+      '与 data/summons.json 的 skillIds 对应',
+    ],
+    skills: skillSubset,
+  }, null, 1),
+  'utf8',
+)
+console.log(`✅ 写入 data/summon-skills.json（${Object.keys(skillSubset).length} 个召唤物技能）`)
+
 console.log(`   召唤物 ${summons.length} 条：战斗型 ${combat.length}（伤害型 ${damage.length} / 功能型 ${combat.length - damage.length}）· 代号段关联 ${linkedByCode} · 引用印证 ${linkedByRef} · 未关联 ${unlinked}`)
 console.log('\n   伤害型召唤物（按 atk 排序，前 18）：')
 for (const s of [...damage].sort((a, b) => b.atk - a.atk).slice(0, 18)) {

@@ -124,5 +124,24 @@ assert('trap 通道排除名单有 5 条', excludedByTrapChannel().length === 5)
   assert('触发伤害不进 summonDps', Math.abs(before - 707.1) < 0.1, `${before}`)
 }
 
+// ---- ⑦ 召唤物技能空间（§23）：范围/索敌/目标数 ----
+{
+  // 有 rangeId 的召唤物应报出范围
+  const wt = summonFor('温蒂')
+  assert('温蒂 蓄水炮 有攻击范围 4-1', wt.meta.space?.rangeId === '4-1', JSON.stringify(wt.meta.space))
+  const hx = summonFor('鸿雪')
+  assert('鸿雪 打字机 有攻击范围 4-1', hx.meta.space?.rangeId === '4-1')
+  // 目标数**不得**并进 summonDps（报告口径是对单目标）
+  const eng = makeOperator({ damageType: 'physical', summon: wt })
+  assert('空间信息不改 summonDps', Math.abs(summonDps(eng) - 585 / 2.4) < 1e-9, `${summonDps(eng)}`)
+  // 目标数 > 1 时引擎**支持**叠加（units.hits/mult），但默认不叠加
+  const many = makeOperator({ damageType: 'physical', summon: { units: [{ atk: 600, interval: 1.5, hits: 3 }], concurrency: 1 } })
+  assert('引擎支持段数（显式传入时叠加）', Math.abs(summonDps(many) - (600 * 3) / 1.5) < 1e-9)
+  // rangeId 覆盖率：伤害型 42 条里应有 15 条带范围
+  const { loadSummons } = await import('./summon.mjs')
+  const withRange = loadSummons().filter((s) => s.dealsDamage && (s.skillIds ?? []).length).length
+  assert('伤害型召唤物技能关联完整', withRange >= 40, `${withRange}`)
+}
+
 console.log(`\n===== 召唤物验证：PASS=${pass} FAIL=${fail} =====`)
 process.exit(fail === 0 ? 0 : 1)

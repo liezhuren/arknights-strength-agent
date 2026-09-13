@@ -98,3 +98,58 @@ export function fmt(v, digits = 1) {
   if (!Number.isFinite(v)) return '∞'
   return v.toFixed(digits)
 }
+
+/**
+ * 多敌人集火生存（§22）。
+ *
+ * **核心口径（重要，最容易算错的地方）**：N 个敌人各自按自己的间隔攻击，若**同时命中**
+ * （同一个波次、同间隔），则应当 `perHit × N` **保持原间隔**，而**不是** `perHit` + `interval / N`。
+ * 后者把伤害"平滑化"了 —— 而离散受击模型存在的全部意义就是"活下去看的是单次能不能扛住"：
+ *
+ *   例（1758 生命 / 356 防 vs 550 攻 / 每 3s 的杂兵）：
+ *     1 个：每击 194 → 可挨 11 击 · 30s
+ *     2 个**同时**：每击 388 → 可挨 5 击 · 12s      ← 正确
+ *     2 个错算成"间隔减半"：每击 194、每 1.5s → 可挨 11 击 · 15s  ← 高估 25%，且漏掉"可能被秒"
+ *
+ * 同时命中也让**自回的窗口变差**（两次伤害之间没有恢复机会），这正是集火比"线性放大"更致命的原因。
+ * 若敌人**错开**命中（不同波次/不同间隔），则应改用 `perHit` + `interval / N` 口径单独计算。
+ *
+ * **等效生命口径**：`pool × (N × atk / perHit_N) × 闪避倍率` —— 用**合并后的来袭强度**
+ * `N × atk` 与**合并后的每击** `perHit_N` 计算，这样量纲与单敌人情形一致（不会出现负值）。
+ *
+ * @param {{atk:number, interval:number, damageType:string}} profile - **单个敌人**的来袭画像
+ * @param {object} defense - 同 survival()
+ * @param {number} [enemies] - 同时集火的敌人数（≥1）
+ * @returns {{perHit:number, hitsToDie:number|null, seconds:number|null, sustained:boolean, ehp:number}}
+ */
+export function surviveGroup(profile, defense = {}, enemies = 1) {
+  const N = Math.max(Math.floor(enemies) || 1, 1)
+  const single = survival(profile, defense)
+  if (N === 1) return { ...single, enemies: 1, perHitGroup: single.perHit }
+  const { maxHp = 0, def = 0, res = 0, drFlat = 0, drPct = 0, shield = 0, dodge = {}, healPerSec = 0 } = defense
+  const perHitGroup = incomingHit(profile.atk * N, { damageType: profile.damageType, def, res, drFlat, drPct })
+  const pool = maxHp + shield
+  const sim = surviveSim({ pool, perHit: perHitGroup, interval: profile.interval, healPerSec })
+  // 合并来袭强度 N×atk 与合并每击 perHitGroup 的比值 = 减伤折算（量纲与单敌人一致，取正值）
+  const mitigFactor = perHitGroup > 0 ? (profile.atk * N) / perHitGroup : Infinity
+  const dodgeMul = single.dodgeMul
+  return {
+    ...single,
+    enemies: N,
+    perHitGroup,
+    hitsToDie: sim.hits,
+    seconds: sim.seconds,
+    sustained: sim.sustained,
+    ehp: Number.isFinite(mitigFactor) ? pool * mitigFactor * dodgeMul : Infinity,
+  }
+}
+
+/**
+ * 集火档位表：对同一画像给出 1/2/3/5 个敌人同时集火的结果（供报告与前端图表用）。
+ * @param {object} profile - 单个敌人的来袭画像
+ * @param {object} defense - 同 survival()
+ * @param {number[]} [counts]
+ */
+export function surviveGroupTiers(profile, defense = {}, counts = [1, 2, 3, 5]) {
+  return counts.map((n) => ({ enemies: n, ...surviveGroup(profile, defense, n) }))
+}

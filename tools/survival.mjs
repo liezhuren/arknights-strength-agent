@@ -6,7 +6,7 @@
 //   4. 闪避按**期望值**折算并标注方差；多敌人集火按线性放大并标注假设
 import fs from 'node:fs'
 import path from 'node:path'
-import { survival, incomingHit, fmt } from '../engine/survival.mjs'
+import { survival, incomingHit, fmt, surviveGroupTiers } from '../engine/survival.mjs'
 import { branchState } from './branch-traits.mjs'
 
 const THREAT = JSON.parse(
@@ -248,6 +248,12 @@ export function runProfiles(p) {
       drFlat: p.drFlat, drPct: p.drPct, shield: p.shield,
       dodge: p.dodge, healPerSec: p.healPerSec,
     }),
+    // 集火档位（§22）：1/2/3/5 个敌人**同时**命中的结果
+    group: surviveGroupTiers(t, {
+      maxHp: p.maxHp, def: p.def, res: p.res,
+      drFlat: p.drFlat, drPct: p.drPct, shield: p.shield,
+      dodge: p.dodge, healPerSec: p.healPerSec,
+    }),
   }))
 }
 
@@ -267,6 +273,18 @@ export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct
     const sec = k.sustained ? '站得住' : `${fmt(k.seconds)}s`
     lines.push(`    ${t.id.padEnd(11)}${String(t.dps).padStart(6)}DPS → 每击 ${String(k.perHit).padStart(4)} · 可挨 ${k.hitsToDie ?? '∞'} 击 · ${sec}`)
   }
+  // 集火档位（§22）：2/3/5 个敌人**同时**命中的结果（只看压力最大的两档，避免刷屏）
+  const groupTiers = [2, 3]
+  lines.push('  多敌人集火（同时命中口径：敌方 ATK ×N、间隔不变；数值已含自身减伤 —— **比线性放大更致命**）：')
+  const pressure = [...killed].sort((a, b) => (a.seconds ?? 1e9) - (b.seconds ?? 1e9))[0]
+  for (const n of groupTiers) {
+    const g = pressure.group?.find((x) => x.enemies === n)
+    if (!g) continue
+    const sec = g.sustained ? '站得住' : `${fmt(g.seconds)}s`
+    lines.push(`    ${pressure.threat.id.padEnd(11)}×${n} 个 → 每击 ${String(g.perHitGroup ?? g.perHit).padStart(4)} · 可挨 ${g.hitsToDie ?? '∞'} 击 · ${sec}`)
+  }
+  lines.push(`    （以压力最大的画像「${pressure.threat.id}」为例；敌人**错开**命中另按 interval÷N 口径，本栏取同时命中）`)
+
   if (s.skill.active) {
     const sk = runProfiles(s.skill.panel)
     const sp = s.skill.panel
@@ -311,8 +329,10 @@ export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct
     }
   }
   for (const note of s.skillNotes.slice(0, 4)) if (!/每秒|防御\+|法抗\+/.test(note)) lines.push(`  技能生存效果：${note}`)
-  lines.push('  说明：单敌人压力假设（多敌人集火按线性放大）；闪避按期望值折算（实际存在方差）；')
-  lines.push('        未计入治疗干员支援、地形与阻挡分流；治疗输出为估算（治疗量与技能叠序有简化）；')
+  lines.push('  说明：单敌人基准 + 2/3 个敌人**同时命中**的集火档位（§22，比线性放大更致命）；')
+  lines.push('        敌人**错开**命中时伤害被平滑化、结果会好于同时命中，本栏取同时命中（更保守）；')
+  lines.push('        闪避按期望值折算（实际存在方差）；未计入治疗干员支援、地形与阻挡分流；')
+  lines.push('        治疗输出为估算（治疗量与技能叠序有简化）；')
   lines.push('        生存结论需结合阵型、关卡压力与队友支援判断，本栏只给量级与硬扛上限')
   return lines.join('\n')
 }

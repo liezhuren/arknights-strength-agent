@@ -137,6 +137,10 @@ export function applyModule(op, entry, level) {
     talentNotes: [],
     traitNotes: [],
     traitBlackboard: {},
+    /** 条件型攻击倍率（§21）：默认不计入基准，报告另给条件化数值 */
+    conditionalTraits: [],
+    /** 基础特性里的条件型加成（同上，如帕拉斯"攻击未被阻挡的敌人时提升至130%"）*/
+    baseConditionalTraits: [],
     warnings: [],
   }
   // ---- 基础分支特性（数据集 trait：文本 + 数值黑匣子）----
@@ -186,11 +190,13 @@ export function applyModule(op, entry, level) {
   if (baseSelf.length && !rule) {
     out.warnings.push(`基础特性含**条件型自身加成**（${baseSelf.join('、')}）—— 按"技能开/关"两种状态生效，未计入面板；评价常态/技能期差异时需手工考虑`)
   }
-  // 基础特性里的**攻击力倍率变化**（如领主"可以进行远程攻击，但此时攻击力降低至80%" → atk_scale 0.8）
-  // 依赖站位/距离，不进默认 DPS，但必须让用户知道
-  if (typeof baseBb.atk_scale === 'number' && baseBb.atk_scale !== 1) {
-    const pct = Math.round(baseBb.atk_scale * 100)
-    out.warnings.push(`基础特性含**条件型攻击力倍率**（${pct}%）未计入 DPS —— ${baseDesc ?? ''}（按站位/距离生效，需按实战判断）`)
+  // 基础特性里的**攻击力倍率变化**：
+  //   > 1 → 条件型**加成**（帕拉斯"攻击未被阻挡的敌人时提升至130%"）→ 走 §21 条件化数值
+  //   < 1 → 条件型**降伤**（领主"远程攻击时降低至80%"）→ 只标注（降伤取决于站位，默认按近战全伤）
+  if (typeof baseBb.atk_scale === 'number' && baseBb.atk_scale > 1) {
+    out.baseConditionalTraits = classifyConditionalTrait(baseDesc ?? '', baseBb).map((t) => ({ ...t, from: 'base' }))
+  } else if (typeof baseBb.atk_scale === 'number' && baseBb.atk_scale < 1) {
+    out.warnings.push(`基础特性含**条件型攻击力降伤**（降至 ${Math.round(baseBb.atk_scale * 100)}%）—— ${baseDesc ?? ''}（按站位/距离生效，默认按不打折计算，需按实战判断）`)
   }
   // 生存相关的基础特性（不能被治疗等）
   if (/无法被友方|不能被友方|无法被治疗/.test(baseDesc ?? '')) {
@@ -288,8 +294,56 @@ export function applyModule(op, entry, level) {
     if (!Object.keys(modBb).some((k) => /penetrate/.test(k)) && isConditional(trait.desc ?? '')) {
       out.warnings.push('特性更新含条件/情景语义，未自动折算进 DPS（见特性栏，需按场景判断）')
     }
+    // ---- 条件型攻击倍率（§21）----
+    // 模板高度统一：「<条件>时攻击力提升至{atk_scale:0%}」，键是 `atk_scale`（**伤害倍率**，
+    // 不同于 SELF_KEY 里的面板属性），因此此前**完全没被折算**。
+    out.conditionalTraits = classifyConditionalTrait(trait.desc ?? '', modBb).map((t) => ({ ...t, from: 'module' }))
+    if (out.conditionalTraits.length) {
+      const pcts = out.conditionalTraits.map((x) => `${x.label} ×${x.value}`).join(' · ')
+      out.warnings.push(`条件型攻击倍率（${pcts}）**未计入基准 DPS**：条件依赖敌人类型/站位，报告另给条件化数值`)
+    }
   }
   return finish()
+}
+
+/**
+ * 条件型攻击倍率分类（§21）。模板统一，故按**条件类型**分类而非逐个干员打补丁。
+ *
+ * 键名审计（129 条条件型模组特性）：`atk_scale`(37) / `damage_scale`(15) / `ep_damage_scale`(5)。
+ * 语义差别：`atk_scale` 是"攻击力**提升至**X"（直接乘），`damage_scale` 是"伤害**提高**X"（加成 → ×(1+X)）。
+ * 另有 66 条含"阻挡"但**无倍率键**（只是阻挡数/防御等），不属本类。
+ *
+ * @returns {Array<{kind, label, value, applied, reason}>}
+ *   kind: air | blocked | unblocked | distance | other；applied 恒为 false（条件不满足就是白送加成）
+ */
+function classifyConditionalTrait(desc, bb) {
+  const d = String(desc)
+  const pick = () => {
+    if (typeof bb.atk_scale === 'number' && bb.atk_scale > 1) return bb.atk_scale
+    if (typeof bb.damage_scale === 'number' && bb.damage_scale > 0) return 1 + bb.damage_scale
+    if (typeof bb.ep_damage_scale === 'number' && bb.ep_damage_scale > 0) return 1 + bb.ep_damage_scale
+    return null
+  }
+  const scale = pick()
+  if (scale === null) return []
+  const extra = scale - 1
+  const mk = (kind, what, reason) => [{ kind, label: `${what} +${Math.round(extra * 100)}%`, value: scale, applied: false, reason }]
+  if (/对空|空中单位|飞行/.test(d)) {
+    return mk('air', '对空', '仅**空中**敌人；6 标准场景与 5 档来袭画像均为地面 → 默认不生效')
+  }
+  if (/距离越远/.test(d)) {
+    return mk('distance', '距离越远', '按**最远距离上限**取值；实际取决于站位')
+  }
+  if (/未阻挡的敌人/.test(d)) {
+    return mk('unblocked', '攻击未被阻挡的敌人', '目标须**未被自身阻挡**；取决于站位与阻挡状态')
+  }
+  if (/被阻挡的敌人|阻挡的敌人/.test(d)) {
+    return mk('blocked', '攻击被阻挡的敌人', '目标须**被自身阻挡**；取决于站位与阻挡状态')
+  }
+  if (/元素损伤/.test(d)) {
+    return mk('other', '阻挡敌人时元素损伤', '元素损伤通道，只标注')
+  }
+  return mk('other', '条件型攻击倍率', `条件依赖生命值/范围/朝向：${d.slice(0, 26)}…`)
 }
 
 /** 自身属性加成键 → 中文名。 */

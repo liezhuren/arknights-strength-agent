@@ -30,7 +30,7 @@ import { formatSurvivalSection } from './survival.mjs'
 import { formatRotationSection } from './rotation.mjs'
 import { formatVersatilitySection } from './versatility.mjs'
 import { formatDifficultySection } from './difficulty.mjs'
-import { summonFor, formatSummonSection } from './summon.mjs'
+import { summonFor, formatSummonSection, formatSummonSurvival } from './summon.mjs'
 import { extractConditional, formatConditionalSection } from './conditional.mjs'
 
 const DATA = JSON.parse(
@@ -417,6 +417,10 @@ export function evaluateEngine(eng, meta = {}) {
   const profile = dpsProfile(eng)
   const physical = eng.damageType === 'physical'
   const nextAttack = isNextAttackSkill(eng)
+  // 条件型攻击倍率（§21）：**只算条件化变体，不改 eng** → 基准数值零漂移
+  const condTraits = meta.conditionalTraits ?? []
+  const condMult = condTraits.reduce((m, t) => m * (t.value ?? 1), 1)
+  const condDps = (def, res) => (skillDps(eng, def, res) * condMult)
   const benchmark = nextAttack
     ? physical
       ? {
@@ -482,6 +486,9 @@ export function evaluateEngine(eng, meta = {}) {
     skillIndexAdjusted: meta.skillIndexAdjusted ?? null,
     descDiscoveries: meta.descDiscoveries ?? [],
     conditional: meta.conditional ?? null,
+    // 条件型攻击倍率（§21）：基准不含，此处给"条件满足时"的数值供对照
+    conditionalTraits: condTraits,
+    conditionalSkillDps: condTraits.length ? (physical ? condDps(400, 0) : condDps(0, 50)) : null,
     penetrate: eng.penetrate,
     talentPenetrate: eng._talentPen ?? null,
     enemyDebuff: eng.enemyDebuff,
@@ -538,8 +545,15 @@ export function evaluate(op, opts = {}) {
     moduleList: modulesOf(op).map((m) => `${m.name}(${m.type}${m.isSpecial ? '·特限' : ''}${m.hasCombatData ? '' : '·无数值'})`),
     moduleApplied: eng._module,
     descDiscoveries,
+    // 特性条件型攻击倍率（§21）：默认不计入基准，报告另给条件化数值
+    // ⚠ **替换 vs 追加**：模组特性为 `override` 时基础特性已被替换 → 基础条件型**不参与**相乘
+    //   （帕拉斯/鞭刃/诗怀雅：基础 1.2 + 模组 override 1.3，错算成 1.56 而不是 1.3）
+    conditionalTraits: (() => {
+      const mode = eng._module?.level?.trait?.mode ?? 'base'
+      const base = mode === 'override' ? [] : (eng._module?.baseConditionalTraits ?? [])
+      return [...base, ...(eng._module?.conditionalTraits ?? [])]
+    })(),
     // 条件型加成与索敌（对空加成/优先攻击/蓄力两态）：**只标注，不进 DPS**
-    // 用 eng 解析后的技能下标（低星回退后可能不是请求值）与专精等级取值
     conditional: extractConditional(eop, eng._skillIndex ?? skillIndex, eng._masteryAdjusted ?? opts.masteryLevel ?? 9),
   })
 }
@@ -610,6 +624,8 @@ export function formatReport(r) {
   }
   if (r.summon) {
     for (const l of formatSummonSection(r)) lines.push(l)
+    // 召唤物自身生存（§23）：独立实体，不与本体 ④ 合并
+    for (const l of formatSummonSurvival(r.operator)) lines.push(l)
     if (r.summonDpsBench) {
       const bk = r.damageType === 'physical' ? 'vs400防' : 'vs50抗'
       lines.push(`        基准口径（${bk}）：召唤物 ${r.summonDpsBench.toFixed(1)} DPS —— **独立于上方本体数值，不相加**`)
@@ -617,6 +633,19 @@ export function formatReport(r) {
   }
   // 条件型加成与索敌（对空/优先攻击/蓄力两态）—— 只标注，不进 DPS
   if (r.conditional) for (const l of formatConditionalSection(r.conditional)) lines.push(l)
+  // 模组/基础特性里的条件型攻击倍率（§21）—— 只标注，基准不含，另给条件化数值
+  if (r.conditionalTraits?.length) {
+    const fromBase = new Set(r.conditionalTraits.filter((t) => t.from === 'base').map((t) => t.label))
+    for (const t of r.conditionalTraits) {
+      lines.push(`特性·条件型（⚠未计入基准）：${t.label} —— 条件：${t.reason}`)
+    }
+    if (fromBase.size) lines.push(`          （其中 ${[...fromBase].join('、')} 来自**基础分支特性**）`)
+    if (r.conditionalSkillDps) {
+      const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
+      const base = r.benchmark[`skillDps${key}`]
+      lines.push(`          条件**全部满足**时技能期 DPS ≈ ${r.conditionalSkillDps.toFixed(1)}（基准 ${base.toFixed(1)} × ${(r.conditionalSkillDps / base).toFixed(2)}）`)
+    }
+  }
   const b = r.benchmark
   if (r.nextAttack) {
     const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
