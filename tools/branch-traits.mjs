@@ -11,7 +11,10 @@
 // 新增状态型分支时只在这里加一条。
 import { readFile } from 'node:fs/promises'
 
-const ops = JSON.parse(await readFile('E:/github/arknights-strength-agent/data/operators.json', 'utf8')).operators
+// 数据集路径：基于本文件位置解析，**不写死绝对路径**（否则别人克隆后跑不了）
+const OPS = new URL('../data/operators.json', import.meta.url)
+
+const ops = JSON.parse(await readFile(OPS, 'utf8')).operators
 
 /**
  * 分支状态规则。

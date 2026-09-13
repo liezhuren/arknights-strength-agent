@@ -7,6 +7,9 @@ import { readFileSync } from 'node:fs'
 import { loadRanges, getRange, renderRange, describeRange, effectiveRangeId, formatRangeSection } from './range.mjs'
 import { findOperator, evaluate } from './evaluate.mjs'
 
+// 数据集路径：基于本文件位置解析，**不写死绝对路径**（否则别人克隆后跑不了）
+const OPS = new URL('../data/operators.json', import.meta.url)
+
 let pass = 0
 let fail = 0
 const assert = (name, ok, detail = '') => {
@@ -16,7 +19,7 @@ const assert = (name, ok, detail = '') => {
 }
 
 const all = loadRanges()
-const ops = JSON.parse(readFileSync('E:/github/arknights-strength-agent/data/operators.json', 'utf8')).operators
+const ops = JSON.parse(readFileSync(OPS, 'utf8')).operators
 
 // ---- ① 几何本身 ----
 assert('射程 73 个', Object.keys(all).length === 73, `${Object.keys(all).length}`)

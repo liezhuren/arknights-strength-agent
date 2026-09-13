@@ -2,7 +2,10 @@
 import { readFile } from 'node:fs/promises'
 import { evaluate } from './evaluate.mjs'
 
-const ops = JSON.parse(await readFile('E:/github/arknights-strength-agent/data/operators.json', 'utf8')).operators
+// 数据集路径：基于本文件位置解析，**不写死绝对路径**（否则别人克隆后跑不了）
+const OPS = new URL('../data/operators.json', import.meta.url)
+
+const ops = JSON.parse(await readFile(OPS, 'utf8')).operators
 const stats = { ok: 0, byReason: {}, unexpected: [] }
 const note = (k) => { stats.byReason[k] = (stats.byReason[k] ?? 0) + 1 }
 

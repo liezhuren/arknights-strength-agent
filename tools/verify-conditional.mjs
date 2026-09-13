@@ -9,6 +9,9 @@ import { readFileSync } from 'node:fs'
 import { findOperator, evaluate } from './evaluate.mjs'
 import { extractConditional } from './conditional.mjs'
 
+// 数据集路径：基于本文件位置解析，**不写死绝对路径**（否则别人克隆后跑不了）
+const OPS = new URL('../data/operators.json', import.meta.url)
+
 let pass = 0
 let fail = 0
 const assert = (name, ok, detail = '') => {
@@ -17,7 +20,7 @@ const assert = (name, ok, detail = '') => {
   console.log(`FAIL  ${name}${detail ? ` —— ${detail}` : ''}`)
 }
 
-const ops = JSON.parse(readFileSync('E:/github/arknights-strength-agent/data/operators.json', 'utf8')).operators
+const ops = JSON.parse(readFileSync(OPS, 'utf8')).operators
 const byName = new Map(ops.map((o) => [o.name, o]))
 
 // ---- ① 对空加成 ----
