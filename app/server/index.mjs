@@ -120,6 +120,7 @@ const routes = {
   'GET /api/operators': ({ url }) => searchOperators({
     q: url.searchParams.get('q') ?? '',
     profession: url.searchParams.get('profession') ?? '',
+    subProfession: url.searchParams.get('subProfession') ?? '',
     rarity: url.searchParams.get('rarity') ?? '',
     limit: Math.min(Number(url.searchParams.get('limit')) || 50, 300),
     offset: Number(url.searchParams.get('offset')) || 0,

@@ -77,6 +77,8 @@ function RotationChart({ r }: { r: NonNullable<Charts['rotation']> }) {
   const total = (r.cycle ?? 1) || 1
   const chargeW = ((r.firstUse ?? 0) / total) * 100
   const durW = (r.duration / total) * 100
+  // 窄段不显示文字（否则会被 overflow 裁成半截字，看起来像坏掉的色条）
+  const label = (w: number, text: string) => (w >= 17 ? text : '')
   return (
     <div className="chart">
       <div className="chart-head">
@@ -84,9 +86,9 @@ function RotationChart({ r }: { r: NonNullable<Charts['rotation']> }) {
         <span className="muted">覆盖率 {pct(r.coverage)} · 60s 内可开 {r.casts60} 次 · 90s 内 {r.casts90} 次</span>
       </div>
       <div className="timeline">
-        <div className="seg charge" style={{ width: `${chargeW}%` }} title={`充能 ${r.firstUse}s`}>充能 {r.firstUse}s</div>
-        <div className="seg active" style={{ width: `${durW}%` }} title={`技能期 ${r.duration}s`}>技能 {r.duration}s</div>
-        <div className="seg down" style={{ width: `${100 - chargeW - durW}%` }} title={`空窗 ${r.downtime}s`} />
+        <div className="seg charge" style={{ width: `${chargeW}%` }} title={`充能 ${r.firstUse}s（首轮可用）`}>{label(chargeW, `充能 ${r.firstUse}s`)}</div>
+        <div className="seg active" style={{ width: `${durW}%` }} title={`技能期 ${r.duration}s`}>{label(durW, `技能 ${r.duration}s`)}</div>
+        <div className="seg down" style={{ width: `${100 - chargeW - durW}%` }} title={`空窗 ${r.downtime}s`}>{label(100 - chargeW - durW, `空窗 ${r.downtime}s`)}</div>
       </div>
       <div className="legend">
         <span><i className="sw charge" /> 充能 {r.firstUse}s（首轮可用）</span>

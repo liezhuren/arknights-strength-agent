@@ -7,6 +7,7 @@
    "rarity": "TIER_1",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "支援机械",
@@ -124,6 +125,7 @@
    "rarity": "TIER_1",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "支援机械",
@@ -251,6 +253,7 @@
    "rarity": "TIER_1",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "支援机械",
@@ -383,6 +386,7 @@
    "rarity": "TIER_1",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "支援机械",
@@ -510,6 +514,7 @@
    "rarity": "TIER_1",
    "profession": "SNIPER",
    "subProfessionId": "bombarder",
+   "subProfessionName": "投掷手",
    "position": "RANGED",
    "tagList": [
     "控场"
@@ -665,6 +670,7 @@
    "rarity": "TIER_1",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "控场"
@@ -795,6 +801,7 @@
    "rarity": "TIER_1",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "支援机械",
@@ -917,6 +924,7 @@
    "rarity": "TIER_1",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "支援机械",
@@ -1044,6 +1052,7 @@
    "rarity": "TIER_1",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "支援机械",
@@ -1171,6 +1180,7 @@
    "rarity": "TIER_1",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "支援机械",
@@ -1298,6 +1308,7 @@
    "rarity": "TIER_1",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -1458,6 +1469,7 @@
    "rarity": "TIER_2",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "新手"
@@ -1574,6 +1586,7 @@
    "rarity": "TIER_2",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "新手"
@@ -1695,6 +1708,7 @@
    "rarity": "TIER_2",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "新手"
@@ -1811,6 +1825,7 @@
    "rarity": "TIER_2",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "新手"
@@ -1927,6 +1942,7 @@
    "rarity": "TIER_2",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "新手"
@@ -2043,6 +2059,7 @@
    "rarity": "TIER_3",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复"
@@ -2307,6 +2324,7 @@
    "rarity": "TIER_3",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复"
@@ -2606,6 +2624,7 @@
    "rarity": "TIER_3",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -2690,6 +2709,7 @@
    "rarity": "TIER_3",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -2999,6 +3019,7 @@
    "rarity": "TIER_3",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -3264,6 +3285,7 @@
    "rarity": "TIER_3",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -3534,6 +3556,7 @@
    "rarity": "TIER_3",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -3798,6 +3821,7 @@
    "rarity": "TIER_3",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -4062,6 +4086,7 @@
    "rarity": "TIER_3",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -4146,6 +4171,7 @@
    "rarity": "TIER_3",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -4451,6 +4477,7 @@
    "rarity": "TIER_3",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -4755,6 +4782,7 @@
    "rarity": "TIER_3",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -5019,6 +5047,7 @@
    "rarity": "TIER_3",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -5103,6 +5132,7 @@
    "rarity": "TIER_3",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -5367,6 +5397,7 @@
    "rarity": "TIER_3",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -5631,6 +5662,7 @@
    "rarity": "TIER_3",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -5930,6 +5962,7 @@
    "rarity": "TIER_3",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -6014,6 +6047,7 @@
    "rarity": "TIER_3",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -6278,6 +6312,7 @@
    "rarity": "TIER_3",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -6362,6 +6397,7 @@
    "rarity": "TIER_3",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速"
@@ -6670,6 +6706,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -7322,6 +7359,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -7984,6 +8022,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -8590,6 +8629,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -9187,6 +9227,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "blastcaster",
+   "subProfessionName": "轰击术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -9834,6 +9875,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -10505,6 +10547,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -11266,6 +11309,7 @@
    "rarity": "TIER_4",
    "profession": "CASTER",
    "subProfessionId": "chain",
+   "subProfessionName": "链术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -11876,6 +11920,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -12473,6 +12518,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -13220,6 +13266,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -13816,6 +13863,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -14618,6 +14666,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -15280,6 +15329,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -15932,6 +15982,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "reaperrange",
+   "subProfessionName": "散射手",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -16743,6 +16794,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -17395,6 +17447,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -17946,6 +17999,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -18642,6 +18696,7 @@
    "rarity": "TIER_4",
    "profession": "SNIPER",
    "subProfessionId": "loopshooter",
+   "subProfessionName": "回环射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -19243,6 +19298,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -19995,6 +20051,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -20597,6 +20654,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -21260,6 +21318,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -21876,6 +21935,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "bearer",
+   "subProfessionName": "执旗手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -22673,6 +22733,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -23429,6 +23490,7 @@
    "rarity": "TIER_4",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -24126,6 +24188,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -24732,6 +24795,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -25284,6 +25348,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -26127,6 +26192,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -26789,6 +26855,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "减速",
@@ -27595,6 +27662,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -28192,6 +28260,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -28888,6 +28957,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -29590,6 +29660,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "musha",
+   "subProfessionName": "武者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -30351,6 +30422,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -30956,6 +31028,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -31655,6 +31728,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "crusher",
+   "subProfessionName": "重剑手",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -32456,6 +32530,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "reaper",
+   "subProfessionName": "收割者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -33267,6 +33342,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "librator",
+   "subProfessionName": "解放者",
    "position": "MELEE",
    "tagList": [
     "爆发"
@@ -33932,6 +34008,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -34589,6 +34666,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -35387,6 +35465,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "merchant",
+   "subProfessionName": "行商",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -36048,6 +36127,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "hookmaster",
+   "subProfessionName": "钩索师",
    "position": "MELEE",
    "tagList": [
     "位移"
@@ -36744,6 +36824,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -37390,6 +37471,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -38396,6 +38478,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -39047,6 +39130,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -39709,6 +39793,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "ringhealer",
+   "subProfessionName": "群愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -40305,6 +40390,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "healer",
+   "subProfessionName": "疗养师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -40916,6 +41002,7 @@
    "rarity": "TIER_4",
    "profession": "MEDIC",
    "subProfessionId": "wandermedic",
+   "subProfessionName": "行医",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -41571,6 +41658,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -42267,6 +42355,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -42913,6 +43002,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -43564,6 +43654,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -44226,6 +44317,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "unyield",
+   "subProfessionName": "不屈者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -44973,6 +45065,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -45730,6 +45823,7 @@
    "rarity": "TIER_4",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -46282,6 +46376,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤"
@@ -46928,6 +47023,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速"
@@ -47533,6 +47629,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -48139,6 +48236,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速"
@@ -48810,6 +48908,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -49507,6 +49606,7 @@
    "rarity": "TIER_4",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素"
@@ -49889,6 +49989,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -50550,6 +50651,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "pusher",
+   "subProfessionName": "推击手",
    "position": "MELEE",
    "tagList": [
     "位移"
@@ -51196,6 +51298,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -51867,6 +51970,7 @@
    "rarity": "TIER_4",
    "profession": "SPECIAL",
    "subProfessionId": "skywalker",
+   "subProfessionName": "巡空者",
    "position": "MELEE",
    "tagList": [
     "高空",
@@ -52754,6 +52858,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "ringhealer",
+   "subProfessionName": "群愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -53301,6 +53406,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "ringhealer",
+   "subProfessionName": "群愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -53903,6 +54009,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "ringhealer",
+   "subProfessionName": "群愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -54705,6 +54812,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -55452,6 +55560,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -56099,6 +56208,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -56806,6 +56916,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -57758,6 +57869,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -58222,6 +58334,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -59033,6 +59146,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "counsellor",
+   "subProfessionName": "策士",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -60038,6 +60152,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -60744,6 +60859,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -61360,6 +61476,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -62121,6 +62238,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "bearer",
+   "subProfessionName": "执旗手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -63023,6 +63141,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "bearer",
+   "subProfessionName": "执旗手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -63875,6 +63994,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "bearer",
+   "subProfessionName": "执旗手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -64822,6 +64942,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -65678,6 +65799,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -66734,6 +66856,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -67536,6 +67659,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -68393,6 +68517,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -69340,6 +69465,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -70137,6 +70263,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -70793,6 +70920,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -71514,6 +71642,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -72175,6 +72304,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "治疗",
@@ -72956,6 +73086,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -73603,6 +73734,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -74255,6 +74387,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -75015,6 +75148,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -75379,6 +75513,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -76026,6 +76161,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -76678,6 +76814,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -77424,6 +77561,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -78106,6 +78244,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -78712,6 +78851,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -79418,6 +79558,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -80074,6 +80215,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "crusher",
+   "subProfessionName": "重剑手",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -80825,6 +80967,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -81527,6 +81670,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -82334,6 +82478,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -82936,6 +83081,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -83643,6 +83789,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -84390,6 +84537,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -85087,6 +85235,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -85794,6 +85943,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -86401,6 +86551,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "musha",
+   "subProfessionName": "武者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -87062,6 +87213,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "musha",
+   "subProfessionName": "武者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -87953,6 +88105,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "reaper",
+   "subProfessionName": "收割者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -88663,6 +88816,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "reaper",
+   "subProfessionName": "收割者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -89338,6 +89492,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "librator",
+   "subProfessionName": "解放者",
    "position": "MELEE",
    "tagList": [
     "爆发"
@@ -90153,6 +90308,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "hammer",
+   "subProfessionName": "撼地者",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -90919,6 +91075,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "primguard",
+   "subProfessionName": "本源近卫",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -91656,6 +91813,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "hammer",
+   "subProfessionName": "撼地者",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -92368,6 +92526,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "mercenary",
+   "subProfessionName": "佣兵",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -93211,6 +93370,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "mercenary",
+   "subProfessionName": "佣兵",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -94269,6 +94429,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -94870,6 +95031,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -95481,6 +95643,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -96087,6 +96250,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -96450,6 +96614,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -97001,6 +97166,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -97607,6 +97773,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -98313,6 +98480,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -98965,6 +99133,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -99612,6 +99781,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -100464,6 +100634,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "reaperrange",
+   "subProfessionName": "散射手",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -101019,6 +101190,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "reaperrange",
+   "subProfessionName": "散射手",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -101779,6 +101951,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "reaperrange",
+   "subProfessionName": "散射手",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -102639,6 +102812,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "skybreaker",
+   "subProfessionName": "裂空炮手",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -103229,6 +103403,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -104165,6 +104340,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -104766,6 +104942,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -105518,6 +105695,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -106315,6 +106493,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -106962,6 +107141,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -107320,6 +107500,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "chain",
+   "subProfessionName": "链术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -107880,6 +108061,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "chain",
+   "subProfessionName": "链术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -108700,6 +108882,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "phalanx",
+   "subProfessionName": "阵法术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -109311,6 +109494,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -110063,6 +110247,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -110770,6 +110955,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -111472,6 +111658,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "phalanx",
+   "subProfessionName": "阵法术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -112143,6 +112330,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -112848,6 +113036,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -113553,6 +113742,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -114388,6 +114578,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -115089,6 +115280,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "blastcaster",
+   "subProfessionName": "轰击术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -115741,6 +115933,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "blastcaster",
+   "subProfessionName": "轰击术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -116443,6 +116636,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -117174,6 +117368,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -117904,6 +118099,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -118579,6 +118775,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -119259,6 +119456,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -119956,6 +120154,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -120703,6 +120902,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -121600,6 +121800,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "soulcaster",
+   "subProfessionName": "塑灵术师",
    "position": "RANGED",
    "tagList": [
     "召唤"
@@ -122364,6 +122565,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -122961,6 +123163,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -123758,6 +123961,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -124410,6 +124614,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -124956,6 +125161,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -125708,6 +125914,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -126360,6 +126567,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -126768,6 +126976,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -127534,6 +127743,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "healer",
+   "subProfessionName": "疗养师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -128244,6 +128454,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "healer",
+   "subProfessionName": "疗养师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -129049,6 +129260,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "healer",
+   "subProfessionName": "疗养师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -129904,6 +130116,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -130655,6 +130868,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "wandermedic",
+   "subProfessionName": "行医",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -131360,6 +131574,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "wandermedic",
+   "subProfessionName": "行医",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -132065,6 +132280,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "wandermedic",
+   "subProfessionName": "行医",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -132670,6 +132886,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "incantationmedic",
+   "subProfessionName": "咒愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -133380,6 +133597,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "incantationmedic",
+   "subProfessionName": "咒愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -134035,6 +134253,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "chainhealer",
+   "subProfessionName": "链愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -134700,6 +134919,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "chainhealer",
+   "subProfessionName": "链愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -135415,6 +135635,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "chainhealer",
+   "subProfessionName": "链愈师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -136140,6 +136361,7 @@
    "rarity": "TIER_5",
    "profession": "MEDIC",
    "subProfessionId": "watchman",
+   "subProfessionName": "守望者",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -137179,6 +137401,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -137826,6 +138049,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -138528,6 +138752,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -139230,6 +139455,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -140082,6 +140308,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -140729,6 +140956,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -141436,6 +141664,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -142083,6 +142312,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "merchant",
+   "subProfessionName": "行商",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -143054,6 +143284,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "merchant",
+   "subProfessionName": "行商",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -143865,6 +144096,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -144727,6 +144959,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -145540,6 +145773,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -146242,6 +146476,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -146888,6 +147123,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "unyield",
+   "subProfessionName": "不屈者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -147691,6 +147927,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "unyield",
+   "subProfessionName": "不屈者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -148388,6 +148625,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -149090,6 +149328,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -149454,6 +149693,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -150181,6 +150421,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -151133,6 +151374,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -151900,6 +152142,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -152547,6 +152790,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "fortress",
+   "subProfessionName": "要塞",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -153154,6 +153398,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "fortress",
+   "subProfessionName": "要塞",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -153956,6 +154201,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "duelist",
+   "subProfessionName": "决战者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -154808,6 +155054,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "duelist",
+   "subProfessionName": "决战者",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -155514,6 +155761,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "primprotector",
+   "subProfessionName": "本源铁卫",
    "position": "MELEE",
    "tagList": [
     "元素",
@@ -156316,6 +156564,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "primprotector",
+   "subProfessionName": "本源铁卫",
    "position": "MELEE",
    "tagList": [
     "元素",
@@ -157068,6 +157317,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -157674,6 +157924,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -158321,6 +158572,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -158918,6 +159170,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -159565,6 +159818,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -160212,6 +160466,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -161058,6 +161313,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -161705,6 +161961,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -162411,6 +162668,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "bombarder",
+   "subProfessionName": "投掷手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -163272,6 +163530,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "hunter",
+   "subProfessionName": "猎手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -163937,6 +164196,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "hunter",
+   "subProfessionName": "猎手",
    "position": "RANGED",
    "tagList": [
     "爆发",
@@ -164603,6 +164863,7 @@
    "rarity": "TIER_5",
    "profession": "SNIPER",
    "subProfessionId": "loopshooter",
+   "subProfessionName": "回环射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -165457,6 +165718,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "geek",
+   "subProfessionName": "怪杰",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -166173,6 +166435,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "hookmaster",
+   "subProfessionName": "钩索师",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -166925,6 +167188,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "hookmaster",
+   "subProfessionName": "钩索师",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -167677,6 +167941,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "hookmaster",
+   "subProfessionName": "钩索师",
    "position": "MELEE",
    "tagList": [
     "位移"
@@ -168473,6 +168738,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "underminer",
+   "subProfessionName": "削弱者",
    "position": "RANGED",
    "tagList": [
     "削弱"
@@ -169139,6 +169405,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "underminer",
+   "subProfessionName": "削弱者",
    "position": "RANGED",
    "tagList": [
     "削弱"
@@ -169790,6 +170057,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "underminer",
+   "subProfessionName": "削弱者",
    "position": "RANGED",
    "tagList": [
     "削弱"
@@ -170586,6 +170854,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -171197,6 +171466,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -171953,6 +172223,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "削弱",
@@ -172759,6 +173030,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -173470,6 +173742,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -174277,6 +174550,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -175042,6 +175316,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -175794,6 +176069,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -176355,6 +176631,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -177181,6 +177458,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -178012,6 +178290,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -178673,6 +178952,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -179318,6 +179598,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -179929,6 +180210,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -180635,6 +180917,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -181541,6 +181824,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素"
@@ -182257,6 +182541,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素"
@@ -183008,6 +183293,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素"
@@ -183859,6 +184145,7 @@
    "rarity": "TIER_5",
    "profession": "SUPPORT",
    "subProfessionId": "supportiveranger",
+   "subProfessionName": "游击手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -184696,6 +184983,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -185407,6 +185695,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -186068,6 +186357,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -186854,6 +187144,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "pusher",
+   "subProfessionName": "推击手",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -187651,6 +187942,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "pusher",
+   "subProfessionName": "推击手",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -188453,6 +188745,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -189200,6 +189493,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -190047,6 +190341,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -190844,6 +191139,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -191615,6 +191911,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -192286,6 +192583,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "削弱",
@@ -192922,6 +193220,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -193733,6 +194032,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "alchemist",
+   "subProfessionName": "炼金师",
    "position": "RANGED",
    "tagList": [
     "削弱",
@@ -194589,6 +194889,7 @@
    "rarity": "TIER_5",
    "profession": "SPECIAL",
    "subProfessionId": "skywalker",
+   "subProfessionName": "巡空者",
    "position": "MELEE",
    "tagList": [
     "高空",
@@ -195226,6 +195527,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -196206,6 +196508,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -197393,6 +197696,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -198473,6 +198777,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "fastshot",
+   "subProfessionName": "速射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -199585,6 +199890,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -200575,6 +200881,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -201594,6 +201901,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "closerange",
+   "subProfessionName": "重射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -203083,6 +203391,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -203963,6 +204272,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "longrange",
+   "subProfessionName": "神射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -205602,6 +205912,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -206588,6 +206899,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -207695,6 +208007,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -208676,6 +208989,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "siegesniper",
+   "subProfessionName": "攻城手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -209873,6 +210187,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "bombarder",
+   "subProfessionName": "投掷手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -211162,6 +211477,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "bombarder",
+   "subProfessionName": "投掷手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -212408,6 +212724,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "reaperrange",
+   "subProfessionName": "散射手",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -213703,6 +214020,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "hunter",
+   "subProfessionName": "猎手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -214797,6 +215115,7 @@
    "rarity": "TIER_6",
    "profession": "SNIPER",
    "subProfessionId": "loopshooter",
+   "subProfessionName": "回环射手",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -216100,6 +216419,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -217131,6 +217451,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -218171,6 +218492,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -219372,6 +219694,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -220663,6 +220986,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "bearer",
+   "subProfessionName": "执旗手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -221944,6 +222268,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -223214,6 +223539,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "pioneer",
+   "subProfessionName": "尖兵",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -224427,6 +224753,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -225512,6 +225839,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -226802,6 +227130,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "tactician",
+   "subProfessionName": "战术家",
    "position": "RANGED",
    "tagList": [
     "费用回复",
@@ -228735,6 +229064,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "counsellor",
+   "subProfessionName": "策士",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -230626,6 +230956,7 @@
    "rarity": "TIER_6",
    "profession": "PIONEER",
    "subProfessionId": "agent",
+   "subProfessionName": "情报官",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -231864,6 +232195,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "blastcaster",
+   "subProfessionName": "轰击术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -232995,6 +233327,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "blastcaster",
+   "subProfessionName": "轰击术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -234369,6 +234702,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -235296,6 +235630,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -236527,6 +236862,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -237458,6 +237794,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -238596,6 +238933,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -239841,6 +240179,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -240880,6 +241219,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -242785,6 +243125,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "splashcaster",
+   "subProfessionName": "扩散术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -243797,6 +244138,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "chain",
+   "subProfessionName": "链术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -245153,6 +245495,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "phalanx",
+   "subProfessionName": "阵法术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -246198,6 +246541,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "phalanx",
+   "subProfessionName": "阵法术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -247208,6 +247552,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "phalanx",
+   "subProfessionName": "阵法术师",
    "position": "RANGED",
    "tagList": [
     "群攻",
@@ -248626,6 +248971,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -249685,6 +250031,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "funnel",
+   "subProfessionName": "驭械术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -251117,6 +251464,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -252173,6 +252521,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "mystic",
+   "subProfessionName": "秘术师",
    "position": "RANGED",
    "tagList": [
     "输出"
@@ -253370,6 +253719,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -254702,6 +255052,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -256312,6 +256663,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "primcaster",
+   "subProfessionName": "本源术师",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -257831,6 +258183,7 @@
    "rarity": "TIER_6",
    "profession": "CASTER",
    "subProfessionId": "soulcaster",
+   "subProfessionName": "塑灵术师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -259424,6 +259777,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "underminer",
+   "subProfessionName": "削弱者",
    "position": "RANGED",
    "tagList": [
     "削弱"
@@ -260371,6 +260725,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -261264,6 +261619,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -262205,6 +262561,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -263277,6 +263634,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "slower",
+   "subProfessionName": "凝滞师",
    "position": "RANGED",
    "tagList": [
     "减速",
@@ -264626,6 +264984,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -265497,6 +265856,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -266834,6 +267194,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -267925,6 +268286,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "bard",
+   "subProfessionName": "吟游者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -269179,6 +269541,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -270185,6 +270548,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "blessing",
+   "subProfessionName": "护佑者",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -271534,6 +271898,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "summoner",
+   "subProfessionName": "召唤师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -272814,6 +273179,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "支援",
@@ -273795,6 +274161,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "craftsman",
+   "subProfessionName": "工匠",
    "position": "MELEE",
    "tagList": [
     "支援",
@@ -274924,6 +275291,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -276005,6 +276373,7 @@
    "rarity": "TIER_6",
    "profession": "SUPPORT",
    "subProfessionId": "ritualist",
+   "subProfessionName": "巫役",
    "position": "RANGED",
    "tagList": [
     "元素",
@@ -277589,6 +277958,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -278717,6 +279087,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -280103,6 +280474,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -281234,6 +281606,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活"
@@ -282464,6 +282837,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "executor",
+   "subProfessionName": "处决者",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -283477,6 +283851,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "merchant",
+   "subProfessionName": "行商",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -284833,6 +285208,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "merchant",
+   "subProfessionName": "行商",
    "position": "MELEE",
    "tagList": [
     "快速复活",
@@ -286005,6 +286381,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "pusher",
+   "subProfessionName": "推击手",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -287326,6 +287703,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "geek",
+   "subProfessionName": "怪杰",
    "position": "RANGED",
    "tagList": [
     "支援",
@@ -288326,6 +288704,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "geek",
+   "subProfessionName": "怪杰",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -289942,6 +290321,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "hookmaster",
+   "subProfessionName": "钩索师",
    "position": "MELEE",
    "tagList": [
     "位移",
@@ -291279,6 +291659,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -292481,6 +292862,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "stalker",
+   "subProfessionName": "伏击客",
    "position": "MELEE",
    "tagList": [
     "减速",
@@ -293696,6 +294078,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "dollkeeper",
+   "subProfessionName": "傀儡师",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -294758,6 +295141,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -296044,6 +296428,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -297619,6 +298004,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "traper",
+   "subProfessionName": "陷阱师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -298863,6 +299249,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "alchemist",
+   "subProfessionName": "炼金师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -301013,6 +301400,7 @@
    "rarity": "TIER_6",
    "profession": "SPECIAL",
    "subProfessionId": "skywalker",
+   "subProfessionName": "巡空者",
    "position": "MELEE",
    "tagList": [
     "高空",
@@ -302592,6 +302980,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -303618,6 +304007,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -304770,6 +305160,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "ringhealer",
+   "subProfessionName": "群愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -305796,6 +306187,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "physician",
+   "subProfessionName": "医师",
    "position": "RANGED",
    "tagList": [
     "召唤",
@@ -306842,6 +307234,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "healer",
+   "subProfessionName": "疗养师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -307952,6 +308345,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "wandermedic",
+   "subProfessionName": "行医",
    "position": "RANGED",
    "tagList": [
     "治疗"
@@ -308901,6 +309295,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "incantationmedic",
+   "subProfessionName": "咒愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -310262,6 +310657,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "incantationmedic",
+   "subProfessionName": "咒愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -311551,6 +311947,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "chainhealer",
+   "subProfessionName": "链愈师",
    "position": "RANGED",
    "tagList": [
     "治疗",
@@ -312645,6 +313042,7 @@
    "rarity": "TIER_6",
    "profession": "MEDIC",
    "subProfessionId": "watchman",
+   "subProfessionName": "守望者",
    "position": "RANGED",
    "tagList": [
     "高空",
@@ -313811,6 +314209,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -314737,6 +315136,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护"
@@ -315699,6 +316099,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -316691,6 +317092,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -317768,6 +318170,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "guardian",
+   "subProfessionName": "守护者",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -319013,6 +319416,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "protector",
+   "subProfessionName": "铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -320189,6 +320593,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "unyield",
+   "subProfessionName": "不屈者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -321431,6 +321836,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "unyield",
+   "subProfessionName": "不屈者",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -322572,6 +322978,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "duelist",
+   "subProfessionName": "决战者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -323666,6 +324073,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "fortress",
+   "subProfessionName": "要塞",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -325057,6 +325465,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -326444,6 +326853,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "防护",
@@ -327741,6 +328151,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "shotprotector",
+   "subProfessionName": "哨戒铁卫",
    "position": "MELEE",
    "tagList": [
     "生存",
@@ -329305,6 +329716,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "primprotector",
+   "subProfessionName": "本源铁卫",
    "position": "MELEE",
    "tagList": [
     "元素",
@@ -330604,6 +331016,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "primprotector",
+   "subProfessionName": "本源铁卫",
    "position": "MELEE",
    "tagList": [
     "元素",
@@ -332321,6 +332734,7 @@
    "rarity": "TIER_6",
    "profession": "TANK",
    "subProfessionId": "artsprotector",
+   "subProfessionName": "驭法铁卫",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -333589,6 +334003,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -334785,6 +335200,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "爆发"
@@ -335820,6 +336236,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -337043,6 +337460,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -337970,6 +338388,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -339120,6 +339539,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -340218,6 +340638,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -341575,6 +341996,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -342032,6 +342454,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "crusher",
+   "subProfessionName": "重剑手",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -343362,6 +343785,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "crusher",
+   "subProfessionName": "重剑手",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -344625,6 +345049,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "hammer",
+   "subProfessionName": "撼地者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -345870,6 +346295,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "hammer",
+   "subProfessionName": "撼地者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -347123,6 +347549,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -348114,6 +348541,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -349308,6 +349736,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "sword",
+   "subProfessionName": "剑豪",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -350695,6 +351124,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -351691,6 +352121,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -353000,6 +353431,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -354225,6 +354657,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -355666,6 +356099,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -356697,6 +357131,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "artsfghter",
+   "subProfessionName": "术战者",
    "position": "MELEE",
    "tagList": [
     "爆发",
@@ -357740,6 +358175,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "musha",
+   "subProfessionName": "武者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -358680,6 +359116,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "musha",
+   "subProfessionName": "武者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -360140,6 +360577,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "instructor",
+   "subProfessionName": "教官",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -361330,6 +361768,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -362510,6 +362949,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -363440,6 +363880,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -364461,6 +364902,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "reaper",
+   "subProfessionName": "收割者",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -365905,6 +366347,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "reaper",
+   "subProfessionName": "收割者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -367040,6 +367483,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "librator",
+   "subProfessionName": "解放者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -368148,6 +368592,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "librator",
+   "subProfessionName": "解放者",
    "position": "MELEE",
    "tagList": [
     "输出",
@@ -369365,6 +369810,7 @@
    "rarity": "TIER_5",
    "profession": "TANK",
    "subProfessionId": "primprotector",
+   "subProfessionName": "本源铁卫",
    "position": "MELEE",
    "tagList": [
     "元素",
@@ -370112,6 +370558,7 @@
    "rarity": "TIER_5",
    "profession": "WARRIOR",
    "subProfessionId": "centurion",
+   "subProfessionName": "强攻手",
    "position": "MELEE",
    "tagList": [
     "群攻",
@@ -370719,6 +371166,7 @@
    "rarity": "TIER_3",
    "profession": "SNIPER",
    "subProfessionId": "aoesniper",
+   "subProfessionName": "炮手",
    "position": "RANGED",
    "tagList": [
     "群攻"
@@ -370983,6 +371431,7 @@
    "rarity": "TIER_3",
    "profession": "WARRIOR",
    "subProfessionId": "lord",
+   "subProfessionName": "领主",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -371261,6 +371710,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -371812,6 +372262,7 @@
    "rarity": "TIER_4",
    "profession": "WARRIOR",
    "subProfessionId": "fighter",
+   "subProfessionName": "斗士",
    "position": "MELEE",
    "tagList": [
     "输出"
@@ -372468,6 +372919,7 @@
    "rarity": "TIER_5",
    "profession": "CASTER",
    "subProfessionId": "corecaster",
+   "subProfessionName": "中坚术师",
    "position": "RANGED",
    "tagList": [
     "输出",
@@ -373271,6 +373723,7 @@
    "rarity": "TIER_5",
    "profession": "PIONEER",
    "subProfessionId": "charger",
+   "subProfessionName": "冲锋手",
    "position": "MELEE",
    "tagList": [
     "费用回复",
@@ -373927,6 +374380,7 @@
    "rarity": "TIER_6",
    "profession": "WARRIOR",
    "subProfessionId": "fearless",
+   "subProfessionName": "无畏者",
    "position": "MELEE",
    "tagList": [
     "输出",

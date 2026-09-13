@@ -15,6 +15,11 @@ ok('GET /api/operators（职业过滤+分页）', s2.rows.length === 5 && s2.row
 
 const f = await get('/api/facets')
 ok('GET /api/facets', f.professions.length >= 8 && f.rarities.length === 6, `${f.professions.length} 职业`)
+ok('  分支（子职业）含中文名与所属职业', f.subProfessions.length === 72 && f.subProfessions.every((s) => s.name && s.profession),
+  `${f.subProfessions.length} 个分支 · 样例 ${f.subProfessions.slice(0, 3).map((s) => s.name).join('/')}`)
+const lib = await get('/api/operators?subProfession=librator')
+ok('  按分支筛选（解放者 4 名）', lib.total === 4 && lib.rows.every((r) => r.sub_profession_name === '解放者'),
+  lib.rows.map((r) => r.name).join('/'))
 
 const op = await get('/api/operators/银灰')
 ok('GET /api/operators/:id（详情）', op.skills?.length === 3 && op.modules?.length >= 2, `${op.name} 技能${op.skills.length} 模组${op.modules.length}`)

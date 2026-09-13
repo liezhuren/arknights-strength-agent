@@ -6,8 +6,13 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.6 "Microsoft YaHei", system-ui, sans-serif; }
 .app { max-width: 1180px; margin: 0 auto; padding: 20px; }
-header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.logo { width: 40px; height: 40px; object-fit: contain; border-radius: 8px; }
 h1 { font-size: 20px; margin: 0; }
+.credit { margin: 26px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.7; }
+.credit a { color: var(--accent); text-decoration: none; }
+.credit a:hover { text-decoration: underline; }
+.branch { color: var(--accent); }
 h3 { font-size: 14px; margin: 14px 0 6px; color: var(--accent); }
 .status { color: var(--muted); font-size: 12px; }
 nav { display: flex; gap: 6px; margin: 16px 0; border-bottom: 1px solid var(--line); }
@@ -34,7 +39,8 @@ th { color: var(--muted); font-weight: 500; }
 .sections { display: grid; gap: 12px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; }
 pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.65; }
-.trait-line { background: #1d2530; border-left: 3px solid var(--accent); padding: 6px 10px; margin: 6px 0; font-size: 12px; }
+/* 分支特性 / 模组 / AI 结果的提示行：原先左侧是亮蓝竖条（"蓝条"），改成低饱和面板样式 */
+.trait-line { background: #1b2029; border: 1px solid var(--line); border-left: 2px solid #46536b; padding: 7px 11px; border-radius: 5px; margin: 6px 0; font-size: 12px; }
 .warn { color: var(--warn); font-size: 12px; margin: 4px 0; }
 .err { background: #2a1b1b; border: 1px solid var(--err); color: #ffd7d7; padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; }
 .empty { color: var(--muted); padding: 40px 0; text-align: center; }
@@ -60,7 +66,8 @@ pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, Consolas, mon
 .row-val { font-size: 11px; color: var(--muted); text-align: right; min-width: 118px; }
 .row-val .up { color: #3ecf8e; font-style: normal; margin-left: 6px; }
 .track { position: relative; height: 16px; background: #141922; border-radius: 3px; }
-.bar { height: 100%; border-radius: 3px; background: var(--accent); }
+/* 默认**不用蓝色**：任何未加修饰类的 .bar 露出来就说明是漏改的 bug，而不是"看起来像设计" */
+.bar { height: 100%; border-radius: 3px; background: #5a6b85; }
 .bar.ok { background: #3ecf8e; }
 .bar.mid { background: var(--warn); }
 .bar.low { background: var(--err); }
@@ -83,9 +90,9 @@ pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, Consolas, mon
 .axis em { display: block; font-style: normal; color: var(--fg); }
 .timeline { display: flex; height: 26px; border-radius: 4px; overflow: hidden; }
 .seg { display: flex; align-items: center; justify-content: center; font-size: 11px; white-space: nowrap; overflow: hidden; }
-.seg.charge { background: #5a6b85; color: #dfe6f0; }
-.seg.active { background: var(--accent); color: #08131f; font-weight: 600; }
-.seg.down { background: #2b3341; }
+.seg.charge { background: #46536b; color: #cfd8e6; }
+.seg.active { background: #3ecf8e; color: #06251a; font-weight: 600; }
+.seg.down { background: repeating-linear-gradient(45deg, #232a36, #232a36 6px, #1c222c 6px, #1c222c 12px); color: var(--muted); }
 .factor { display: grid; grid-template-columns: 26px 80px 1fr; gap: 8px; align-items: start; margin: 5px 0; font-size: 12px; }
 .factor .lv { text-align: center; border-radius: 4px; font-size: 11px; }
 .lv3 { background: #3a1f1f; color: var(--err); }

@@ -3,7 +3,8 @@ export type Rarity = 'TIER_1' | 'TIER_2' | 'TIER_3' | 'TIER_4' | 'TIER_5' | 'TIE
 
 export interface OperatorRow {
   id: string; name: string; rarity: Rarity; rarity_num: number; profession: string
-  sub_profession: string; atk: number; def: number; max_hp: number; cost: number
+  sub_profession: string; sub_profession_name: string | null
+  atk: number; def: number; max_hp: number; cost: number
   block_cnt: number; trait_desc: string | null
 }
 export interface SearchResult { total: number; rows: OperatorRow[] }
@@ -78,8 +79,12 @@ const post = <T,>(p: string, body: unknown) =>
 
 export const api = {
   health: () => req<{ ok: boolean; node: string; modelEnabled: boolean }>('/api/health'),
-  facets: () => req<{ professions: { profession: string; c: number }[]; rarities: { rarity: string; c: number }[] }>('/api/facets'),
-  search: (p: { q?: string; profession?: string; rarity?: string; limit?: number; offset?: number }) => {
+  facets: () => req<{
+    professions: { profession: string; c: number }[]
+    rarities: { rarity: string; c: number }[]
+    subProfessions: { id: string; name: string; profession: string; c: number }[]
+  }>('/api/facets'),
+  search: (p: { q?: string; profession?: string; subProfession?: string; rarity?: string; limit?: number; offset?: number }) => {
     const qs = new URLSearchParams(Object.entries(p).filter(([, v]) => v !== '' && v !== undefined).map(([k, v]) => [k, String(v)])).toString()
     return req<SearchResult>(`/api/operators?${qs}`)
   },

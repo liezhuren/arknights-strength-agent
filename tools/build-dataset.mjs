@@ -13,6 +13,16 @@ const REAL_PROFESSIONS = new Set(['MEDIC', 'WARRIOR', 'SPECIAL', 'SNIPER', 'SUPP
 const chars = excel('character_table.json')
 const skills = excel('skill_table.json')
 
+/** 分支（子职业）中文名：uniequip_table.subProfDict → { 分支ID: 中文名 }。
+ *  用途：把 `WARRIOR/librator` 显示为「近卫 / 解放者」，并支持按分支筛选。 */
+function buildSubProfessionNames() {
+  const table = excel('uniequip_table.json')
+  const dict = table.subProfDict ?? {}
+  const out = {}
+  for (const [id, v] of Object.entries(dict)) out[id] = v?.subProfessionName ?? null
+  return out
+}
+
 /** 提取满级面板（最后 phase 的最后 keyframe） */
 function maxPanel(phases) {
   const last = phases[phases.length - 1]
@@ -119,6 +129,7 @@ function buildModuleIndex() {
 }
 
 const moduleIndex = buildModuleIndex()
+const subProfNames = buildSubProfessionNames()
 const operators = []
 const skipped = []
 for (const [id, c] of Object.entries(chars)) {
@@ -134,6 +145,7 @@ for (const [id, c] of Object.entries(chars)) {
     rarity: c.rarity ?? null,
     profession: c.profession ?? null,
     subProfessionId: c.subProfessionId ?? null,
+    subProfessionName: subProfNames[c.subProfessionId] ?? null,
     position: c.position ?? null,
     tagList: c.tagList ?? [],
     panel: maxPanel(c.phases ?? []),

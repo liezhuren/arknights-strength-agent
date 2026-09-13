@@ -11,8 +11,34 @@ const ROOT = path.resolve(import.meta.dirname, '../..')
 const DB = path.join(ROOT, 'app/db/arknights.db')
 const load = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'))
 
+// 重建前备份**用户数据**（自制干员/评测历史/解析沉淀），重建后回填 —— 数据管线不该吞掉用户内容
+const backup = { custom: [], evaluations: [], parses: [] }
+if (fs.existsSync(DB)) {
+  try {
+    const old = new DatabaseSync(DB)
+    for (const [k, t] of [['custom', 'custom_operators'], ['evaluations', 'evaluations'], ['parses', 'mechanism_parses']]) {
+      try { backup[k] = old.prepare(`SELECT * FROM ${t}`).all() } catch { /* 表不存在 */ }
+    }
+    old.close()
+    const n = backup.custom.length + backup.evaluations.length + backup.parses.length
+    if (n) console.log(`ℹ 备份用户数据：自制干员 ${backup.custom.length} · 评测历史 ${backup.evaluations.length} · 解析沉淀 ${backup.parses.length}`)
+  } catch { /* 旧库不可读则直接重建 */ }
+}
+
 fs.mkdirSync(path.dirname(DB), { recursive: true })
-if (fs.existsSync(DB)) fs.rmSync(DB)
+if (fs.existsSync(DB)) {
+  try {
+    fs.rmSync(DB)
+  } catch (e) {
+    // Windows 下运行中的服务（app/server）会持有数据库文件锁
+    console.error(`\n❌ 无法删除旧数据库：${e.code}\n   原因：文件被占用（多半是 app/server 正在运行，SQLite 持有句柄）。\n   处理：先停掉服务（Ctrl+C 或结束 node 进程）再重建，或用 npm script 里的一键重建。\n   DB 路径：${DB}\n`)
+    process.exit(1)
+  }
+}
+// WAL/SHM 残留同样需要清理
+for (const suf of ['-wal', '-shm']) {
+  if (fs.existsSync(DB + suf)) { try { fs.rmSync(DB + suf) } catch { /* 忽略 */ } }
+}
 const db = new DatabaseSync(DB)
 db.exec('PRAGMA journal_mode = WAL')
 
@@ -20,7 +46,7 @@ db.exec(`
 -- 干员（含面板与分支特性）
 CREATE TABLE operators (
   id TEXT PRIMARY KEY, name TEXT, rarity TEXT, rarity_num INTEGER,
-  profession TEXT, sub_profession TEXT, position TEXT,
+  profession TEXT, sub_profession TEXT, sub_profession_name TEXT, position TEXT,
   max_hp INTEGER, atk INTEGER, def INTEGER, magic_resistance INTEGER,
   cost INTEGER, block_cnt INTEGER, base_attack_time REAL, sp_recovery_per_sec REAL,
   respawn_time INTEGER, attack_speed INTEGER,
@@ -29,6 +55,7 @@ CREATE TABLE operators (
 );
 CREATE INDEX idx_op_name ON operators(name);
 CREATE INDEX idx_op_sub ON operators(sub_profession);
+CREATE INDEX idx_op_subname ON operators(sub_profession_name);
 
 -- 天赋
 CREATE TABLE talents (
@@ -79,6 +106,15 @@ CREATE TABLE evaluations (
   id INTEGER PRIMARY KEY AUTOINCREMENT, op_id TEXT, op_name TEXT, skill_idx INTEGER,
   module_spec TEXT, damage_type TEXT, payload TEXT, created_at TEXT DEFAULT (datetime('now'))
 );
+
+-- 机制解析沉淀（AI 提议的长尾机制补丁；只提议不入引擎，人工审核后并入 tools/overrides.mjs）
+CREATE TABLE mechanism_parses (
+  op_id TEXT, skill_idx INTEGER, form TEXT, patches TEXT, reasoning TEXT,
+  confidence TEXT, provider TEXT, model TEXT, source TEXT DEFAULT 'llm',
+  created_at TEXT DEFAULT (datetime('now')), updated_at TEXT,
+  PRIMARY KEY (op_id, skill_idx)
+);
+CREATE INDEX idx_parse_updated ON mechanism_parses(updated_at DESC);
 `)
 
 const ins = (sql) => db.prepare(sql)
@@ -86,9 +122,9 @@ const RARITY_NUM = { TIER_1: 1, TIER_2: 2, TIER_3: 3, TIER_4: 4, TIER_5: 5, TIER
 
 // ---- 干员 / 天赋 / 技能 ----
 const ops = load('data/operators.json').operators
-const iOp = ins(`INSERT INTO operators (id,name,rarity,rarity_num,profession,sub_profession,position,
+const iOp = ins(`INSERT INTO operators (id,name,rarity,rarity_num,profession,sub_profession,sub_profession_name,position,
   max_hp,atk,def,magic_resistance,cost,block_cnt,base_attack_time,sp_recovery_per_sec,respawn_time,attack_speed,
-  trait_desc,trait_blackboard,tag_list,panel_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+  trait_desc,trait_blackboard,tag_list,panel_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
 const iTal = ins(`INSERT INTO talents (op_id,idx,description,blackboard,unlock_phase,unlock_level) VALUES (?,?,?,?,?,?)`)
 const iSk = ins(`INSERT INTO skills (op_id,idx,skill_id,name,sp_type,sp_cost,init_sp,increment,duration,duration_type,range_id,has_mastery3) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`)
 const iLv = ins(`INSERT INTO skill_levels (op_id,skill_idx,level_idx,level,name,description,duration,blackboard) VALUES (?,?,?,?,?,?,?,?)`)
@@ -97,6 +133,7 @@ let levels = 0
 for (const op of ops) {
   const p = op.panel ?? {}
   iOp.run(op.id, op.name, op.rarity, RARITY_NUM[op.rarity] ?? 5, op.profession, op.subProfessionId,
+    op.subProfessionName ?? null,
     op.position ?? null, p.maxHp ?? null, p.atk ?? null, p.def ?? null, p.magicResistance ?? null,
     p.cost ?? null, p.blockCnt ?? null, p.baseAttackTime ?? null, p.spRecoveryPerSec ?? null,
     p.respawnTime ?? null, p.attackSpeed ?? null,
@@ -143,11 +180,26 @@ for (const b of load('data/scenario-baseline.json').scenarios) {
   iBl.run(b.id, b.name, b.def, b.res, b.count, b.p10, b.p25, b.p50, b.p75, b.p90, JSON.stringify(b.top))
 }
 
+// ---- 回填用户数据（重建不应吞掉用户内容）----
+for (const r of backup.custom) {
+  db.prepare(`INSERT OR IGNORE INTO custom_operators (id,name,data,created_at,updated_at) VALUES (?,?,?,?,?)`)
+    .run(r.id, r.name, r.data, r.created_at, r.updated_at)
+}
+for (const r of backup.evaluations) {
+  db.prepare(`INSERT INTO evaluations (id,op_id,op_name,skill_idx,module_spec,damage_type,payload,created_at) VALUES (?,?,?,?,?,?,?,?)`)
+    .run(r.id, r.op_id, r.op_name, r.skill_idx, r.module_spec, r.damage_type, r.payload, r.created_at)
+}
+for (const r of backup.parses) {
+  db.prepare(`INSERT OR REPLACE INTO mechanism_parses (op_id,skill_idx,form,patches,reasoning,confidence,provider,model,source,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+    .run(r.op_id, r.skill_idx, r.form, r.patches, r.reasoning, r.confidence, r.provider, r.model, r.source, r.created_at, r.updated_at)
+}
+
 const count = (t) => db.prepare(`SELECT COUNT(*) c FROM ${t}`).get().c
 const stats = {
   operators: count('operators'), talents: count('talents'), skills: count('skills'), skill_levels: count('skill_levels'),
   modules: count('modules'), module_levels: count('module_levels'), scenarios: count('scenarios'),
   threats: count('threat_profiles'), baseline: count('scenario_baseline'),
+  custom_kept: count('custom_operators'), evals_kept: count('evaluations'), parses_kept: count('mechanism_parses'),
 }
 db.close()
 const size = (fs.statSync(DB).size / 1024 / 1024).toFixed(1)

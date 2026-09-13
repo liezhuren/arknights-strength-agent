@@ -102,28 +102,32 @@ export function getOperator(query) {
   return op
 }
 
-/** 干员检索（名称模糊 + 职业/稀有度过滤 + 分页）。 */
-export function searchOperators({ q = '', profession = '', rarity = '', limit = 50, offset = 0 } = {}) {
+/** 干员检索（名称模糊 + 职业/分支/稀有度过滤 + 分页）。 */
+export function searchOperators({ q = '', profession = '', subProfession = '', rarity = '', limit = 50, offset = 0 } = {}) {
   const where = []
   const args = []
   if (q) { where.push('(name LIKE ? OR id LIKE ?)'); args.push(`%${q}%`, `%${q}%`) }
   if (profession) { where.push('profession = ?'); args.push(profession) }
+  if (subProfession) { where.push('sub_profession = ?'); args.push(subProfession) }
   if (rarity) { where.push('rarity = ?'); args.push(rarity) }
   const w = where.length ? `WHERE ${where.join(' AND ')}` : ''
   const total = db.prepare(`SELECT COUNT(*) c FROM operators ${w}`).get(...args).c
   const rows = db.prepare(
-    `SELECT id,name,rarity,rarity_num,profession,sub_profession,atk,def,max_hp,cost,block_cnt,trait_desc
-     FROM operators ${w} ORDER BY rarity_num DESC, name LIMIT ? OFFSET ?`,
+    `SELECT id,name,rarity,rarity_num,profession,sub_profession,sub_profession_name,atk,def,max_hp,cost,block_cnt,trait_desc
+     FROM operators ${w} ORDER BY rarity_num DESC, sub_profession_name, name LIMIT ? OFFSET ?`,
   ).all(...args, limit, offset)
   return { total, rows }
 }
 
-/** 职业 / 稀有度清单（前端筛选用）。 */
+/** 职业 / 分支 / 稀有度清单（前端筛选用）。分支带中文名与所属职业，供"职业→分支"二级筛选。 */
 export function facets() {
   return {
     professions: db.prepare(`SELECT profession, COUNT(*) c FROM operators GROUP BY profession ORDER BY c DESC`).all(),
     rarities: db.prepare(`SELECT rarity, COUNT(*) c FROM operators GROUP BY rarity ORDER BY rarity`).all(),
-    subProfessions: db.prepare(`SELECT sub_profession, COUNT(*) c FROM operators GROUP BY sub_profession ORDER BY c DESC`).all(),
+    subProfessions: db.prepare(
+      `SELECT sub_profession AS id, COALESCE(sub_profession_name, sub_profession) AS name, profession, COUNT(*) c
+       FROM operators GROUP BY sub_profession ORDER BY profession, c DESC`,
+    ).all(),
   }
 }
 

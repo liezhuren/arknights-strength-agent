@@ -18,9 +18,10 @@ type Tab = 'ops' | 'eval' | 'compare' | 'custom' | 'settings'
 export default function App() {
   const [tab, setTab] = useState<Tab>('ops')
   const [health, setHealth] = useState<{ node: string; modelEnabled: boolean } | null>(null)
-  const [facets, setFacets] = useState<{ professions: { profession: string; c: number }[]; rarities: { rarity: string; c: number }[] }>({ professions: [], rarities: [] })
+  const [facets, setFacets] = useState<{ professions: { profession: string; c: number }[]; rarities: { rarity: string; c: number }[]; subProfessions: { id: string; name: string; profession: string; c: number }[] }>({ professions: [], rarities: [], subProfessions: [] })
   const [q, setQ] = useState('')
   const [prof, setProf] = useState('')
+  const [subProf, setSubProf] = useState('')
   const [rows, setRows] = useState<OperatorRow[]>([])
   const [total, setTotal] = useState(0)
   const [current, setCurrent] = useState<OperatorRow | null>(null)
@@ -31,17 +32,20 @@ export default function App() {
     api.facets().then(setFacets).catch(() => {})
   }, [])
   useEffect(() => {
-    api.search({ q, profession: prof, limit: 60 })
+    api.search({ q, profession: prof, subProfession: subProf, limit: 60 })
       .then((r) => { setRows(r.rows); setTotal(r.total) })
       .catch((e) => setErr(String(e.message)))
-  }, [q, prof])
+  }, [q, prof, subProf])
+  // 只显示当前职业下的分支（选了职业才出分支下拉，避免 72 项过长）
+  const subOptions = facets.subProfessions.filter((s) => !prof || s.profession === prof)
 
   const openEval = (op: OperatorRow) => { setCurrent(op); setTab('eval') }
 
   return (
     <div className="app">
       <header>
-        <h1>🐋 明日方舟 · 强度评测</h1>
+        <img className="logo" src="./logo.png" alt="logo" />
+        <h1>明日方舟 · 强度评测</h1>
         <div className="status">
           {health ? <>API 就绪（{health.node}） · 模型：{health.modelEnabled ? '已启用' : '未启用（纯规则层）'}</> : '连接 API 中…'}
         </div>
@@ -58,20 +62,27 @@ export default function App() {
         <section>
           <div className="bar">
             <input placeholder="搜索干员（名称/ID）" value={q} onChange={(e) => setQ(e.target.value)} />
-            <select value={prof} onChange={(e) => setProf(e.target.value)}>
+            <select value={prof} onChange={(e) => { setProf(e.target.value); setSubProf('') }}>
               <option value="">全部职业</option>
               {facets.professions.map((p) => <option key={p.profession} value={p.profession}>{PROF_LABEL[p.profession] ?? p.profession}（{p.c}）</option>)}
+            </select>
+            <select value={subProf} onChange={(e) => setSubProf(e.target.value)} title="分支（子职业）">
+              <option value="">全部分支{prof ? `（${subOptions.length}）` : `（${facets.subProfessions.length}）`}</option>
+              {subOptions.map((s) => <option key={s.id} value={s.id}>{s.name}（{s.c}）</option>)}
             </select>
             <span className="muted">共 {total} 名</span>
           </div>
           <table>
-            <thead><tr><th>干员</th><th>稀有度</th><th>职业/分支</th><th>ATK</th><th>DEF</th><th>生命</th><th>费用</th><th>分支特性</th><th /></tr></thead>
+            <thead><tr><th>干员</th><th>稀有度</th><th>职业 / 分支</th><th>ATK</th><th>DEF</th><th>生命</th><th>费用</th><th>分支特性</th><th /></tr></thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id}>
                   <td><b>{r.name}</b></td>
                   <td>{RARITY_LABEL[r.rarity] ?? r.rarity}</td>
-                  <td className="muted">{PROF_LABEL[r.profession] ?? r.profession}/{r.sub_profession}</td>
+                  <td className="muted">
+                    {PROF_LABEL[r.profession] ?? r.profession}
+                    <span className="branch">/ {r.sub_profession_name ?? r.sub_profession}</span>
+                  </td>
                   <td>{r.atk}</td><td>{r.def}</td><td>{r.max_hp}</td><td>{r.cost}</td>
                   <td className="trait">{(r.trait_desc ?? '').replace(/<[^>]+>/g, '').slice(0, 28)}</td>
                   <td><button onClick={() => openEval(r)}>评测</button></td>
@@ -86,6 +97,15 @@ export default function App() {
       {tab === 'compare' && <ComparePanel initial={current?.id} onError={setErr} />}
       {tab === 'custom' && <CustomPanel onError={setErr} />}
       {tab === 'settings' && <SettingsPanel onError={setErr} />}
+
+      <footer className="credit">
+        <b>数据来源</b>：干员/技能/模组数值抓取自 GitHub 开源项目{' '}
+        <a href="https://github.com/Kengxxiao/ArknightsGameData" target="_blank" rel="noreferrer">Kengxxiao/ArknightsGameData</a>
+        ，机制与模组数值交叉校验引用 <a href="https://prts.wiki" target="_blank" rel="noreferrer">PRTS Wiki</a>。
+        <br />
+        《明日方舟》及相关素材版权归<b>上海鹰角网络科技有限公司</b>所有；本项目为<b>非商业性研究/学习工具</b>，
+        与鹰角网络无关联，数值引擎与评测标准为独立实现，不保证与游戏内实际表现一致。
+      </footer>
     </div>
   )
 }
