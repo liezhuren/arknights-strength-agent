@@ -1,0 +1,7 @@
+{
+  "name": "非法样例（应校验失败）",
+  "damageType": "nuclear",
+  "atk": -5,
+  "baseInterval": 0,
+  "skill": { "spType": "teleport" }
+}

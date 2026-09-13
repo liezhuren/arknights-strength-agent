@@ -1,0 +1,33 @@
+# ---- 依赖 ----
+node_modules/
+.pnpm-store/
+
+# ---- 构建产物 ----
+app/web/dist/
+dist/
+
+# ---- 运行时数据库（可由 data/*.json 一条命令重建：node app/db/build-db.mjs）----
+app/db/*.db
+app/db/*.db-wal
+app/db/*.db-shm
+
+# ---- 本地配置：含 API Key，绝不入库 ----
+app/config.json
+*.local.json
+
+# ---- 日志 / 临时 ----
+*.log
+tmp/
+.tmp/
+tools/probe-*.mjs
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 说明：data/*.json **要**入库（11 MB）—— 它们是从游戏数据仓库构建的产物，
+#      不入库的话别人克隆后无法直接运行（需另克隆 ArknightsGameData 并跑 tools/build-*.mjs）。
+#      游戏数据仓库本身在仓库之外（E:\github\ArknightsGameData），不属于本项目。

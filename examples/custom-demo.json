@@ -1,0 +1,31 @@
+{
+  "name": "深海试作·蓝闪",
+  "rarity": 6,
+  "archetype": "术师-核心术师",
+  "damageType": "magical",
+  "atk": 700,
+  "maxHp": 1400,
+  "def": 100,
+  "res": 15,
+  "baseInterval": 1.5,
+  "blockCount": 1,
+  "cost": 20,
+  "redeployTime": 70,
+  "hitCount": 1,
+  "targetCount": 1,
+  "talents": [
+    { "name": "深海亲和", "description": "攻击力+10%，攻击速度+8", "atkBonusPct": 10, "aspdBonus": 8 }
+  ],
+  "skill": {
+    "name": "高压水刃",
+    "description": "攻击力+150%，攻击变为3连击，同时攻击4个目标",
+    "spType": "auto",
+    "spCost": 40,
+    "spStart": 20,
+    "duration": 25,
+    "attackMult": 2.5,
+    "aspdBonus": 0,
+    "hits": 3,
+    "targetCount": 4
+  }
+}

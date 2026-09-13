@@ -1,0 +1,67 @@
+{
+ "builtAt": "2026-09-13",
+ "source": "ArknightsGameData(zh_CN) levels/enemydata/enemy_database.json",
+ "notes": [
+  "ATK/间隔取自真实敌人（已排除 atk>5000 或 间隔<0.5s 的地图装置/演出类）",
+  "敌人伤害类型在数据层无字段（由 prefab 决定）→ 画像类型按名字可判定为准的锚点设定",
+  "dps = atk / interval，为单敌人对 0 防御目标的每秒伤害（未计我方 DEF/RES/闪避）",
+  "多敌人集火时实际压力按敌人数线性放大（评估时需说明假设）"
+ ],
+ "totalEnemies": 1949,
+ "distribution": {
+  "p10": 87.9,
+  "p25": 120,
+  "p50": 180,
+  "p75": 266.7,
+  "p90": 416.7,
+  "p95": 538.5,
+  "p99": 1100
+ },
+ "profiles": [
+  {
+   "id": "物理·清杂",
+   "damageType": "physical",
+   "atk": 550,
+   "interval": 3,
+   "dps": 183.3,
+   "anchor": "富营养的猎食者（atk 550 / 3s）",
+   "note": "p50 级杂兵，盾位日常承压"
+  },
+  {
+   "id": "物理·精英",
+   "damageType": "physical",
+   "atk": 1000,
+   "interval": 2.6,
+   "dps": 384.6,
+   "anchor": "重装五十夫长（atk 1000 / 2.6s）",
+   "note": "精英近战，重装主要考验"
+  },
+  {
+   "id": "物理·狂暴",
+   "damageType": "physical",
+   "atk": 1750,
+   "interval": 1.3,
+   "dps": 1346.2,
+   "anchor": "狂暴宿主组长（atk 1750 / 1.3s）",
+   "note": "高压（p97 级），硬扛上限考验"
+  },
+  {
+   "id": "法术·中压",
+   "damageType": "magical",
+   "atk": 800,
+   "interval": 2.5,
+   "dps": 320,
+   "anchor": "爆裂冰法师（atk 800 / 2.5s）",
+   "note": "法师单位，考法抗与自回"
+  },
+  {
+   "id": "法术·高压",
+   "damageType": "magical",
+   "atk": 3600,
+   "interval": 7,
+   "dps": 514.3,
+   "anchor": "巫术巨像（atk 3600 / 7s）",
+   "note": "高单次法术，考血线与减伤"
+  }
+ ]
+}

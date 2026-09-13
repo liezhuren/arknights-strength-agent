@@ -1,0 +1,30 @@
+{
+  "_comment": "复制为 app/config.json 后填写。模型用于长尾技能描述解析与自然语言评注；**不配置也能用**（规则层已覆盖高频机制）。config.json 已在 .gitignore 中，不会被提交。",
+  "provider": "",
+  "providers": {
+    "deepseek": {
+      "label": "DeepSeek",
+      "baseURL": "https://api.deepseek.com/v1",
+      "model": "deepseek-chat",
+      "apiKey": ""
+    },
+    "openai": {
+      "label": "OpenAI",
+      "baseURL": "https://api.openai.com/v1",
+      "model": "gpt-4o-mini",
+      "apiKey": ""
+    },
+    "anthropic": {
+      "label": "Anthropic",
+      "baseURL": "https://api.anthropic.com/v1",
+      "model": "claude-3-5-sonnet-latest",
+      "apiKey": ""
+    },
+    "ollama": {
+      "label": "本地 Ollama",
+      "baseURL": "http://127.0.0.1:11434/v1",
+      "model": "qwen2.5:14b",
+      "apiKey": "local"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-09-13T11:57:55.440Z",
+  "operatorCount": 454,
+  "skippedCount": 914,
+  "rarityDist": {
+    "TIER_1": 11,
+    "TIER_2": 5,
+    "TIER_3": 22,
+    "TIER_4": 70,
+    "TIER_5": 201,
+    "TIER_6": 145
+  },
+  "skillTotal": 994,
+  "withMastery3": 416,
+  "damageTypeNote": "damageType 语义未推断（blackboard 的 atk/atk_scale 区分留评测层），数据集原样保留数值"
+}

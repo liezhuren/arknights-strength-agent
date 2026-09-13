@@ -1,0 +1,328 @@
+{
+ "generatedAt": "2026-09-02T03:14:48.342Z",
+ "totalEnemies": 2130,
+ "defTiers": [
+  {
+   "id": "低甲",
+   "range": [
+    0,
+    200
+   ],
+   "label": "DEF <200（脆皮）"
+  },
+  {
+   "id": "中甲",
+   "range": [
+    200,
+    500
+   ],
+   "label": "DEF 200-500（中甲）"
+  },
+  {
+   "id": "高甲",
+   "range": [
+    500,
+    1000
+   ],
+   "label": "DEF 500-1000（高甲）"
+  },
+  {
+   "id": "重甲",
+   "range": [
+    1000,
+    null
+   ],
+   "label": "DEF ≥1000（重甲）"
+  }
+ ],
+ "resTiers": [
+  {
+   "id": "低抗",
+   "range": [
+    0,
+    20
+   ],
+   "label": "RES <20（低抗）"
+  },
+  {
+   "id": "中抗",
+   "range": [
+    20,
+    50
+   ],
+   "label": "RES 20-50（中抗）"
+  },
+  {
+   "id": "高抗",
+   "range": [
+    50,
+    80
+   ],
+   "label": "RES 50-80（高抗）"
+  },
+  {
+   "id": "极高抗",
+   "range": [
+    80,
+    null
+   ],
+   "label": "RES ≥80（极高抗）"
+  }
+ ],
+ "defDist": {
+  "低甲": 785,
+  "中甲": 601,
+  "重甲": 300,
+  "高甲": 444
+ },
+ "resDist": {
+  "低抗": 860,
+  "极高抗": 59,
+  "中抗": 718,
+  "高抗": 493
+ },
+ "comboRepresentatives": {
+  "低甲/低抗": {
+   "count": 532,
+   "representative": {
+    "name": "无人机",
+    "maxHp": 3000,
+    "atk": 400,
+    "def": 100,
+    "res": 0
+   }
+  },
+  "低甲/中抗": {
+   "count": 174,
+   "representative": {
+    "name": "空值体",
+    "maxHp": 5000,
+    "atk": 320,
+    "def": 100,
+    "res": 20
+   }
+  },
+  "低甲/高抗": {
+   "count": 74,
+   "representative": {
+    "name": "高塔术师",
+    "maxHp": 7000,
+    "atk": 600,
+    "def": 160,
+    "res": 65
+   }
+  },
+  "低甲/极高抗": {
+   "count": 5,
+   "representative": {
+    "name": "凝缩热力",
+    "maxHp": 5000,
+    "atk": 100,
+    "def": 50,
+    "res": 80
+   }
+  },
+  "中甲/低抗": {
+   "count": 165,
+   "representative": {
+    "name": "深池飞行大队队长",
+    "maxHp": 8000,
+    "atk": 550,
+    "def": 450,
+    "res": 0
+   }
+  },
+  "中甲/中抗": {
+   "count": 251,
+   "representative": {
+    "name": "勤奋劳工",
+    "maxHp": 11500,
+    "atk": 1,
+    "def": 400,
+    "res": 20
+   }
+  },
+  "中甲/高抗": {
+   "count": 181,
+   "representative": {
+    "name": "赏金猎人“大骑士”",
+    "maxHp": 10000,
+    "atk": 500,
+    "def": 240,
+    "res": 60
+   }
+  },
+  "中甲/极高抗": {
+   "count": 4,
+   "representative": {
+    "name": "披甲源石虫",
+    "maxHp": 20000,
+    "atk": 600,
+    "def": 200,
+    "res": 80
+   }
+  },
+  "高甲/低抗": {
+   "count": 87,
+   "representative": {
+    "name": "愤怒的守墓石像",
+    "maxHp": 12000,
+    "atk": 750,
+    "def": 750,
+    "res": 0
+   }
+  },
+  "高甲/中抗": {
+   "count": 217,
+   "representative": {
+    "name": "鄙瘴",
+    "maxHp": 18000,
+    "atk": 900,
+    "def": 500,
+    "res": 30
+   }
+  },
+  "高甲/高抗": {
+   "count": 138,
+   "representative": {
+    "name": "“殉道者”，安多恩",
+    "maxHp": 27000,
+    "atk": 750,
+    "def": 550,
+    "res": 60
+   }
+  },
+  "高甲/极高抗": {
+   "count": 2,
+   "representative": {
+    "name": "赫尔昏佐伦，“巫王”",
+    "maxHp": 80000,
+    "atk": 750,
+    "def": 600,
+    "res": 80
+   }
+  },
+  "重甲/低抗": {
+   "count": 76,
+   "representative": {
+    "name": "行天救护车",
+    "maxHp": 18000,
+    "atk": 900,
+    "def": 1200,
+    "res": 0
+   }
+  },
+  "重甲/中抗": {
+   "count": 76,
+   "representative": {
+    "name": "似兽",
+    "maxHp": 35000,
+    "atk": 450,
+    "def": 1500,
+    "res": 40
+   }
+  },
+  "重甲/高抗": {
+   "count": 100,
+   "representative": {
+    "name": "PRTS，“源代码”",
+    "maxHp": 50000,
+    "atk": 1000,
+    "def": 3000,
+    "res": 75
+   }
+  },
+  "重甲/极高抗": {
+   "count": 48,
+   "representative": {
+    "name": "“钳钳生风”",
+    "maxHp": 17000,
+    "atk": 1300,
+    "def": 2500,
+    "res": 90
+   }
+  }
+ },
+ "wellKnown": [
+  {
+   "query": "源石虫",
+   "name": "简饲源石虫",
+   "def": 50,
+   "res": 0,
+   "maxHp": 4500,
+   "atk": 200
+  },
+  {
+   "query": "猎狗",
+   "name": "猎狗",
+   "def": 0,
+   "res": 20,
+   "maxHp": 820,
+   "atk": 190
+  },
+  {
+   "query": "重装防御者",
+   "name": "重装防御者",
+   "def": 800,
+   "res": 0,
+   "maxHp": 6000,
+   "atk": 600
+  },
+  {
+   "query": "高阶术师",
+   "name": "高阶术师",
+   "def": 120,
+   "res": 50,
+   "maxHp": 7000,
+   "atk": 240
+  },
+  {
+   "query": "红刀哥",
+   "found": false
+  },
+  {
+   "query": "大盾",
+   "found": false
+  },
+  {
+   "query": "爱国者",
+   "name": "爱国者",
+   "def": 500,
+   "res": 45,
+   "maxHp": 45000,
+   "atk": 1600
+  },
+  {
+   "query": "霜星",
+   "name": "霜星",
+   "def": 250,
+   "res": 50,
+   "maxHp": 25000,
+   "atk": 420
+  },
+  {
+   "query": "塔露拉",
+   "name": "塔露拉",
+   "def": 700,
+   "res": 50,
+   "maxHp": 50000,
+   "atk": 1500
+  },
+  {
+   "query": "梅菲斯特",
+   "name": "梅菲斯特",
+   "def": 200,
+   "res": 60,
+   "maxHp": 28000,
+   "atk": 500
+  },
+  {
+   "query": "泥岩",
+   "name": "泥岩小队掷能者",
+   "def": 400,
+   "res": 30,
+   "maxHp": 7000,
+   "atk": 400
+  }
+ ]
+}

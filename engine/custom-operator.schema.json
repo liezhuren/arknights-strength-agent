@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/arknights-strength-agent/custom-operator.schema.json",
+  "title": "CustomOperator",
+  "description": "用户自创干员的评测输入。面板为满练最终值（E2 满级 + 潜能 + 信赖 + 模组合并）。",
+  "type": "object",
+  "required": ["name", "atk", "baseInterval", "damageType"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "rarity": { "type": "integer", "minimum": 3, "maximum": 6, "default": 5 },
+    "archetype": { "type": "string", "description": "职业分支，如 术师-扩散术师 / 近卫-强攻手" },
+    "damageType": { "enum": ["physical", "magical", "true"], "description": "伤害类型" },
+    "atk": { "type": "number", "minimum": 0, "description": "攻击力" },
+    "maxHp": { "type": "number", "minimum": 0 },
+    "def": { "type": "number", "minimum": 0 },
+    "res": { "type": "number", "minimum": 0, "maximum": 100 },
+    "baseInterval": { "type": "number", "exclusiveMinimum": 0, "description": "基础攻击间隔（秒）" },
+    "blockCount": { "type": "integer", "minimum": 0 },
+    "cost": { "type": "number", "minimum": 0, "description": "DP 费用" },
+    "redeployTime": { "type": "number", "minimum": 0, "description": "再部署时间（秒）" },
+    "spRecoveryPerSec": { "type": "number", "minimum": 0, "default": 1, "description": "自然回 SP 速率（自动回复技能，方舟默认 1/秒）" },
+    "hitAssumptionPerSec": { "type": "number", "minimum": 0, "default": 0.5, "description": "受击频率假设（受击回复技能用，场景依赖）" },
+    "hitCount": { "type": "integer", "minimum": 1, "default": 1, "description": "基础攻击段数" },
+    "targetCount": { "type": "integer", "minimum": 1, "default": 1, "description": "基础同时攻击目标数" },
+    "talents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string", "description": "自然语言描述，供 agent 解读" },
+          "atkBonusPct": { "type": "number", "description": "攻击力百分比加成" },
+          "aspdBonus": { "type": "number", "description": "攻速百分比加成" }
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string", "description": "自然语言描述，供 agent 解读特殊机制" },
+        "spType": { "enum": ["auto", "attack", "hit"], "description": "SP 回复方式" },
+        "spCost": { "type": "number", "minimum": 0 },
+        "spStart": { "type": "number", "minimum": 0, "description": "初始 SP" },
+        "duration": { "type": "number", "minimum": 0, "description": "持续时间（秒），0 表示被动/永续" },
+        "attackMult": { "type": "number", "minimum": 0, "default": 1, "description": "攻击力倍率" },
+        "aspdBonus": { "type": "number", "description": "技能期攻速百分比加成" },
+        "hits": { "type": "integer", "minimum": 1, "default": 1, "description": "技能段数" },
+        "targetCount": { "type": "integer", "minimum": 1, "default": 1, "description": "技能目标数" }
+      }
+    }
+  }
+}

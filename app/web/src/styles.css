@@ -1,0 +1,45 @@
+:root {
+  color-scheme: dark;
+  --bg: #12151c; --panel: #1a1f29; --line: #2b3341; --fg: #e6e9ef; --muted: #8d97a8;
+  --accent: #4da3ff; --warn: #ffb454; --err: #ff6b6b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.6 "Microsoft YaHei", system-ui, sans-serif; }
+.app { max-width: 1180px; margin: 0 auto; padding: 20px; }
+header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+h1 { font-size: 20px; margin: 0; }
+h3 { font-size: 14px; margin: 14px 0 6px; color: var(--accent); }
+.status { color: var(--muted); font-size: 12px; }
+nav { display: flex; gap: 6px; margin: 16px 0; border-bottom: 1px solid var(--line); }
+nav button { background: none; border: none; color: var(--muted); padding: 8px 14px; cursor: pointer; border-bottom: 2px solid transparent; font-size: 14px; }
+nav button.on { color: var(--fg); border-bottom-color: var(--accent); }
+.bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+input, select, textarea, button {
+  background: var(--panel); color: var(--fg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 10px; font: inherit;
+}
+textarea { width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.5; }
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; }
+.muted { color: var(--muted); font-size: 12px; }
+.trait { color: var(--muted); font-size: 12px; max-width: 260px; }
+.cards { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 16px; min-width: 130px; }
+.card span { display: block; color: var(--muted); font-size: 12px; }
+.card b { font-size: 20px; }
+.sections { display: grid; gap: 12px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; }
+pre { margin: 0; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.65; }
+.trait-line { background: #1d2530; border-left: 3px solid var(--accent); padding: 6px 10px; margin: 6px 0; font-size: 12px; }
+.warn { color: var(--warn); font-size: 12px; margin: 4px 0; }
+.err { background: #2a1b1b; border: 1px solid var(--err); color: #ffd7d7; padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; }
+.empty { color: var(--muted); padding: 40px 0; text-align: center; }
+.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; align-items: start; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+.list { list-style: none; padding: 0; margin: 0; }
+.list li { display: flex; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.list li button { margin-left: auto; font-size: 12px; padding: 2px 8px; }

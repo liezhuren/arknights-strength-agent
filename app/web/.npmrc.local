@@ -1,0 +1,5 @@
+registry=https://registry.npmjs.org
+proxy=
+https-proxy=
+noproxy=*
+strict-ssl=true
