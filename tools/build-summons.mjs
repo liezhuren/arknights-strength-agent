@@ -80,6 +80,117 @@ function concurrencyFor(text, name) {
   return best === null ? { value: 1, confidence: 'default', quote: '' } : { value: best, confidence: 'phrase', quote }
 }
 
+// ---- 召唤物**自身技能**的伤害改量提取（2026 §18）----
+//
+// 结构事实（已核实）：
+//   · 召唤物的 skills[N] 对应其**第 N+1 个技能**；干员的技能可以给召唤物换技能
+//     （鸿雪 S3「锐笔速写」→ 打字机 sktok_bgsnow_3）
+//   · **不能用召唤物技能序号反推干员技能序号**：令三种形态共用 sktok_ling_soul3
+//     （形态由"功能"决定，不是技能序号）→ 只能按**效果**判定
+//   · `2.` 前缀的键属于**第二形态**（弦惊「普通形态/高级形态」），**不作用于基础形态** → 跳过
+//
+// 只建模"无条件且改变普攻"的两类（其余只统计+标注，绝不硬套）：
+//   ① 攻击力倍率：`atk`(值 v → ×(1+v)) 或 `atk_scale`/`attack@atk_scale`(值 v → ×v)
+//   ② 攻击间隔：`attack_speed`（**是百分比**，+60 → 间隔 ÷1.6）或 `base_attack_time`（秒差，负值缩短）
+//
+// ⚠ 已知**不能**当普攻倍率的（会算错，故排除）：
+//   · 一次性入场伤害：梅尔「爆破回收」6 倍、傀影「夜幕突袭」3 倍、W 2.8 倍、蜜蜡「沙之碑召唤」3 倍…
+//   · 周期/持续伤害：死芒 S3「每秒造成攻击力120%」、望 S2 5.8 倍
+//   · 条件/概率型：傀影 S1（50% 概率）、鸿雪 S1（40% 概率 2.25 倍）、琳琅诗怀雅（在场3秒后）
+//   · 高级形态专属：弦惊 `2.*`（且高级形态的真实加成不在这几个键里，硬套会算成 −20% 的错值）
+const SKILL_SCALE_KEYS = ['atk', 'atk_scale', 'attack@atk_scale']
+const SKILL_INTERVAL_KEYS = ['base_attack_time', 'attack_speed']
+const isSecondForm = (key) => /^\d+\./.test(key)
+const cleanDesc = (d) => String(d ?? '').replace(/<[^>]*>/g, '')
+
+/**
+ * 判断某个召唤物技能能否作为"改变普攻持续输出"的倍率。
+ * 返回 { atkMult, intervalMult, modeled, reason }
+ * 判据顺序（先用描述把已知的"非普攻"类型摘出去，再认无条件的普攻强化）：
+ */
+function classifySummonSkill(lv, name = '') {
+  const bb = (lv.blackboard ?? []).map((b) => ({ key: b.key, value: val(b.value) }))
+  const desc = cleanDesc(lv.description)
+  const firstForm = bb.filter((b) => !isSecondForm(b.key))
+  let atkMult = null
+  let intervalMult = null
+  for (const { key, value } of firstForm) {
+    if (SKILL_SCALE_KEYS.includes(key) && typeof value === 'number') {
+      const m = key === 'atk' ? 1 + value : value
+      if (m > 0) atkMult = atkMult === null ? m : Math.max(atkMult, m)
+    }
+    if (SKILL_INTERVAL_KEYS.includes(key) && typeof value === 'number') {
+      const m = key === 'attack_speed' ? 1 / (1 + value / 100) : 1 + value
+      if (m > 0) intervalMult = intervalMult === null ? m : Math.min(intervalMult, m)
+    }
+  }
+  const hasAtk = atkMult !== null
+  // ---- 认定项（优先级最高）：叠层型"每击消耗一层"是**最强的普攻强化证据**，必须先判，
+  //      否则会被下面的"部署后立即…"关键词误杀（傀影「血色乐章」就是这么被误判的）----
+  const times = firstForm.find((b) => /^(times|max_stack_cnt)$/.test(b.key))?.value
+  const atkEntry = firstForm.find((b) => b.key === 'atk' && typeof b.value === 'number')
+  if (times > 0 && atkEntry) {
+    return {
+      atkMult: 1 + atkEntry.value,
+      intervalMult,
+      modeled: true,
+      reason: `叠层攻击力强化（${times} 层 ×${Math.round(atkEntry.value * 100)}%，每击消耗一层 → 全程平均 ×${(1 + atkEntry.value).toFixed(2)}）`,
+    }
+  }
+  // ---- 排除项（按描述判定）----
+  if (/每秒/.test(desc)) return { atkMult, intervalMult, modeled: false, reason: '周期伤害（每秒结算），非普攻' }
+  if (/概率/.test(desc) || firstForm.some((b) => b.key === 'prob')) return { atkMult, intervalMult, modeled: false, reason: '概率触发' }
+  if (/下次攻击|下次的|部署后立即|部署时|出现时|触发时|引爆时|开启时|立即对|立即发射|连续攻击/.test(desc)) {
+    return { atkMult, intervalMult, modeled: false, reason: '一次性入场/触发伤害，非普攻倍率' }
+  }
+  // 无描述时用技能名判定：爆破/引爆/触发/冲锋/召唤 都是"效果伤害"而非普攻强化
+  if (/爆破|引爆|触发|冲锋|召唤|回收/.test(name)) {
+    return { atkMult, intervalMult, modeled: false, reason: '技能名为效果伤害（爆破/触发/冲锋类），非普攻倍率' }
+  }
+  // ---- 认定项 ----
+  // 描述明确说"攻击力增强" → 强化普攻
+  if (hasAtk && /自身?攻击力提升|攻击力\+|攻击力提高|攻击力增强/.test(desc)) {
+    return { atkMult, intervalMult, modeled: true, reason: `描述明确为攻击力强化（×${atkMult}）` }
+  }
+  // 攻速改量（intervalMult 命中）→ 与描述无关，`attack_speed`/`base_attack_time` 语义唯一
+  if (intervalMult !== null) return { atkMult, intervalMult, modeled: true, reason: '攻击间隔改量（攻速/间隔键语义唯一）' }
+  // 无描述、只有倍率键 → 无法判定是否作用于普攻，保守不计
+  if (hasAtk) return { atkMult, intervalMult, modeled: false, reason: '无描述可判定，保守不计（可能是任一类型的倍率）' }
+  return { atkMult, intervalMult, modeled: false, reason: '无伤害改量键' }
+}
+
+/** 提取某召唤物"自身技能"里可建模的伤害改量（逐条分类，取效率最高的一条作代表） */
+function ownSkillMods(tokenChar) {
+  const all = []
+  const seen = new Set()
+  for (const [i, sk] of (tokenChar.skills ?? []).entries()) {
+    const t = skills[sk.skillId]
+    if (!t) continue
+    // 同一个 skillId 会在多个技能位上重复出现（令三形态共用 sktok_ling_soul3）→ 去重，避免条数虚高
+    if (seen.has(sk.skillId)) continue
+    seen.add(sk.skillId)
+    const lv = t.levels[t.levels.length - 1]
+    const c = classifySummonSkill(lv, t.levels[0]?.name ?? '')
+    all.push({
+      index: i,
+      id: sk.skillId,
+      name: t.levels[0]?.name ?? sk.skillId,
+      duration: lv.duration,
+      spCost: lv.spData?.spCost ?? null,
+      ...c,
+      // 供人工复核的关键字（只保留可能影响伤害的键）
+      keys: (lv.blackboard ?? [])
+        .map((b) => `${b.key}=${val(b.value)}`)
+        .filter((x) => !/^(withdraw|sp_max|sp_min)=/.test(x)),
+    })
+  }
+  const modeled = all.filter((s) => s.modeled)
+  const best = modeled.sort(
+    (a, b) => (b.atkMult ?? 1) / (b.intervalMult ?? 1) - (a.atkMult ?? 1) / (a.intervalMult ?? 1),
+  )[0] ?? null
+  return { mods: best, all, modeledCount: modeled.length }
+}
+
 // ---- "限时"时长：只认黑匣子键 attack@tokenduration（夕天赋「小自在」持续25秒）----
 // ⚠ 位置坑：该键在**干员的天赋/技能 blackboard**里，不在召唤物自身技能里（召唤物技能只有 skcom_withdraw）。
 // ⚠ 教训：不要用文本里的「持续N秒」兜底 —— 那是**减益/护盾时长**（夜烟 抗性-23% 持续1秒、
@@ -250,6 +361,8 @@ for (const [id, c] of Object.entries(chars)) {
       return { durationSec: bbDur ?? semDur, durationSource: bbDur ? 'blackboard' : semDur ? 'text' : null }
     })(),
     skillIds: (c.skills ?? []).map((s) => s.skillId),
+    // 自身技能里可建模的伤害改量（攻击力倍率 / 攻击间隔）与未能建模的条数
+    ownSkill: ownSkillMods(c),
   })
 }
 

@@ -123,11 +123,15 @@ for (const name of ['凯尔希', '令', '鸿雪', '维什戴尔', '夕', '温蒂
   const m = r.summon.meta
   const per = r.summon.units[0]
   const bits = [
-    `${m.mode} atk${per.atk}/${per.interval}s`,
+    `${m.mode} atk${per.atk.toFixed(1)}/${per.interval.toFixed(3)}s`,
     `单体 ${(per.atk / per.interval).toFixed(1)}`,
     `基准 1 个 → ${r.summonDps.toFixed(1)}`,
     `基准口径 ${r.summonDpsBench.toFixed(1)}`,
   ]
+  if (m.ownSkill && (m.ownSkill.atkMult !== 1 || m.ownSkill.intervalMult !== 1)) {
+    bits.push(`自身技能「${m.ownSkill.name}」×${m.ownSkill.atkMult}/${m.ownSkill.intervalMult}（裸面板 ${(m.baseAtk / m.baseInterval).toFixed(1)}）`)
+  }
+  if (m.unmodeledSkills > 0) bits.push(`${m.unmodeledSkills} 个技能未折入`)
   if (m.maxCopies > 1) bits.push(`最多存在 ${m.maxCopies} 个 → 上限 ${(r.summonDps * m.maxCopies).toFixed(0)}`)
   if (m.durationSec) bits.push(`限时 ${m.durationSec}s`)
   if (m.modeCount > 1) bits.push(`${m.modeCount} 种形态取最强`)

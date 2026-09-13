@@ -80,5 +80,26 @@ assert('trap 通道排除名单有 5 条', excludedByTrapChannel().length === 5)
   assert('召唤物基准口径已算', r.summonDpsBench > 0 && r.summonDpsBench < r.summonDps)
 }
 
+// ---- ⑤ 召唤物自身技能（§18）：只建模"无条件改变普攻"的两类 ----
+{
+  // 傀影 S2「血色乐章」：10 层 ×20%，每击消耗一层 → 全程平均 ×1.2
+  const m = makeOperator({ damageType: 'physical', summon: summonFor('傀影') })
+  assert('傀影 自身技能 ×1.2 → 548×1.2/0.93 = 707.1', Math.abs(summonDps(m) - (548 * 1.2) / 0.93) < 1e-6, `${summonDps(m)}`)
+  // 鸿雪 S3「锐笔速写」：攻击力提升至 255% 且攻击间隔缩短 0.6s（1.6→1.0）
+  const h = makeOperator({ damageType: 'physical', summon: summonFor('鸿雪') })
+  assert('鸿雪 自身技能 2.55× / 间隔 0.4 → 3450.5', Math.abs(summonDps(h) - (866 * 2.55) / (1.6 * 0.4)) < 1e-6, `${summonDps(h)}`)
+  // 衡沙「上紧发条」：攻速 +60（是百分比）→ 间隔 ÷1.6
+  const l = makeOperator({ damageType: 'magical', summon: summonFor('衡沙') })
+  assert('衡沙 自身技能 攻速+60 → 间隔 ×0.625', Math.abs(summonDps(l) - 340 / (1.6 * 0.625)) < 1e-6, `${summonDps(l)}`)
+  // 一次性入场伤害**不能**当普攻倍率：梅尔「爆破回收」6 倍、令「逍遥」4.5 倍都必须不计
+  const mel = makeOperator({ damageType: 'magical', summon: summonFor('梅尔') })
+  assert('梅尔 一次性 6 倍不计入普攻', Math.abs(summonDps(mel) - 444 / 1.25) < 1e-9, `${summonDps(mel)}`)
+  const yao = summonFor('令')
+  assert('令 选中弦惊（4.5 倍的逍遥不计）', yao.meta.mode === '“弦惊”', yao.meta.mode)
+  // 未建模的条数要被统计出来（报告据此标注"下限"）
+  assert('鸿雪 记录了未建模技能数', summonFor('鸿雪').meta.unmodeledSkills >= 2, `${summonFor('鸿雪').meta.unmodeledSkills}`)
+  assert('弦惊 第二形态 `2.` 前缀未被套到基础形态', Math.abs(summonDps(makeOperator({ damageType: 'magical', summon: summonFor('令') })) - 823 / 1.5) < 1e-9)
+}
+
 console.log(`\n===== 召唤物验证：PASS=${pass} FAIL=${fail} =====`)
 process.exit(fail === 0 ? 0 : 1)

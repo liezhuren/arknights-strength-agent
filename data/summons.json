@@ -43,7 +43,25 @@
    "skillIds": [
     "skcom_withdraw",
     "skcom_withdraw"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "skcom_withdraw",
+      "name": "自我销毁",
+      "duration": 10,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10001_deepcl_tentac",
@@ -68,7 +86,12 @@
    "skillIds": [
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10002_kalts_mon3tr",
@@ -94,7 +117,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10003_cgbird_bird",
@@ -120,7 +148,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10004_otter_motter",
@@ -145,7 +178,42 @@
    "skillIds": [
     "sktok_motter_1",
     "sktok_motter_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_motter_1",
+      "name": "迷惑装置",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "概率触发",
+      "keys": [
+       "prob=0.35"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_motter_2",
+      "name": "爆破回收",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 6,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "技能名为效果伤害（爆破/触发/冲锋类），非普攻倍率",
+      "keys": [
+       "atk_scale=6",
+       "stun=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10005_mgllan_drone1",
@@ -171,7 +239,25 @@
     "sktok_mgllan_drone1",
     "sktok_mgllan_drone1",
     "sktok_mgllan_drone1"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mgllan_drone1",
+      "name": "回收",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "技能名为效果伤害（爆破/触发/冲锋类），非普攻倍率",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10005_mgllan_drone2",
@@ -197,7 +283,25 @@
     "sktok_mgllan_drone2",
     "sktok_mgllan_drone2",
     "sktok_mgllan_drone2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mgllan_drone2",
+      "name": "回收",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "技能名为效果伤害（爆破/触发/冲锋类），非普攻倍率",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10005_mgllan_drone3",
@@ -223,7 +327,25 @@
     "sktok_mgllan_drone3",
     "sktok_mgllan_drone3",
     "sktok_mgllan_drone3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mgllan_drone3",
+      "name": "回收",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "技能名为效果伤害（爆破/触发/冲锋类），非普攻倍率",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10006_vodfox_doll",
@@ -248,7 +370,28 @@
    "skillIds": [
     null,
     "sktok_vodfox_token"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_vodfox_token",
+      "name": "诅咒娃娃",
+      "duration": 15,
+      "spCost": 0,
+      "atkMult": 0.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk=-0.5",
+       "def=-0.5"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10007_phatom_twin",
@@ -274,7 +417,76 @@
     "sktok_phatom_1",
     "sktok_phatom_2",
     "sktok_phatom_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": {
+     "index": 1,
+     "id": "sktok_phatom_2",
+     "name": "血色乐章",
+     "duration": -1,
+     "spCost": 0,
+     "atkMult": 1.2,
+     "intervalMult": null,
+     "modeled": true,
+     "reason": "叠层攻击力强化（10 层 ×20%，每击消耗一层 → 全程平均 ×1.20）",
+     "keys": [
+      "times=10",
+      "atk=0.2"
+     ]
+    },
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_phatom_1",
+      "name": "暗夜魅影",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "概率触发",
+      "keys": [
+       "prob=0.5",
+       "hp_ratio=0.8",
+       "duration=10"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_phatom_2",
+      "name": "血色乐章",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.2,
+      "intervalMult": null,
+      "modeled": true,
+      "reason": "叠层攻击力强化（10 层 ×20%，每击消耗一层 → 全程平均 ×1.20）",
+      "keys": [
+       "times=10",
+       "atk=0.2"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_phatom_3",
+      "name": "夜幕突袭",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=3",
+       "force=0",
+       "sluggish=4.5",
+       "root=4.5",
+       "stun=4.5"
+      ]
+     }
+    ],
+    "modeledCount": 1
+   }
   },
   {
    "id": "token_10008_cqbw_box",
@@ -300,7 +512,28 @@
     null,
     "sktok_cqbw_token",
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_cqbw_token",
+      "name": "受害者启动模式",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2.8,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=2.8",
+       "stun=2.2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10009_weedy_cannon",
@@ -326,7 +559,33 @@
     null,
     null,
     "sktok_weedy_token"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 2,
+      "id": "sktok_weedy_token",
+      "name": "液氮大炮",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "force=3",
+       "stun=0",
+       "atk_scale=3.5",
+       "duration=8",
+       "dist=1",
+       "value=1200",
+       "interval=0.066"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10010_folivo_car",
@@ -351,7 +610,28 @@
    "skillIds": [
     null,
     "sktok_folivo_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_folivo_2",
+      "name": "全景过载摄像",
+      "duration": 10,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "stun=5",
+       "talent_range_flag=1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10011_beewax_oblisk",
@@ -376,7 +656,28 @@
    "skillIds": [
     null,
     "sktok_beewax"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_beewax",
+      "name": "沙之碑召唤",
+      "duration": 0,
+      "spCost": 25,
+      "atkMult": 3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=3",
+       "stun=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10012_rosmon_shield",
@@ -402,7 +703,32 @@
     null,
     null,
     "sktok_rosmon"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 2,
+      "id": "sktok_rosmon",
+      "name": "战术装备召唤",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 1.75,
+      "intervalMult": 0.5,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "base_attack_time=-0.5",
+       "atk=0.75",
+       "attack@max_target=2",
+       "def=1",
+       "attack@append_atk_scale=0.5",
+       "stun=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10013_robin_mine",
@@ -427,7 +753,45 @@
    "skillIds": [
     "sktok_robin_1",
     "sktok_robin_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_robin_1",
+      "name": "束缚“夹子”",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 3.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=3.5",
+       "constraint=3"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_robin_2",
+      "name": "弹射“夹子”",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 3.8,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=3.8",
+       "force=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10014_bstalk_crab",
@@ -452,7 +816,12 @@
    "skillIds": [
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10015_dusk_drgn",
@@ -478,7 +847,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10016_rfrost_mine",
@@ -503,7 +877,45 @@
    "skillIds": [
     "sktok_rfrost_1",
     "sktok_rfrost_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_rfrost_1",
+      "name": "陷阱部署",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 3.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=3.5",
+       "stun=1.5"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_rfrost_2",
+      "name": "击倒猎物",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=2",
+       "constraint=1.5"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10017_skadi2_dedant",
@@ -529,7 +941,60 @@
     "sktok_skadi2_1",
     "sktok_skadi2_2",
     "sktok_skadi2_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_skadi2_1",
+      "name": "共鸣",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "max_hp=1.7",
+       "attack@atk_to_hp_recovery_ratio=0.8",
+       "damage_resistance=0.5"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_skadi2_2",
+      "name": "共鸣",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.6,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk=0.6",
+       "def=0.6",
+       "attack@atk_to_hp_recovery_ratio=0.2"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_skadi2_3",
+      "name": "共鸣",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 2.1,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=0.7",
+       "atk=1.1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10018_robrta_mach",
@@ -554,7 +1019,25 @@
    "skillIds": [
     "sktok_robrta",
     "sktok_robrta"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_robrta",
+      "name": "全自动造型仪",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10019_nearl2_sword",
@@ -580,7 +1063,28 @@
     null,
     null,
     "sktok_nearl2_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 2,
+      "id": "sktok_nearl2_3",
+      "name": "“耀阳”",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.1,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=1.1",
+       "stun=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10020_ling_soul1",
@@ -606,7 +1110,25 @@
     "sktok_ling_soul1",
     "sktok_ling_soul1",
     "sktok_ling_soul1"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ling_soul1",
+      "name": "重进酒",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10020_ling_soul2",
@@ -632,7 +1154,28 @@
     "sktok_ling_soul2",
     "sktok_ling_soul2",
     "sktok_ling_soul2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ling_soul2",
+      "name": "笑鸣瑟",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "2.atk_scale=4.5",
+       "2.duration=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10020_ling_soul3",
@@ -658,7 +1201,32 @@
     "sktok_ling_soul3",
     "sktok_ling_soul3",
     "sktok_ling_soul3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ling_soul3",
+      "name": "宁作吾",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "2.max_hp=1",
+       "2.atk=0.8",
+       "2.def=0.8",
+       "2.magic_resistance=1",
+       "2.base_attack_time=0.8",
+       "2.block_cnt=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10051_radian_tower1",
@@ -684,7 +1252,25 @@
     "sktok_radian_1",
     "sktok_radian_1",
     "sktok_radian_1"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_radian_1",
+      "name": "律动线",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10052_radian_tower2",
@@ -710,7 +1296,27 @@
     "sktok_radian_2",
     "sktok_radian_2",
     "sktok_radian_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_radian_2",
+      "name": "环形鳞地",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "attack@projectile_life_time=1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10053_radian_tower3",
@@ -736,7 +1342,28 @@
     "sktok_radian_3",
     "sktok_radian_3",
     "sktok_radian_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_radian_3",
+      "name": "手牵手",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "attack@token_radian_tower3_s_3[normal_aoe].max_target=0",
+       "talent@prism_max_target=0"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10021_blkngt_hypnos",
@@ -761,7 +1388,37 @@
    "skillIds": [
     "sktok_blkngt_hypnos_s_1",
     "sktok_blkngt_hypnos_s_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_blkngt_hypnos_s_1",
+      "name": "食梦",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_blkngt_hypnos_s_2",
+      "name": "食梦",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10022_kazema_shadow",
@@ -786,7 +1443,12 @@
    "skillIds": [
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10023_windft_wrench",
@@ -811,7 +1473,61 @@
    "skillIds": [
     "sktok_windft_wrench_1",
     "sktok_windft_wrench_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": {
+     "index": 1,
+     "id": "sktok_windft_wrench_2",
+     "name": "可靠电池",
+     "duration": 0,
+     "spCost": 0,
+     "atkMult": 2.6,
+     "intervalMult": 1.5,
+     "modeled": true,
+     "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+     "keys": [
+      "atk=1.6",
+      "talent_scale=2",
+      "base_attack_time=0.5",
+      "windft_s_2_recharge.cnt=1"
+     ]
+    },
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_windft_wrench_1",
+      "name": "可靠电池",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=2.5",
+       "attack@sp=1"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_windft_wrench_2",
+      "name": "可靠电池",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2.6,
+      "intervalMult": 1.5,
+      "modeled": true,
+      "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+      "keys": [
+       "atk=1.6",
+       "talent_scale=2",
+       "base_attack_time=0.5",
+       "windft_s_2_recharge.cnt=1"
+      ]
+     }
+    ],
+    "modeledCount": 1
+   }
   },
   {
    "id": "token_10041_cathy_catsld",
@@ -836,7 +1552,37 @@
    "skillIds": [
     "sktok_cathy_catsld_1",
     "sktok_cathy_catsld_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_cathy_catsld_1",
+      "name": "岁月锻打",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_cathy_catsld_2",
+      "name": "战火淬炼",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10045_alanna_crane",
@@ -861,7 +1607,12 @@
    "skillIds": [
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10024_ebnhlz_rcube",
@@ -887,7 +1638,28 @@
     null,
     "sktok_ebnhlz_token",
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_ebnhlz_token",
+      "name": "闪回",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2.45,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=2.45",
+       "force=1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10025_doroth_recttp",
@@ -913,7 +1685,65 @@
     "sktok_doroth_1",
     "sktok_doroth_2",
     "sktok_doroth_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_doroth_1",
+      "name": "危险目标清除",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 4.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=4.5",
+       "def=-0.35",
+       "duration=5"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_doroth_2",
+      "name": "流沙区域生成",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=3",
+       "cnt_2=1",
+       "duration=3.5",
+       "duration_2=6"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_doroth_3",
+      "name": "高速共振排障",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=3.5",
+       "sluggish=5",
+       "interval=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10026_bgsnow_subbow",
@@ -939,7 +1769,73 @@
     "sktok_bgsnow_1",
     "sktok_bgsnow_2",
     "sktok_bgsnow_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": {
+     "index": 2,
+     "id": "sktok_bgsnow_3",
+     "name": "锐笔速写",
+     "duration": 20,
+     "spCost": 0,
+     "atkMult": 2.55,
+     "intervalMult": 0.4,
+     "modeled": true,
+     "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+     "keys": [
+      "attack@atk_scale=2.55",
+      "base_attack_time=-0.6"
+     ]
+    },
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_bgsnow_1",
+      "name": "抑扬格",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 2.25,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "概率触发",
+      "keys": [
+       "atk=0.6",
+       "prob=0.4",
+       "atk_scale=2.25"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_bgsnow_2",
+      "name": "点题",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 2.3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=2.3",
+       "respawn_time=0.5"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_bgsnow_3",
+      "name": "锐笔速写",
+      "duration": 20,
+      "spCost": 0,
+      "atkMult": 2.55,
+      "intervalMult": 0.4,
+      "modeled": true,
+      "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+      "keys": [
+       "attack@atk_scale=2.55",
+       "base_attack_time=-0.6"
+      ]
+     }
+    ],
+    "modeledCount": 1
+   }
   },
   {
    "id": "token_10027_ironmn_pile1",
@@ -965,7 +1861,27 @@
     "sktok_ironmn_pile1",
     "sktok_ironmn_pile1",
     "sktok_ironmn_pile1"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ironmn_pile1",
+      "name": "极致火力",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "talent_scale=4"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10027_ironmn_pile2",
@@ -991,7 +1907,28 @@
     "sktok_ironmn_pile2",
     "sktok_ironmn_pile2",
     "sktok_ironmn_pile2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ironmn_pile2",
+      "name": "高效补给",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "s2.interval=2",
+       "s2.hp_ratio=0.008"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10027_ironmn_pile3",
@@ -1017,7 +1954,29 @@
     "sktok_ironmn_pile3",
     "sktok_ironmn_pile3",
     "sktok_ironmn_pile3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ironmn_pile3",
+      "name": "铁钳号·原型机",
+      "duration": 0,
+      "spCost": 5,
+      "atkMult": 3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=3",
+       "atk_scale_2=1.5",
+       "hp_ratio=0.025"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10028_vigil_wolf",
@@ -1043,7 +2002,51 @@
     "sktok_vigil_wolf_1",
     "sktok_vigil_wolf_2",
     "sktok_vigil_wolf_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_vigil_wolf_1",
+      "name": "狼群",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_vigil_wolf_2",
+      "name": "狼群",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_vigil_wolf_3",
+      "name": "狼群",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "attack@vigil_wolf_s_3.atk_scale=0.5"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10029_slent2_protrb",
@@ -1069,7 +2072,27 @@
     null,
     "sktok_slent2_protrb",
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_slent2_protrb",
+      "name": "夜灯",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "damage_resistance_scale=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10030_mlyss_wtrman",
@@ -1095,7 +2118,52 @@
     "sktok_mlyss_wtrman_1",
     "sktok_mlyss_wtrman_2",
     "sktok_mlyss_wtrman_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mlyss_wtrman_1",
+      "name": "流形",
+      "duration": 20,
+      "spCost": 100,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_mlyss_wtrman_2",
+      "name": "流形",
+      "duration": 20,
+      "spCost": 100,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_mlyss_wtrman_3",
+      "name": "流形",
+      "duration": 20,
+      "spCost": 100,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "interval=25",
+       "force=0"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10031_swire2_gdtrap",
@@ -1121,7 +2189,29 @@
     null,
     "sktok_swire2_gdtrap",
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_swire2_gdtrap",
+      "name": "“见面礼”",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": 2,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "duration_switch=3",
+       "attack@atk_scale=2",
+       "attack@sluggish=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10032_jesca2_jckshd",
@@ -1147,7 +2237,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10034_ray_sndbst",
@@ -1173,7 +2268,25 @@
     null,
     "sktok_ray_2",
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_ray_2",
+      "name": "广域警觉",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10033_ela_grzmot",
@@ -1199,7 +2312,71 @@
     "sktok_ela_1",
     "sktok_ela_2",
     "sktok_ela_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_ela_1",
+      "name": "眩目阻滞",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "duration=10",
+       "sluggish=10",
+       "projectile_range=1.7",
+       "damage_hitrate_physical=-0.4",
+       "damage_hitrate_magical=-0.4"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_ela_2",
+      "name": "震荡坚守",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "stun=5",
+       "projectile_range=1.7",
+       "def=3",
+       "def_penetrate_fixed=800",
+       "attack@projectile_range=1.1"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_ela_3",
+      "name": "“博萨克风暴”",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.9,
+      "intervalMult": 0.65,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "sluggish=7",
+       "weak[limit]=7",
+       "damage_scale=1.35",
+       "fake_damage_scale=0.35",
+       "projectile_range=1.7",
+       "atk=0.9",
+       "base_attack_time=-0.35",
+       "attack@trigger_time=40",
+       "cnt=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10035_wisdel_wward",
@@ -1225,7 +2402,27 @@
     "sktok_wisdel_wward",
     "sktok_wisdel_wward",
     "sktok_wisdel_wward"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_wisdel_wward",
+      "name": "魂灵之影",
+      "duration": 0,
+      "spCost": 5,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "sluggish=1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10039_ulpia_block",
@@ -1251,7 +2448,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10037_mitm_trshrb",
@@ -1276,7 +2478,37 @@
    "skillIds": [
     "sktok_mitm_trshrb_1",
     "sktok_mitm_trshrb_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mitm_trshrb_1",
+      "name": "废品战车",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_mitm_trshrb_2",
+      "name": "废品战车",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10036_lasher_mcbird",
@@ -1301,7 +2533,55 @@
    "skillIds": [
     "sktok_lasher_mcbird_1",
     "sktok_lasher_mcbird_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": {
+     "index": 0,
+     "id": "sktok_lasher_mcbird_1",
+     "name": "上紧发条",
+     "duration": 10,
+     "spCost": 0,
+     "atkMult": null,
+     "intervalMult": 0.625,
+     "modeled": true,
+     "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+     "keys": [
+      "attack_speed=60"
+     ]
+    },
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_lasher_mcbird_1",
+      "name": "上紧发条",
+      "duration": 10,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": 0.625,
+      "modeled": true,
+      "reason": "攻击间隔改量（攻速/间隔键语义唯一）",
+      "keys": [
+       "attack_speed=60"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_lasher_mcbird_2",
+      "name": "权知轻重",
+      "duration": 20,
+      "spCost": 0,
+      "atkMult": 1.4,
+      "intervalMult": null,
+      "modeled": true,
+      "reason": "描述明确为攻击力强化（×1.4）",
+      "keys": [
+       "attack@sluggish=1",
+       "atk=0.4"
+      ]
+     }
+    ],
+    "modeledCount": 2
+   }
   },
   {
    "id": "token_10040_siege2_vlion",
@@ -1327,7 +2607,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10042_tecno_puppet",
@@ -1352,7 +2637,12 @@
    "skillIds": [
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10043_necras_skeltn",
@@ -1378,7 +2668,52 @@
     "sktok_necras_skeltn_1",
     "sktok_necras_skeltn_2",
     "sktok_necras_skeltn_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_necras_skeltn_1",
+      "name": "怨火缠身",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_necras_skeltn_2",
+      "name": "怨火缠身",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_necras_skeltn_3",
+      "name": "怨火缠身",
+      "duration": 8,
+      "spCost": 15,
+      "atkMult": 1.2,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "周期伤害（每秒结算），非普攻",
+      "keys": [
+       "attack@atk_scale=1.2",
+       "attack@duration=8"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10044_wulfen_mine",
@@ -1403,7 +2738,46 @@
    "skillIds": [
     "sktok_wulfen_1",
     "sktok_wulfen_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_wulfen_1",
+      "name": "“驱兽专用”",
+      "duration": -1,
+      "spCost": 8,
+      "atkMult": 2.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=2.5",
+       "stun=3"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_wulfen_2",
+      "name": "“顽石专用”",
+      "duration": -1,
+      "spCost": 8,
+      "atkMult": 2.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "cnt=1",
+       "atk_scale=2.5",
+       "def=-0.25",
+       "duration=5"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10050_monstr_prosts",
@@ -1429,7 +2803,49 @@
     "sktok_monstr_prosts1",
     "sktok_monstr_prosts2",
     "sktok_monstr_prosts3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_monstr_prosts1",
+      "name": "策略：超压链接",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_monstr_prosts2",
+      "name": "策略：超负荷",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_monstr_prosts3",
+      "name": "策略：熔毁",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10056_angel2_target",
@@ -1455,7 +2871,49 @@
     "sktok_angel2_target_1",
     "sktok_angel2_target_2",
     "sktok_angel2_target_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_angel2_target_1",
+      "name": "天空大扫除",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_angel2_target_2",
+      "name": "开火成瘾症",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_angel2_target_3",
+      "name": "使命必达！",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10054_phatm2_encdool",
@@ -1481,7 +2939,34 @@
     "sktok_phatm2_encdool_2",
     "sktok_phatm2_encdool_2",
     "sktok_phatm2_encdool_2"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_phatm2_encdool_2",
+      "name": "本能的召唤",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.5,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=1.5",
+       "ep_damage_ratio_token=0.25",
+       "ability_range_radius=0.4",
+       "buff_time=6",
+       "sluggish=6",
+       "interval_damage=0.5",
+       "max_target=4",
+       "interval=10"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10055_phatm2_mndclv",
@@ -1507,7 +2992,25 @@
     "sktok_phatm2_mndclv_3",
     "sktok_phatm2_mndclv_3",
     "sktok_phatm2_mndclv_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_phatm2_mndclv_3",
+      "name": "迷狂牢笼",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10057_svash2_eagle1",
@@ -1533,7 +3036,53 @@
     "sktok_svash2_1",
     "sktok_svash2_2",
     "sktok_svash2_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_svash2_1",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_svash2_2",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_svash2_3",
+      "name": "变革已至",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "bird_atk_scale=2",
+       "damage_scale_display=0.3",
+       "weak[limit]=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10057_svash2_eagle2",
@@ -1559,7 +3108,53 @@
     "sktok_svash2_1",
     "sktok_svash2_2",
     "sktok_svash2_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_svash2_1",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_svash2_2",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_svash2_3",
+      "name": "变革已至",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "bird_atk_scale=2",
+       "damage_scale_display=0.3",
+       "weak[limit]=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10057_svash2_eagle3",
@@ -1585,7 +3180,53 @@
     "sktok_svash2_1",
     "sktok_svash2_2",
     "sktok_svash2_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_svash2_1",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_svash2_2",
+      "name": "开放性开局",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_svash2_3",
+      "name": "变革已至",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "bird_atk_scale=2",
+       "damage_scale_display=0.3",
+       "weak[limit]=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10058_sbell2_icetgt",
@@ -1611,7 +3252,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10059_nasti_nstdef",
@@ -1637,7 +3283,29 @@
     "sktok_nasti_nstdef",
     "sktok_nasti_nstdef",
     "sktok_nasti_nstdef"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_nasti_nstdef",
+      "name": "“拱卫”",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "周期伤害（每秒结算），非普攻",
+      "keys": [
+       "talent@hp_ratio=0.02",
+       "talent@def=0.55",
+       "talent@block_cnt=1"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10060_nasti_nstchr",
@@ -1663,7 +3331,32 @@
     "sktok_nasti_nstchr",
     "sktok_nasti_nstchr",
     "sktok_nasti_nstchr"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_nasti_nstchr",
+      "name": "“执行”",
+      "duration": -1,
+      "spCost": 5,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": [
+       "value=1",
+       "talent@hp=1",
+       "talent@sp=1",
+       "talent@interval=0.5",
+       "talent@shield_max_hp_rate=0.8",
+       "talent@shield_each_hp_rate=0.05"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10061_nasti_nstbld",
@@ -1689,7 +3382,38 @@
     "sktok_nasti_nstbld",
     "sktok_nasti_nstbld",
     "sktok_nasti_nstbld"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_nasti_nstbld",
+      "name": "栖脚地",
+      "duration": -1,
+      "spCost": 50,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "周期伤害（每秒结算），非普攻",
+      "keys": [
+       "attack@nasti_nstbld[m4_bonus].max_hp=0.2",
+       "attack@nasti_nstbld[m4_bonus].atk=0.2",
+       "attack@nasti_nstbld[m5_bonus].max_hp=0.4",
+       "attack@nasti_nstbld[m5_bonus].atk=0.4",
+       "attack@nasti_nstbld[m6_bonus].max_hp=0.6",
+       "attack@nasti_nstbld[m6_bonus].atk=0.6",
+       "attack@nasti_nstbld_m5[attribute_up].max_hp=1000",
+       "attack@nasti_nstbld_m5[attribute_up].def=100",
+       "attack@nasti_nstbld_m5[attribute_up].magic_resistance=5",
+       "attack@nasti_nstbld_m6[attribute_up].max_hp=2000",
+       "attack@nasti_nstbld_m6[attribute_up].def=200",
+       "attack@nasti_nstbld_m6[attribute_up].magic_resistance=10"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10064_wang_stone1",
@@ -1715,7 +3439,60 @@
     "sktok_wang_1",
     "sktok_wang_2",
     "sktok_wang_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_wang_1",
+      "name": "取势",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 1.35,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "周期伤害（每秒结算），非普攻",
+      "keys": [
+       "atk_scale=1.35",
+       "sluggish=6.5"
+      ]
+     },
+     {
+      "index": 1,
+      "id": "sktok_wang_2",
+      "name": "连星",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 5.8,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=5.8",
+       "move_speed=-0.5",
+       "duration=6",
+       "tile_count=6",
+       "display_move_speed=0.5"
+      ]
+     },
+     {
+      "index": 2,
+      "id": "sktok_wang_3",
+      "name": "天下劫",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3.8,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=3.8"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10065_demetr_dmtpos",
@@ -1741,7 +3518,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10068_kalts2_mtship",
@@ -1767,7 +3549,49 @@
     "sktok_mtship_1",
     "sktok_mtship_2",
     "sktok_mtship_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mtship_1",
+      "name": "应急肃正防线",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_mtship_2",
+      "name": "保护性拒止",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_mtship_3",
+      "name": "破梏重生",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10066_closur_ourbase",
@@ -1793,7 +3617,49 @@
     "sktok_closur_ourbase1",
     "sktok_closur_ourbase2",
     "sktok_closur_ourbase3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_closur_ourbase1",
+      "name": "支援范围",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_closur_ourbase2",
+      "name": "支援范围",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_closur_ourbase3",
+      "name": "支援范围",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10063_buddy_bddg",
@@ -1815,7 +3681,12 @@
    "skillIndex": null,
    "durationSec": null,
    "durationSource": null,
-   "skillIds": []
+   "skillIds": [],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10069_mcnist_mcgraf",
@@ -1841,7 +3712,51 @@
     "sktok_mcgraf_1",
     "sktok_mcgraf_2",
     "sktok_mcgraf_3"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_mcgraf_1",
+      "name": "结构性原理",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 1,
+      "id": "sktok_mcgraf_2",
+      "name": "结构性原理",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无伤害改量键",
+      "keys": []
+     },
+     {
+      "index": 2,
+      "id": "sktok_mcgraf_3",
+      "name": "工程学十字星",
+      "duration": -1,
+      "spCost": 0,
+      "atkMult": 3,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "无描述可判定，保守不计（可能是任一类型的倍率）",
+      "keys": [
+       "atk_scale=3"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10070_aphris_pc",
@@ -1867,7 +3782,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "token_10071_aglna2_agairp",
@@ -1893,7 +3813,12 @@
     null,
     null,
     null
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [],
+    "modeledCount": 0
+   }
   },
   {
    "id": "trap_079_allydonq",
@@ -1917,7 +3842,28 @@
    "durationSource": null,
    "skillIds": [
     "sktok_allydonq"
-   ]
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 0,
+      "id": "sktok_allydonq",
+      "name": "冲锋",
+      "duration": 0,
+      "spCost": 4,
+      "atkMult": 2,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=2",
+       "force=2"
+      ]
+     }
+    ],
+    "modeledCount": 0
+   }
   }
  ]
 }

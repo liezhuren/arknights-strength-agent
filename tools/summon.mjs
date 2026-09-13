@@ -58,11 +58,17 @@ export function summonFor(opName) {
   const all = summonsOf(opName)
   if (all.length === 0) return null
   // 同一干员的召唤物默认互斥（技能改变功能）→ 取单体 DPS 最大的一个模式
+  // ⚠ 比较必须用**自身技能改量后**的 DPS：鸿雪「打字机」带 S3 是 ×6.375，选模式时不能用裸面板
   const mode = all
-    .map((s) => ({ unit: { name: s.name, atk: s.atk, interval: s.interval ?? 1.5, hits: 1, mult: 1 }, src: s }))
-    .sort((a, b) => b.unit.atk / b.unit.interval - a.unit.atk / a.unit.interval)[0]
+    .map((s) => {
+      const sm = s.ownSkill?.mods ?? null
+      const atkMult = sm?.atkMult ?? 1
+      const intervalMult = sm?.intervalMult ?? 1
+      const unit = { name: s.name, atk: s.atk * atkMult, interval: (s.interval ?? 1.5) * intervalMult, hits: 1, mult: 1 }
+      return { unit, src: s, sm, eff: unit.atk / unit.interval }
+    })
+    .sort((a, b) => b.eff - a.eff)[0]
   const concurrency = Math.max(mode.src.concurrency ?? 1, 1)
-  // 限时召唤物：durationSec 有值 → 由语义层决定覆盖率；数据层暂按"满覆盖"并标注
   return {
     units: [mode.unit],
     // ⚠ 保持 1：数据里的 `concurrency` 是**该召唤物在场上限N个**，而合成体只占 1 个实体，
@@ -75,6 +81,21 @@ export function summonFor(opName) {
       owner: opName,
       modeCount: all.length,
       mode: mode.src.name,
+      // 自身技能改量（§18）：已并入 units 的 atk/interval
+      ownSkill: mode.sm
+        ? {
+            name: mode.sm.name,
+            atkMult: mode.sm.atkMult ?? 1,
+            intervalMult: mode.sm.intervalMult ?? 1,
+            reason: mode.sm.reason,
+            duration: mode.sm.duration,
+            spCost: mode.sm.spCost,
+          }
+        : null,
+      // 未能建模的技能条数（一次性入场伤害/周期伤害/概率型/无描述）→ 报告标注
+      unmodeledSkills: (mode.src.ownSkill?.all ?? []).filter((x) => !x.modeled).length,
+      baseAtk: mode.src.atk,
+      baseInterval: mode.src.interval,
       maxCopies: concurrency,
       concurrencyConfidence: mode.src.concurrencyConfidence ?? 'default',
       concurrencyQuote: mode.src.concurrencyQuote ?? '',
@@ -102,8 +123,18 @@ export function formatSummonSection(r) {
   const single = per.atk / Math.max(per.interval ?? 1.5, 0.01)
   const conf = m.concurrencyConfidence === 'phrase' ? '按召唤数量描述' : '无同时部署数表述，保守假设 1 个'
   lines.push(`召唤物：${m.mode} · atk${per.atk}/${per.interval}s → 单体 ${single.toFixed(1)} DPS${m.skillIndex !== null ? `（由 S${m.skillIndex + 1} 产出/强化）` : ''}`)
+  if (m.ownSkill && (m.ownSkill.atkMult !== 1 || m.ownSkill.intervalMult !== 1)) {
+    const parts = []
+    if (m.ownSkill.atkMult !== 1) parts.push(`攻击力 ×${m.ownSkill.atkMult}`)
+    if (m.ownSkill.intervalMult !== 1) parts.push(`间隔 ×${m.ownSkill.intervalMult}`)
+    const before = (m.baseAtk / m.baseInterval).toFixed(1)
+    lines.push(`        自身技能「${m.ownSkill.name}」已计入：${parts.join(' · ')}（${m.baseAtk}/${m.baseInterval}s 单体 ${before} → ${single.toFixed(1)}）；依据：${m.ownSkill.reason}`)
+  }
   lines.push(`        ${m.modeCount > 1 ? `${m.modeCount} 种召唤物形态（同一时刻只存在 1 种，按最强形态计）· ` : ''}基准按 1 个在场 → 召唤物 ${r.summonDps.toFixed(1)} DPS`)
-  lines.push(`        取数口径：${conf}；召唤物**自身技能未建模**（仅普攻），故为下限`)
+  lines.push(`        取数口径：${conf}`)
+  if (m.unmodeledSkills > 0) {
+    lines.push(`        ⚠ 另有 ${m.unmodeledSkills} 个自身技能**未折入**持续 DPS（一次性入场伤害/周期伤害/概率型/无描述可判定 → 不计比硬套更安全），故为持续输出的下限`)
+  }
   if (m.maxCopies > 1) {
     lines.push(`        ⚠ 该召唤物表述为「最多存在 ${m.maxCopies} 个」→ 铺满时上限约 ${(r.summonDps * m.maxCopies).toFixed(0)} DPS（受部署位限制，默认口径不取）`)
   }
