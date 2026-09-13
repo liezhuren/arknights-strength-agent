@@ -41,6 +41,9 @@ export default function App() {
   const subOptions = facets.subProfessions.filter((s) => !prof || s.profession === prof)
   // 星级从高到低（API 按稀有度升序返回）
   const rarOptions = [...facets.rarities].sort((a, b) => (b.rarity > a.rarity ? 1 : -1))
+  // 各 facets 的**人数合计**（都等于全库干员数）——"全部"下拉显示它，而不是"选项个数"
+  // （选项个数会被误读成干员数：星级写 6、职业写 8，而实际是 454 名）
+  const sum = (arr: { c: number }[]) => arr.reduce((a, x) => a + x.c, 0)
 
   const openEval = (op: OperatorRow) => { setCurrent(op); setTab('eval') }
 
@@ -66,15 +69,15 @@ export default function App() {
           <div className="bar">
             <input placeholder="搜索干员（名称/ID）" value={q} onChange={(e) => setQ(e.target.value)} />
             <select value={prof} onChange={(e) => { setProf(e.target.value); setSubProf('') }}>
-              <option value="">全部职业</option>
+              <option value="">全部职业（{sum(facets.professions)}）</option>
               {facets.professions.map((p) => <option key={p.profession} value={p.profession}>{PROF_LABEL[p.profession] ?? p.profession}（{p.c}）</option>)}
             </select>
             <select value={subProf} onChange={(e) => setSubProf(e.target.value)} title="分支（子职业）">
-              <option value="">全部分支{prof ? `（${subOptions.length}）` : `（${facets.subProfessions.length}）`}</option>
+              <option value="">全部分支（{sum(subOptions)}）</option>
               {subOptions.map((s) => <option key={s.id} value={s.id}>{s.name}（{s.c}）</option>)}
             </select>
             <select value={rar} onChange={(e) => setRar(e.target.value)} title="星级（稀有度）">
-              <option value="">全部星级{facets.rarities.length ? `（${facets.rarities.length}）` : ''}</option>
+              <option value="">全部星级（{sum(facets.rarities)}）</option>
               {rarOptions.map((r) => <option key={r.rarity} value={r.rarity}>{RARITY_LABEL[r.rarity] ?? r.rarity}（{r.c}）</option>)}
             </select>
             {(prof || subProf || rar || q) && (
