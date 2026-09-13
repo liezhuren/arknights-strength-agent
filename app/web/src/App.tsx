@@ -160,14 +160,10 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
   const r = data?.result
   const bench = r?.benchmark ?? {}
   const key = r?.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
-  const sections: [string, string | null][] = [
-    ['泛用性（关键点）', r?.versatilitySection ?? null],
-    ['操作难度（关键点）', r?.difficultySection ?? null],
-    ['回转（关键点）', r?.rotationSection ?? null],
-    ['团队增益', r?.teamBuffSection ?? null],
-    ['控制', r?.controlSection ?? null],
-    ['生存（锦上添花但关键）', r?.survivalSection ?? null],
-  ]
+  // 各栏**展示形态**（后端 splitSections 已剥掉标题元信息与口径旁白）；
+  // 旁白（notes）是给 agent/LLM 看的，网页不渲染 —— 需要原文时看接口的 result.*Section
+  const ORDER = ['versatility', 'difficulty', 'rotation', 'teamBuff', 'control', 'survival'] as const
+  const sections = ORDER.map((k) => data?.sections?.[k]).filter(Boolean) as { title: string; content: string[]; notes: string[] }[]
   return (
     <section>
       <div className="bar">
@@ -214,6 +210,20 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
         </div>
       )}
 
+      {/* AI（LLM）在哪一步参与：规则层负责数值，模型只做长尾机制解析且**只提议不入引擎** */}
+      <details className="ai-note">
+        <summary>AI（模型）在这一步参与什么？</summary>
+        <div className="ai-note-body">
+          <p><b>数值本身不经过模型。</b>面板、伤害、覆盖率、生存、射程等全部由本地引擎按游戏数据算出，结果可复算、可回归（有锚点表守着）。</p>
+          <ol>
+            <li><b>第一层·通用描述模式库</b>（自动）：技能描述里的高频表述（额外目标 / 连击 / 停止攻击 / 充能 / 索敌 / 对空…）→ 自动转成引擎参数，无需介入。</li>
+            <li><b>第二层·模型解析</b>（点「AI 解析技能描述」）：只用于模式库覆盖不到的<b>长尾独有机制</b>。模型读技能/天赋原文，产出机制补丁（形态、倍率、条件）。</li>
+            <li><b>沉淀与审核</b>：结果落到 <code>mechanism_parses</code> 表，可在「模型设置」里查看并导出成审核片段。⚠ <b>模型输出不会自动注入引擎</b> —— 未经人工审核的解析不影响任何数值。</li>
+          </ol>
+          <p className="muted">没配模型也能用全部功能：此时第 2 层不可用，报告里长尾机制会标注为「未解析」。在「模型设置」里填 provider / API Key 即可启用（Key 只落本地，接口不回显）。</p>
+        </div>
+      </details>
+
       {r && (
         <>
           <div className="cards">
@@ -232,10 +242,10 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
           {r.moduleApplied?.warnings?.map((w, i) => <p key={i} className="warn">⚠ {w}</p>)}
           {data.charts && <ChartsView charts={data.charts} />}
           <div className="sections">
-            {sections.filter(([, s]) => s).map(([title, s]) => (
-              <div className="panel" key={title}>
-                <h3>{title}</h3>
-                <pre>{s}</pre>
+            {sections.map((s) => (
+              <div className="panel" key={s.title}>
+                <h3>{s.title}</h3>
+                <pre>{s.content.join('\n')}</pre>
               </div>
             ))}
           </div>

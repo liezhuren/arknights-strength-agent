@@ -15,6 +15,7 @@ import {
   saveParse, getParse, listParses, deleteParse, exportOverrides,
 } from '../db/index.mjs'
 import { evaluate, formatReport } from '../../tools/evaluate.mjs'
+import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
 import { modulesOf } from '../../tools/modules.mjs'
 import { parseMechanism, chat, activeProvider } from './llm.mjs'
@@ -87,6 +88,16 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
   return {
     result: r,
     report: formatReport(r),
+    // 各栏的**展示形态**（标题剥掉元信息、结尾口径旁白分离）——
+    // 网页渲染这个；`result` 里的 *Section 原文（含旁白）保留给 LLM/agent 与终端报告
+    sections: splitSections({
+      versatility: r.versatilitySection,
+      difficulty: r.difficultySection,
+      rotation: r.rotationSection,
+      teamBuff: r.teamBuffSection,
+      control: r.controlSection,
+      survival: r.survivalSection,
+    }),
     operator: { id: op.id, name: op.name, rarity: op.rarity, profession: op.profession, subProfessionId: op.subProfessionId },
     modules: modulesOf(op).map((m) => ({ id: m.id, name: m.name, type: m.type, isSpecial: !!m.isSpecial, hasCombatData: !!m.hasCombatData })),
     charts: {

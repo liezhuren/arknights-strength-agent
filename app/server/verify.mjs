@@ -32,6 +32,20 @@ ok('  星级 × 分支 叠加（解放者 6★ = 玛恩纳/司霆惊蛰）',
   combo2.total === 2 && combo2.rows.every((r) => r.rarity === 'TIER_6'), combo2.rows.map((r) => r.name).join('/'))
 ok('  facets.rarities 计数与筛选一致', f.rarities.find((x) => x.rarity === 'TIER_6')?.c === r6.total)
 
+// 栏位"双形态"：网页看 sections（已剥元信息与口径旁白），LLM/终端看 result.*Section 原文
+{
+  const ev = await post('/api/evaluate', { query: '能天使', skillIndex: 2 })
+  const S = ev.sections ?? {}
+  ok('evaluate 返回结构化 sections', ['versatility', 'difficulty', 'rotation', 'teamBuff', 'survival'].every((k) => S[k]),
+    Object.keys(S).join(','))
+  ok('  标题已剥掉元信息括号（不含"关键点"/"（…）"）',
+    Object.values(S).every((x) => !/关键点|锦上添花|[（(]/.test(x.title)), Object.values(S).map((x) => x.title).join(' | '))
+  ok('  正文不含口径旁白（"说明："）', Object.values(S).every((x) => !x.content.some((l) => /说明：/.test(l))))
+  ok('  旁白被保留在 notes（给 agent 用，未丢失）', Object.values(S).some((x) => x.notes.length > 0))
+  ok('  原文仍含旁白（LLM/终端零损失）', /说明：/.test(ev.result.versatilitySection) && /说明：/.test(ev.report))
+  ok('  正文非空（不是把内容也剥掉了）', Object.values(S).every((x) => x.content.length > 0))
+}
+
 const op = await get('/api/operators/银灰')
 ok('GET /api/operators/:id（详情）', op.skills?.length === 3 && op.modules?.length >= 2, `${op.name} 技能${op.skills.length} 模组${op.modules.length}`)
 

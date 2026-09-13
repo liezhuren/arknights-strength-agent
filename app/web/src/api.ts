@@ -29,11 +29,20 @@ export interface Charts {
   decay: { x: number; value: number }[]
 }
 
+/** 一栏的展示形态：标题（已剥掉元信息）+ 正文 + 口径旁白（旁白是给 agent 看的，网页不渲染） */
+export interface SectionView {
+  title: string
+  content: string[]
+  notes: string[]
+}
+
 export interface EvaluationResult {
   operator: { id: string; name: string; rarity: string; profession: string; subProfessionId: string }
   modules: ModuleInfo[]
   report: string
   charts: Charts
+  /** 各栏的展示形态（网页渲染这个，避免把给 agent 的口径旁白糊到用户脸上） */
+  sections: Record<string, SectionView>
   result: {
     skill: string; damageType: string; coverage: number
     benchmark: Record<string, number>

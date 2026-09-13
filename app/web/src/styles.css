@@ -35,6 +35,16 @@ button:disabled { opacity: .5; cursor: default; }
 /* .ghost = 次级按钮（筛选行里的"清空"，不抢主操作视觉） */
 button.ghost { background: transparent; color: var(--muted); padding: 4px 8px; font-size: 12px; }
 button.ghost:hover { color: var(--fg); }
+/* .ai-note = "AI 参与位置"折叠说明块（不占常规视觉重量） */
+details.ai-note { margin: 8px 0; font-size: 12px; }
+details.ai-note > summary { cursor: pointer; color: var(--muted); user-select: none; }
+details.ai-note > summary:hover { color: var(--fg); }
+.ai-note-body { border-left: 2px solid var(--line); margin: 6px 0 0 4px; padding: 4px 0 4px 12px; color: var(--muted); line-height: 1.65; }
+.ai-note-body p { margin: 4px 0; }
+.ai-note-body ol { margin: 4px 0; padding-left: 18px; }
+.ai-note-body li { margin: 3px 0; }
+.ai-note-body b { color: var(--fg); }
+.ai-note-body code { color: var(--accent); }
 .axis-params { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 
 table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
