@@ -44,7 +44,30 @@
 | 罗宾/霜华 | `robin_mine` / `rfrost_mine` | 100 | 1 | 0 |（陷阱型，已归 trap 通道）|
 | 森蚺/黑键等 | `radian_tower1/2/3` 戴乌/赛柯/桑特拉 | 471 / 773 / 741 | 1.2 / 1.8 / 1.3 | 3 / 2 / 1 |
 
-## 3. 实现前必须解决：干员 ↔ 召唤物关联
+## 3. 干员 ↔ 召唤物关联 —— ✅ **已解决（确定性，无需 LLM 兜底）**
+
+**解法**：干员 id 是 `char_<序号>_<代号>`，召唤物 id 是 `token_<序号>_<代号>_<名称>`
+→ **代号段相同即同一干员**：`char_003_kalts` ↔ `token_10002_kalts_mon3tr`。
+
+实测（`node tools/build-summons.mjs`）：**73/74 一次命中**，交叉印证（扫干员 blackboard 里的 token id 字符串）
+命中 **0** 次也不需要；唯一未关联的是 `trap_079_allydonq`（`trap_` 前缀的地图装置）。
+
+→ **结论：LLM 层不需要介入关联**。`tools/overrides.mjs` 的二层兜底仍保留给未来边缘案例（异格/跨干员/编号不一致）。
+
+### 已产出的数据：`data/summons.json`（74 条）
+```json
+{ "id": "token_10002_kalts_mon3tr", "name": "Mon3tr", "owner": "凯尔希", "link": "code",
+  "combat": true, "device": false, "atk": 1402, "interval": 2, "blockCnt": 3, "maxHp": 5433,
+  "cost": 20, "skillIds": ["skcom_..."] }
+```
+- `combat: true` 共 **50 条**（占位面板判据筛掉 24 条装置）
+- 战斗型前列：Mon3tr 1402 · 鸿雪"打字机" 866 · 令"弦惊" 823 · 维什戴尔魂灵之影 777 ·
+  乌尔比安"从不混淆的方向" 777 · 电弧赛柯 773 · 风丸纸偶 772 · 麦哲伦龙腾.A 753 ·
+  温蒂工程蓄水炮 585 · 傀影镜中虚影 548 · 令"清平" 549 · 梅尔机械水獭 444 …
+
+---
+
+## 3b.（历史记录）关联方式的原始排查线索
 
 已知线索（`tools/probe-summon2.mjs` 正在探）：
 - 天赋/技能 blackboard 里出现过 `token_key`、`talent@token_key`、`max_token_cnt`、`additional_token_cnt`、

@@ -1,0 +1,1326 @@
+{
+ "builtAt": "2026-09-13",
+ "source": "ArknightsGameData(zh_CN) character_table.json (profession=TOKEN)",
+ "notes": [
+  "召唤物本体在 character_table 的 TOKEN 职业下；token_table.json 不是召唤物名录（只有 trap_* 地图装置）",
+  "owner 关联：一级按 id 代号段匹配，二级按\"干员 blackboard 中出现的 token id\"交叉印证；仍未关联的见 link=null",
+  "combat=false 且 device=true 的是装置/工具（占位面板 atk100/间隔1/生命100），不计 DPS",
+  "召唤物自身技能（skillIds）未建模，仅记录"
+ ],
+ "stats": {
+  "total": 74,
+  "combat": 50,
+  "linkedByCode": 73,
+  "linkedByRef": 0,
+  "unlinked": 1
+ },
+ "summons": [
+  {
+   "id": "token_10000_silent_healrb",
+   "name": "医疗探机",
+   "owner": "赫默",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 125,
+   "interval": 0.5,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 5,
+   "skillIds": [
+    "skcom_withdraw",
+    "skcom_withdraw"
+   ]
+  },
+  {
+   "id": "token_10001_deepcl_tentac",
+   "name": "触手",
+   "owner": "深海色",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 462,
+   "interval": 1.25,
+   "blockCnt": 1,
+   "maxHp": 2016,
+   "cost": 5,
+   "skillIds": [
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10002_kalts_mon3tr",
+   "name": "Mon3tr",
+   "owner": "凯尔希",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 1402,
+   "interval": 2,
+   "blockCnt": 3,
+   "maxHp": 5433,
+   "cost": 10,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10003_cgbird_bird",
+   "name": "幻影",
+   "owner": "夜莺",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 6000,
+   "cost": 5,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10004_otter_motter",
+   "name": "机械水獭",
+   "owner": "梅尔",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 444,
+   "interval": 1.25,
+   "blockCnt": 1,
+   "maxHp": 1950,
+   "cost": 5,
+   "skillIds": [
+    "sktok_motter_1",
+    "sktok_motter_2"
+   ]
+  },
+  {
+   "id": "token_10005_mgllan_drone1",
+   "name": "龙腾.F",
+   "owner": "麦哲伦",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 2000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_mgllan_drone1",
+    "sktok_mgllan_drone1",
+    "sktok_mgllan_drone1"
+   ]
+  },
+  {
+   "id": "token_10005_mgllan_drone2",
+   "name": "龙腾.L",
+   "owner": "麦哲伦",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 509,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 2000,
+   "cost": 7,
+   "skillIds": [
+    "sktok_mgllan_drone2",
+    "sktok_mgllan_drone2",
+    "sktok_mgllan_drone2"
+   ]
+  },
+  {
+   "id": "token_10005_mgllan_drone3",
+   "name": "龙腾.A",
+   "owner": "麦哲伦",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 753,
+   "interval": 2.3,
+   "blockCnt": 0,
+   "maxHp": 2000,
+   "cost": 8,
+   "skillIds": [
+    "sktok_mgllan_drone3",
+    "sktok_mgllan_drone3",
+    "sktok_mgllan_drone3"
+   ]
+  },
+  {
+   "id": "token_10006_vodfox_doll",
+   "name": "诅咒娃娃",
+   "owner": "巫恋",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 5,
+   "skillIds": [
+    null,
+    "sktok_vodfox_token"
+   ]
+  },
+  {
+   "id": "token_10007_phatom_twin",
+   "name": "镜中虚影",
+   "owner": "傀影",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 548,
+   "interval": 0.93,
+   "blockCnt": 1,
+   "maxHp": 1416,
+   "cost": 5,
+   "skillIds": [
+    "sktok_phatom_1",
+    "sktok_phatom_2",
+    "sktok_phatom_3"
+   ]
+  },
+  {
+   "id": "token_10008_cqbw_box",
+   "name": "此面向敌",
+   "owner": "W",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    "sktok_cqbw_token",
+    null
+   ]
+  },
+  {
+   "id": "token_10009_weedy_cannon",
+   "name": "工程蓄水炮",
+   "owner": "温蒂",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 585,
+   "interval": 2.4,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    null,
+    null,
+    "sktok_weedy_token"
+   ]
+  },
+  {
+   "id": "token_10010_folivo_car",
+   "name": "移动摄影器",
+   "owner": "稀音",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 477,
+   "interval": 1.25,
+   "blockCnt": 1,
+   "maxHp": 2020,
+   "cost": 5,
+   "skillIds": [
+    null,
+    "sktok_folivo_2"
+   ]
+  },
+  {
+   "id": "token_10011_beewax_oblisk",
+   "name": "沙之碑",
+   "owner": "蜜蜡",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 3,
+   "maxHp": 5000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    "sktok_beewax"
+   ]
+  },
+  {
+   "id": "token_10012_rosmon_shield",
+   "name": "迷迭香的战术装备",
+   "owner": "迷迭香",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 2,
+   "maxHp": 5000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    "sktok_rosmon"
+   ]
+  },
+  {
+   "id": "token_10013_robin_mine",
+   "name": "“夹子”",
+   "owner": "罗宾",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_robin_1",
+    "sktok_robin_2"
+   ]
+  },
+  {
+   "id": "token_10014_bstalk_crab",
+   "name": "磐蟹护卫队",
+   "owner": "豆苗",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 404,
+   "interval": 1.25,
+   "blockCnt": 0,
+   "maxHp": 1895,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10015_dusk_drgn",
+   "name": "“小自在”",
+   "owner": "夕",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 398,
+   "interval": 1.9,
+   "blockCnt": 2,
+   "maxHp": 1997,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10016_rfrost_mine",
+   "name": "迎宾踏垫",
+   "owner": "霜华",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_rfrost_1",
+    "sktok_rfrost_2"
+   ]
+  },
+  {
+   "id": "token_10017_skadi2_dedant",
+   "name": "斯卡蒂的海嗣",
+   "owner": "浊心斯卡蒂",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    "sktok_skadi2_1",
+    "sktok_skadi2_2",
+    "sktok_skadi2_3"
+   ]
+  },
+  {
+   "id": "token_10018_robrta_mach",
+   "name": "全自动造型仪",
+   "owner": "罗比菈塔",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    "sktok_robrta",
+    "sktok_robrta"
+   ]
+  },
+  {
+   "id": "token_10019_nearl2_sword",
+   "name": "“耀阳”",
+   "owner": "耀骑士临光",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 10,
+   "interval": 1,
+   "blockCnt": 2,
+   "maxHp": 6000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    "sktok_nearl2_3"
+   ]
+  },
+  {
+   "id": "token_10020_ling_soul1",
+   "name": "“清平”",
+   "owner": "令",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 549,
+   "interval": 1.25,
+   "blockCnt": 1,
+   "maxHp": 2500,
+   "cost": 12,
+   "skillIds": [
+    "sktok_ling_soul1",
+    "sktok_ling_soul1",
+    "sktok_ling_soul1"
+   ]
+  },
+  {
+   "id": "token_10020_ling_soul2",
+   "name": "“逍遥”",
+   "owner": "令",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 406,
+   "interval": 1.6,
+   "blockCnt": 1,
+   "maxHp": 1217,
+   "cost": 9,
+   "skillIds": [
+    "sktok_ling_soul2",
+    "sktok_ling_soul2",
+    "sktok_ling_soul2"
+   ]
+  },
+  {
+   "id": "token_10020_ling_soul3",
+   "name": "“弦惊”",
+   "owner": "令",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 823,
+   "interval": 1.5,
+   "blockCnt": 2,
+   "maxHp": 3607,
+   "cost": 23,
+   "skillIds": [
+    "sktok_ling_soul3",
+    "sktok_ling_soul3",
+    "sktok_ling_soul3"
+   ]
+  },
+  {
+   "id": "token_10051_radian_tower1",
+   "name": "戴乌",
+   "owner": "电弧",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 471,
+   "interval": 1.2,
+   "blockCnt": 3,
+   "maxHp": 3230,
+   "cost": 18,
+   "skillIds": [
+    "sktok_radian_1",
+    "sktok_radian_1",
+    "sktok_radian_1"
+   ]
+  },
+  {
+   "id": "token_10052_radian_tower2",
+   "name": "赛柯",
+   "owner": "电弧",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 773,
+   "interval": 1.8,
+   "blockCnt": 2,
+   "maxHp": 2333,
+   "cost": 16,
+   "skillIds": [
+    "sktok_radian_2",
+    "sktok_radian_2",
+    "sktok_radian_2"
+   ]
+  },
+  {
+   "id": "token_10053_radian_tower3",
+   "name": "桑特拉",
+   "owner": "电弧",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 741,
+   "interval": 1.3,
+   "blockCnt": 1,
+   "maxHp": 1430,
+   "cost": 16,
+   "skillIds": [
+    "sktok_radian_3",
+    "sktok_radian_3",
+    "sktok_radian_3"
+   ]
+  },
+  {
+   "id": "token_10021_blkngt_hypnos",
+   "name": "眠兽",
+   "owner": "夜半",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 474,
+   "interval": 1.25,
+   "blockCnt": 0,
+   "maxHp": 2582,
+   "cost": 0,
+   "skillIds": [
+    "sktok_blkngt_hypnos_s_1",
+    "sktok_blkngt_hypnos_s_2"
+   ]
+  },
+  {
+   "id": "token_10022_kazema_shadow",
+   "name": "纸偶",
+   "owner": "风丸",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 772,
+   "interval": 1.2,
+   "blockCnt": 0,
+   "maxHp": 2372,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10023_windft_wrench",
+   "name": "可靠电池",
+   "owner": "掠风",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    "sktok_windft_wrench_1",
+    "sktok_windft_wrench_2"
+   ]
+  },
+  {
+   "id": "token_10041_cathy_catsld",
+   "name": "爬行号·防护单元",
+   "owner": "凯瑟琳",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    "sktok_cathy_catsld_1",
+    "sktok_cathy_catsld_2"
+   ]
+  },
+  {
+   "id": "token_10045_alanna_crane",
+   "name": "小螺帽",
+   "owner": "阿兰娜",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10024_ebnhlz_rcube",
+   "name": "旧日残影",
+   "owner": "黑键",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    "sktok_ebnhlz_token",
+    null
+   ]
+  },
+  {
+   "id": "token_10025_doroth_recttp",
+   "name": "共振装置",
+   "owner": "多萝西",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_doroth_1",
+    "sktok_doroth_2",
+    "sktok_doroth_3"
+   ]
+  },
+  {
+   "id": "token_10026_bgsnow_subbow",
+   "name": "“打字机”",
+   "owner": "鸿雪",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 866,
+   "interval": 1.6,
+   "blockCnt": 0,
+   "maxHp": 500,
+   "cost": 5,
+   "skillIds": [
+    "sktok_bgsnow_1",
+    "sktok_bgsnow_2",
+    "sktok_bgsnow_3"
+   ]
+  },
+  {
+   "id": "token_10027_ironmn_pile1",
+   "name": "白铁™多功能平台",
+   "owner": "白铁",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 3,
+   "skillIds": [
+    "sktok_ironmn_pile1",
+    "sktok_ironmn_pile1",
+    "sktok_ironmn_pile1"
+   ]
+  },
+  {
+   "id": "token_10027_ironmn_pile2",
+   "name": "白铁™多功能平台",
+   "owner": "白铁",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 2000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_ironmn_pile2",
+    "sktok_ironmn_pile2",
+    "sktok_ironmn_pile2"
+   ]
+  },
+  {
+   "id": "token_10027_ironmn_pile3",
+   "name": "铁钳号·原型机",
+   "owner": "白铁",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 6000,
+   "cost": 10,
+   "skillIds": [
+    "sktok_ironmn_pile3",
+    "sktok_ironmn_pile3",
+    "sktok_ironmn_pile3"
+   ]
+  },
+  {
+   "id": "token_10028_vigil_wolf",
+   "name": "狼群",
+   "owner": "伺夜",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 371,
+   "interval": 1.25,
+   "blockCnt": 0,
+   "maxHp": 1100,
+   "cost": 0,
+   "skillIds": [
+    "sktok_vigil_wolf_1",
+    "sktok_vigil_wolf_2",
+    "sktok_vigil_wolf_3"
+   ]
+  },
+  {
+   "id": "token_10029_slent2_protrb",
+   "name": "夜灯",
+   "owner": "淬羽赫默",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    "sktok_slent2_protrb",
+    null
+   ]
+  },
+  {
+   "id": "token_10030_mlyss_wtrman",
+   "name": "流形",
+   "owner": "缪尔赛思",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 302,
+   "interval": 1.5,
+   "blockCnt": 0,
+   "maxHp": 2000,
+   "cost": 0,
+   "skillIds": [
+    "sktok_mlyss_wtrman_1",
+    "sktok_mlyss_wtrman_2",
+    "sktok_mlyss_wtrman_3"
+   ]
+  },
+  {
+   "id": "token_10031_swire2_gdtrap",
+   "name": "香槟炸弹",
+   "owner": "琳琅诗怀雅",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    "sktok_swire2_gdtrap",
+    null
+   ]
+  },
+  {
+   "id": "token_10032_jesca2_jckshd",
+   "name": "机动盾牌",
+   "owner": "涤火杰西卡",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 2,
+   "maxHp": 3802,
+   "cost": 5,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10034_ray_sndbst",
+   "name": "沙地兽",
+   "owner": "莱伊",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 3,
+   "skillIds": [
+    null,
+    "sktok_ray_2",
+    null
+   ]
+  },
+  {
+   "id": "token_10033_ela_grzmot",
+   "name": "雷鸣地雷",
+   "owner": "艾拉",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 5,
+   "skillIds": [
+    "sktok_ela_1",
+    "sktok_ela_2",
+    "sktok_ela_3"
+   ]
+  },
+  {
+   "id": "token_10035_wisdel_wward",
+   "name": "魂灵之影",
+   "owner": "维什戴尔",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 777,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 3500,
+   "cost": 0,
+   "skillIds": [
+    "sktok_wisdel_wward",
+    "sktok_wisdel_wward",
+    "sktok_wisdel_wward"
+   ]
+  },
+  {
+   "id": "token_10039_ulpia_block",
+   "name": "从不混淆的方向",
+   "owner": "乌尔比安",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 777,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 3500,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10037_mitm_trshrb",
+   "name": "樱桃三号",
+   "owner": "渡桥",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 323,
+   "interval": 1.25,
+   "blockCnt": 0,
+   "maxHp": 2750,
+   "cost": 0,
+   "skillIds": [
+    "sktok_mitm_trshrb_1",
+    "sktok_mitm_trshrb_2"
+   ]
+  },
+  {
+   "id": "token_10036_lasher_mcbird",
+   "name": "发条羽兽",
+   "owner": "衡沙",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 340,
+   "interval": 1.6,
+   "blockCnt": 1,
+   "maxHp": 974,
+   "cost": 8,
+   "skillIds": [
+    "sktok_lasher_mcbird_1",
+    "sktok_lasher_mcbird_2"
+   ]
+  },
+  {
+   "id": "token_10040_siege2_vlion",
+   "name": "黄金盟誓",
+   "owner": "维娜·维多利亚",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 500,
+   "interval": 2.5,
+   "blockCnt": 1,
+   "maxHp": 4000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10042_tecno_puppet",
+   "name": "木偶舞者",
+   "owner": "特克诺",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 298,
+   "interval": 2.5,
+   "blockCnt": 1,
+   "maxHp": 1144,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10043_necras_skeltn",
+   "name": "悲叹的仆役",
+   "owner": "死芒",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 308,
+   "interval": 1.8,
+   "blockCnt": 1,
+   "maxHp": 1850,
+   "cost": 0,
+   "skillIds": [
+    "sktok_necras_skeltn_1",
+    "sktok_necras_skeltn_2",
+    "sktok_necras_skeltn_3"
+   ]
+  },
+  {
+   "id": "token_10044_wulfen_mine",
+   "name": "矿石“杀手”",
+   "owner": "钼铅",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 5,
+   "skillIds": [
+    "sktok_wulfen_1",
+    "sktok_wulfen_2"
+   ]
+  },
+  {
+   "id": "token_10050_monstr_prosts",
+   "name": "重构体",
+   "owner": "Mon3tr",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 2.85,
+   "blockCnt": 0,
+   "maxHp": 5433,
+   "cost": 3,
+   "skillIds": [
+    "sktok_monstr_prosts1",
+    "sktok_monstr_prosts2",
+    "sktok_monstr_prosts3"
+   ]
+  },
+  {
+   "id": "token_10056_angel2_target",
+   "name": "投递坐标",
+   "owner": "新约能天使",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 5,
+   "blockCnt": 0,
+   "maxHp": 3000,
+   "cost": 0,
+   "skillIds": [
+    "sktok_angel2_target_1",
+    "sktok_angel2_target_2",
+    "sktok_angel2_target_3"
+   ]
+  },
+  {
+   "id": "token_10054_phatm2_encdool",
+   "name": "本能的召唤",
+   "owner": "酒神",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 5,
+   "skillIds": [
+    "sktok_phatm2_encdool_2",
+    "sktok_phatm2_encdool_2",
+    "sktok_phatm2_encdool_2"
+   ]
+  },
+  {
+   "id": "token_10055_phatm2_mndclv",
+   "name": "迷狂牢笼",
+   "owner": "酒神",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 3,
+   "cost": 0,
+   "skillIds": [
+    "sktok_phatm2_mndclv_3",
+    "sktok_phatm2_mndclv_3",
+    "sktok_phatm2_mndclv_3"
+   ]
+  },
+  {
+   "id": "token_10057_svash2_eagle1",
+   "name": "风雪之眼",
+   "owner": "凛御银灰",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 16,
+   "skillIds": [
+    "sktok_svash2_1",
+    "sktok_svash2_2",
+    "sktok_svash2_3"
+   ]
+  },
+  {
+   "id": "token_10057_svash2_eagle2",
+   "name": "风雪之眼",
+   "owner": "凛御银灰",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 14,
+   "skillIds": [
+    "sktok_svash2_1",
+    "sktok_svash2_2",
+    "sktok_svash2_3"
+   ]
+  },
+  {
+   "id": "token_10057_svash2_eagle3",
+   "name": "风雪之眼",
+   "owner": "凛御银灰",
+   "link": "code",
+   "combat": false,
+   "device": true,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 19,
+   "skillIds": [
+    "sktok_svash2_1",
+    "sktok_svash2_2",
+    "sktok_svash2_3"
+   ]
+  },
+  {
+   "id": "token_10058_sbell2_icetgt",
+   "name": "保护目标（冻结状态）",
+   "owner": "圣聆初雪",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 3,
+   "maxHp": 3500,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10059_nasti_nstdef",
+   "name": "“质检专员”",
+   "owner": "娜斯提",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 100,
+   "cost": 4,
+   "skillIds": [
+    "sktok_nasti_nstdef",
+    "sktok_nasti_nstdef",
+    "sktok_nasti_nstdef"
+   ]
+  },
+  {
+   "id": "token_10060_nasti_nstchr",
+   "name": "“监工专员”",
+   "owner": "娜斯提",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 8,
+   "cost": 4,
+   "skillIds": [
+    "sktok_nasti_nstchr",
+    "sktok_nasti_nstchr",
+    "sktok_nasti_nstchr"
+   ]
+  },
+  {
+   "id": "token_10061_nasti_nstbld",
+   "name": "“应急承重小组”",
+   "owner": "娜斯提",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 4150,
+   "cost": 6,
+   "skillIds": [
+    "sktok_nasti_nstbld",
+    "sktok_nasti_nstbld",
+    "sktok_nasti_nstbld"
+   ]
+  },
+  {
+   "id": "token_10064_wang_stone1",
+   "name": "棋子",
+   "owner": "望",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 3,
+   "skillIds": [
+    "sktok_wang_1",
+    "sktok_wang_2",
+    "sktok_wang_3"
+   ]
+  },
+  {
+   "id": "token_10065_demetr_dmtpos",
+   "name": "牵绊",
+   "owner": "贝洛内",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10068_kalts2_mtship",
+   "name": "战术锚点",
+   "owner": "凯尔希·思衡托",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 2235,
+   "cost": 3,
+   "skillIds": [
+    "sktok_mtship_1",
+    "sktok_mtship_2",
+    "sktok_mtship_3"
+   ]
+  },
+  {
+   "id": "token_10066_closur_ourbase",
+   "name": "指挥中心",
+   "owner": "可露希尔",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 2,
+   "maxHp": 3275,
+   "cost": 0,
+   "skillIds": [
+    "sktok_closur_ourbase1",
+    "sktok_closur_ourbase2",
+    "sktok_closur_ourbase3"
+   ]
+  },
+  {
+   "id": "token_10063_buddy_bddg",
+   "name": "牙猎犬",
+   "owner": "罗德岛隐秘队",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 175,
+   "interval": 1.25,
+   "blockCnt": 0,
+   "maxHp": 1095,
+   "cost": 0,
+   "skillIds": []
+  },
+  {
+   "id": "token_10069_mcnist_mcgraf",
+   "name": "结构性原理",
+   "owner": "机械师",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 600,
+   "interval": 1.5,
+   "blockCnt": 3,
+   "maxHp": 3500,
+   "cost": 10,
+   "skillIds": [
+    "sktok_mcgraf_1",
+    "sktok_mcgraf_2",
+    "sktok_mcgraf_3"
+   ]
+  },
+  {
+   "id": "token_10070_aphris_pc",
+   "name": "中继器",
+   "owner": "谬因",
+   "link": "code",
+   "combat": false,
+   "device": false,
+   "atk": 0,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 500,
+   "cost": 3,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "token_10071_aglna2_agairp",
+   "name": "“一会儿见！”",
+   "owner": "予愿安洁莉娜",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 0,
+   "maxHp": 1000,
+   "cost": 0,
+   "skillIds": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "id": "trap_079_allydonq",
+   "name": "猎潮的骑士",
+   "owner": null,
+   "link": null,
+   "combat": true,
+   "device": false,
+   "atk": 400,
+   "interval": 2,
+   "blockCnt": 2,
+   "maxHp": 3000,
+   "cost": 5,
+   "skillIds": [
+    "sktok_allydonq"
+   ]
+  }
+ ]
+}
