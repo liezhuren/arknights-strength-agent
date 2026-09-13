@@ -18,26 +18,33 @@
 
 ## 使用
 
-### 网页界面
+需要 **Node ≥ 22**（核心用到内置 `node:sqlite`，无需安装任何依赖）。
+
+### 网页界面（推荐）
 
 ```bash
+git clone git@github.com:liezhuren/arknights-strength-agent.git
+cd arknights-strength-agent
+node app/db/build-db.mjs
 node app/server/index.mjs --port 8787
 ```
 
 浏览器打开 **http://127.0.0.1:8787**。
 
-首次运行需先建数据库与打包前端：
+数据集（`data/*.json`）已随仓库提供，**不需要另外下载游戏数据**。
+
+前端界面需要额外构建一次（不想构建也行：根路径会给出提示，API 仍可正常调用）：
 
 ```bash
-node tools/build-dataset.mjs && node tools/build-modules.mjs && node tools/build-summons.mjs
-node tools/build-ranges.mjs && node tools/build-threat-scenarios.mjs && node tools/build-scenario-baseline.mjs
-node app/db/build-db.mjs
 cd app/web && pnpm install && pnpm build
 ```
 
-> 重建数据库前需先停止服务，否则 Windows 会因文件占用报 EPERM。
+> - 第 3 步 `build-db.mjs` **必须执行**（数据库是构建产物，未随仓库提供；缺失时服务会提示"数据库不存在，请先运行 node app/db/build-db.mjs"）。
+> - 重建数据库前需先停止服务，否则 Windows 会因文件占用报 EPERM。
 
 ### 命令行
+
+命令行走的是 `data/*.json`，**不依赖数据库**，克隆后可直接用：
 
 ```bash
 node tools/evaluate.mjs 银灰                  # 评测（默认 S3，伤害类型自动推断）
@@ -189,7 +196,9 @@ node tools/anchors.mjs                 # 重新生成锚点表
 | [`docs/module-prts-crosscheck.md`](docs/module-prts-crosscheck.md) | PRTS 模组数值交叉校验（105/105 一致） |
 | [`docs/data-inventory.md`](docs/data-inventory.md) · [`docs/mechanics.md`](docs/mechanics.md) | 数据资产清单 / 机制笔记 |
 
-### 从零构建
+### 从零重建数据集（开发用，普通使用不需要）
+
+`data/*.json` 已随仓库提供，所以克隆后**无需**这一步。只有当你改了数据管线、或想换一版游戏数据时才需要：
 
 ```bash
 # 游戏数据仓库不在本仓库内，需自行 clone
@@ -200,7 +209,7 @@ cd ../arknights-strength-agent
 # 路径默认 E:/github/ArknightsGameData，不同则修改 tools/build-*.mjs 中的 ROOT
 node tools/build-dataset.mjs && node tools/build-modules.mjs && node tools/build-summons.mjs
 node tools/build-ranges.mjs && node tools/build-threat-scenarios.mjs && node tools/build-scenario-baseline.mjs
-node app/db/build-db.mjs
+node tools/build-element.mjs && node app/db/build-db.mjs
 ```
 
 ### 模型接入（可选）
