@@ -10,7 +10,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { URL } from 'node:url'
 import {
-  getOperator, searchOperators, facets, getScenarios, getThreats, getBaseline,
+  getOperator, searchOperators, facets, getScenarios, getThreats, getBaseline, getRanges,
   saveCustom, listCustom, deleteCustom, recordEvaluation, recentEvaluations, getEvaluation,
   saveParse, getParse, listParses, deleteParse, exportOverrides,
 } from '../db/index.mjs'
@@ -127,6 +127,8 @@ const routes = {
   }),
   'GET /api/facets': () => facets(),
   'GET /api/scenarios': () => ({ scenarios: getScenarios(), threats: getThreats(), baseline: getBaseline() }),
+  // 射程几何（range_table）：形状 + 指标，供前端画范围图
+  'GET /api/ranges': () => ({ ranges: getRanges() }),
 
   'POST /api/evaluate': async ({ body }) => {
     const out = runEvaluation(body)

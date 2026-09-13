@@ -134,6 +134,20 @@ export function facets() {
 export const getScenarios = () => db.prepare(`SELECT * FROM scenarios`).all()
 export const getThreats = () => db.prepare(`SELECT * FROM threat_profiles`).all()
 export const getBaseline = () => db.prepare(`SELECT * FROM scenario_baseline`).all()
+/** 射程几何（range_table）：DB 列名 → 前端习惯的字段名，grids 从 JSON 还原成 [row,col] 数组 */
+export const getRanges = () =>
+  db.prepare(`SELECT * FROM ranges`).all().map((r) => ({
+    id: r.range_id,
+    direction: r.direction,
+    grids: JSON.parse(r.grids ?? '[]'),
+    tiles: r.tiles,
+    width: r.width,
+    height: r.height,
+    reach: r.reach,
+    nearest: r.nearest,
+    containsSelf: !!r.contains_self,
+    shape: r.shape,
+  }))
 
 /** 自制干员 CRUD。 */
 export const listCustom = () => db.prepare(`SELECT * FROM custom_operators ORDER BY id DESC`).all()

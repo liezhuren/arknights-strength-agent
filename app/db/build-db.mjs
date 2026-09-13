@@ -77,6 +77,13 @@ CREATE TABLE skill_levels (
   PRIMARY KEY (op_id, skill_idx, level_idx)
 );
 
+-- 射程几何（range_table）：形状 + 预算好的指标
+CREATE TABLE ranges (
+  range_id TEXT PRIMARY KEY, direction INTEGER, grids TEXT,
+  tiles INTEGER, width INTEGER, height INTEGER, reach INTEGER, nearest INTEGER,
+  contains_self INTEGER, shape TEXT
+);
+
 -- 模组（含数值）
 CREATE TABLE modules (
   module_id TEXT PRIMARY KEY, op_id TEXT, name TEXT, type TEXT, is_special INTEGER,
@@ -170,6 +177,16 @@ for (const [charId, list] of Object.entries(mods)) {
   }
 }
 
+// ---- 射程几何 ----
+const ranges = load('data/ranges.json').ranges
+const iRg = ins(`INSERT INTO ranges VALUES (?,?,?,?,?,?,?,?,?,?)`)
+let rangeCount = 0
+for (const r of Object.values(ranges)) {
+  iRg.run(r.id, r.direction ?? 1, JSON.stringify(r.grids ?? []), r.tiles, r.width, r.height,
+    r.reach, r.nearest, r.containsSelf ? 1 : 0, r.shape ?? null)
+  rangeCount++
+}
+
 // ---- 场景 / 来袭画像 / 基准线 ----
 const iSc = ins(`INSERT INTO scenarios VALUES (?,?,?,?,?)`)
 for (const s of load('data/scenarios.json').scenarios) iSc.run(s.id, s.name, s.def, s.res, s.enemy ?? null)
@@ -198,7 +215,7 @@ const count = (t) => db.prepare(`SELECT COUNT(*) c FROM ${t}`).get().c
 const stats = {
   operators: count('operators'), talents: count('talents'), skills: count('skills'), skill_levels: count('skill_levels'),
   modules: count('modules'), module_levels: count('module_levels'), scenarios: count('scenarios'),
-  threats: count('threat_profiles'), baseline: count('scenario_baseline'),
+  threats: count('threat_profiles'), baseline: count('scenario_baseline'), ranges: count('ranges'),
   custom_kept: count('custom_operators'), evals_kept: count('evaluations'), parses_kept: count('mechanism_parses'),
 }
 db.close()

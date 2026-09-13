@@ -32,6 +32,7 @@ import { formatVersatilitySection } from './versatility.mjs'
 import { formatDifficultySection } from './difficulty.mjs'
 import { summonFor, formatSummonSection, formatSummonSurvival } from './summon.mjs'
 import { extractConditional, formatConditionalSection } from './conditional.mjs'
+import { formatRangeSection } from './range.mjs'
 
 const DATA = JSON.parse(
   fs.readFileSync(path.resolve(import.meta.dirname, '../data/operators.json'), 'utf8'),
@@ -489,6 +490,8 @@ export function evaluateEngine(eng, meta = {}) {
     // 条件型攻击倍率（§21）：基准不含，此处给"条件满足时"的数值供对照
     conditionalTraits: condTraits,
     conditionalSkillDps: condTraits.length ? (physical ? condDps(400, 0) : condDps(0, 50)) : null,
+    // 射程几何（range_table）：报告行 + 形状示意图
+    rangeSection: meta.rangeSection ?? [],
     penetrate: eng.penetrate,
     talentPenetrate: eng._talentPen ?? null,
     enemyDebuff: eng.enemyDebuff,
@@ -555,6 +558,8 @@ export function evaluate(op, opts = {}) {
     })(),
     // 条件型加成与索敌（对空加成/优先攻击/蓄力两态）：**只标注，不进 DPS**
     conditional: extractConditional(eop, eng._skillIndex ?? skillIndex, eng._masteryAdjusted ?? opts.masteryLevel ?? 9),
+    // 射程几何（range_table）：面板射程 + 技能改射程 + 形状示意图
+    rangeSection: formatRangeSection(op, eng._skillIndex ?? skillIndex, eng._masteryAdjusted ?? opts.masteryLevel ?? 9),
   })
 }
 
@@ -577,6 +582,8 @@ export function formatReport(r) {
   ]
   if (r.skillIndexAdjusted) lines.push(`⚠ ${r.skillIndexAdjusted}`)
   if (r.trait) lines.push(`分支特性：${r.trait}`)
+  // 射程几何（range_table）：覆盖格数/射程/盲区 + 示意图
+  if (r.rangeSection?.length) for (const l of r.rangeSection) lines.push(l)
   if (r.enemyDebuff && (r.enemyDebuff.defPct || r.enemyDebuff.resFlat)) {
     const parts = []
     if (r.enemyDebuff.defPct) parts.push(`减防${Math.round(r.enemyDebuff.defPct * 100)}%`)

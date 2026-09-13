@@ -23,12 +23,15 @@ function buildSubProfessionNames() {
   return out
 }
 
-/** 提取满级面板（最后 phase 的最后 keyframe） */
+/** 提取满级面板（最后 phase 的最后 keyframe）
+ *  ⚠ `rangeId` 在 **phase 级**（不在 attributesKeyFrames.data 里）—— 早期只读 data，把射程丢了，
+ *  而 DB 层一直在读 `lv?.rangeId`（于是永远是 null）。2026 修正：面板与技能都带上射程 id。 */
 function maxPanel(phases) {
   const last = phases[phases.length - 1]
   const kf = last?.attributesKeyFrames?.[last.attributesKeyFrames.length - 1]
   return {
     maxLevel: last?.maxLevel ?? null,
+    rangeId: last?.rangeId ?? null, // 精英化会改射程（银灰 2-3 → 3-12）
     ...(kf?.data ?? {}),
   }
 }
@@ -78,6 +81,7 @@ function extractSkills(skillRefs) {
       skillType: lv.skillType ?? null,
       durationType: lv.durationType ?? null,
       duration: lv.duration ?? null,
+      rangeId: lv.rangeId ?? null, // 技能可改射程（银灰 S2 → 1-2、S3 → 3-7）；437/1803 个技能有
       spData: lv.spData
         ? { spType: lv.spData.spType ?? null, spCost: lv.spData.spCost ?? null, initSp: lv.spData.initSp ?? null }
         : null,
