@@ -32,6 +32,9 @@ textarea { width: 100%; font-family: ui-monospace, Consolas, monospace; font-siz
 button { cursor: pointer; }
 button:hover { border-color: var(--accent); }
 button:disabled { opacity: .5; cursor: default; }
+/* .ghost = 次级按钮（筛选行里的"清空"，不抢主操作视觉） */
+button.ghost { background: transparent; color: var(--muted); padding: 4px 8px; font-size: 12px; }
+button.ghost:hover { color: var(--fg); }
 .axis-params { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 
 table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }

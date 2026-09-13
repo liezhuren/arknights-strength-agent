@@ -22,6 +22,7 @@ export default function App() {
   const [q, setQ] = useState('')
   const [prof, setProf] = useState('')
   const [subProf, setSubProf] = useState('')
+  const [rar, setRar] = useState('')
   const [rows, setRows] = useState<OperatorRow[]>([])
   const [total, setTotal] = useState(0)
   const [current, setCurrent] = useState<OperatorRow | null>(null)
@@ -32,12 +33,14 @@ export default function App() {
     api.facets().then(setFacets).catch(() => {})
   }, [])
   useEffect(() => {
-    api.search({ q, profession: prof, subProfession: subProf, limit: 60 })
+    api.search({ q, profession: prof, subProfession: subProf, rarity: rar, limit: 60 })
       .then((r) => { setRows(r.rows); setTotal(r.total) })
       .catch((e) => setErr(String(e.message)))
-  }, [q, prof, subProf])
+  }, [q, prof, subProf, rar])
   // 只显示当前职业下的分支（选了职业才出分支下拉，避免 72 项过长）
   const subOptions = facets.subProfessions.filter((s) => !prof || s.profession === prof)
+  // 星级从高到低（API 按稀有度升序返回）
+  const rarOptions = [...facets.rarities].sort((a, b) => (b.rarity > a.rarity ? 1 : -1))
 
   const openEval = (op: OperatorRow) => { setCurrent(op); setTab('eval') }
 
@@ -70,6 +73,13 @@ export default function App() {
               <option value="">全部分支{prof ? `（${subOptions.length}）` : `（${facets.subProfessions.length}）`}</option>
               {subOptions.map((s) => <option key={s.id} value={s.id}>{s.name}（{s.c}）</option>)}
             </select>
+            <select value={rar} onChange={(e) => setRar(e.target.value)} title="星级（稀有度）">
+              <option value="">全部星级{facets.rarities.length ? `（${facets.rarities.length}）` : ''}</option>
+              {rarOptions.map((r) => <option key={r.rarity} value={r.rarity}>{RARITY_LABEL[r.rarity] ?? r.rarity}（{r.c}）</option>)}
+            </select>
+            {(prof || subProf || rar || q) && (
+              <button className="ghost" onClick={() => { setQ(''); setProf(''); setSubProf(''); setRar('') }} title="清空全部筛选">清空</button>
+            )}
             <span className="muted">共 {total} 名</span>
           </div>
           <table>

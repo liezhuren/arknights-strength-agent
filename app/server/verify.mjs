@@ -20,6 +20,17 @@ ok('  分支（子职业）含中文名与所属职业', f.subProfessions.length
 const lib = await get('/api/operators?subProfession=librator')
 ok('  按分支筛选（解放者 4 名）', lib.total === 4 && lib.rows.every((r) => r.sub_profession_name === '解放者'),
   lib.rows.map((r) => r.name).join('/'))
+// 星级筛选（前端筛选行新增）：单条件 + 与职业/分支叠加
+const r6 = await get('/api/operators?rarity=TIER_6&limit=1')
+ok('  按星级筛选（6★ 145 名）', r6.total === 145, `${r6.total}`)
+const r1 = await get('/api/operators?rarity=TIER_1&limit=1')
+ok('  按星级筛选（1★ 11 名）', r1.total === 11, `${r1.total}`)
+const combo = await get('/api/operators?profession=WARRIOR&rarity=TIER_6&limit=1')
+ok('  星级 × 职业 叠加（近卫 6★ 32 名）', combo.total === 32, `${combo.total}`)
+const combo2 = await get('/api/operators?subProfession=librator&rarity=TIER_6')
+ok('  星级 × 分支 叠加（解放者 6★ = 玛恩纳/司霆惊蛰）',
+  combo2.total === 2 && combo2.rows.every((r) => r.rarity === 'TIER_6'), combo2.rows.map((r) => r.name).join('/'))
+ok('  facets.rarities 计数与筛选一致', f.rarities.find((x) => x.rarity === 'TIER_6')?.c === r6.total)
 
 const op = await get('/api/operators/银灰')
 ok('GET /api/operators/:id（详情）', op.skills?.length === 3 && op.modules?.length >= 2, `${op.name} 技能${op.skills.length} 模组${op.modules.length}`)
