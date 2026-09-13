@@ -59,6 +59,14 @@ ok('  缺 baseInterval 必须被拒（防宽松断言掩盖校验失效）', bad
 await fetch(B + '/api/custom?name=' + encodeURIComponent('API验证·测试干员'), { method: 'DELETE' })
 ok('DELETE /api/custom', !(await get('/api/custom')).some((c) => c.name === 'API验证·测试干员'))
 
+// ---- 轴参数化：爆发型技能允许用户给轴（部署次数/轴长），默认仍为补丁里的理想轴 ----
+const w0 = await post('/api/evaluate', { query: '望', skillIndex: 2 })
+ok('burst 默认理想轴保持不变（锚点）', Math.abs(w0.result.burstTotalDamage - 179056) < 1, `总伤 ${w0.result.burstTotalDamage.toFixed(0)} / 轴DPS ${w0.result.burstDps.toFixed(0)}`)
+const w1 = await post('/api/evaluate', { query: '望', skillIndex: 2, axis: { deploys: 10, windowSec: 60 } })
+ok('  用户轴生效（总伤按部署数等比缩放）', Math.abs(w1.result.burstTotalDamage / w0.result.burstTotalDamage - 10 / 16) < 1e-6,
+  `10部署/60s → 总伤 ${w1.result.burstTotalDamage.toFixed(0)} · 轴DPS ${w1.result.burstDps.toFixed(0)}`)
+ok('  轴参数被标记为用户给定', w1.result.burst.axisFromUser === true)
+
 const cfg = await get('/api/config')
 ok('GET /api/config（Key 已脱敏）', cfg.providers && Object.keys(cfg.providers).length >= 4, Object.keys(cfg.providers).join('/'))
 const cfg2 = await post('/api/config', { provider: 'deepseek', providers: { deepseek: { apiKey: 'sk-test-not-real-1234' } } })

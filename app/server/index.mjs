@@ -68,11 +68,11 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; cha
 
 /** 核心：跑一次评测（数据集干员），返回结构化结果 + 文本报告。
  *  除格式化文本外，另给**结构化数据**（charts），供前端画图 —— 口径与文本完全同源，不重复计算。 */
-function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageType = 'auto' }) {
+function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageType = 'auto', axis }) {
   const op = getOperator(query)
   if (!op) throw new Error(`未找到干员：${query}`)
   const si = Number(skillIndex)
-  const r = evaluate(op, { damageType, skillIndex: si, moduleSpec, moduleLevel })
+  const r = evaluate(op, { damageType, skillIndex: si, moduleSpec, moduleLevel, axis })
   // 结构化：泛用性六场景 / 回转身周期 / 生存分档 / 操作难度因素
   const v = extractVersatility(r.engine)
   const rot = extractRotation(op, si, r.engine)

@@ -252,8 +252,10 @@ export function extractTalentEnemyDebuff(op) {
  * @param {number} [opts.masteryLevel] - 技能等级下标（默认 9 = 专三）
  * @param {string} [opts.moduleSpec] - 模组启用规格（none/default/isw/X/模组名，默认 none 不启用）
  * @param {number} [opts.moduleLevel] - 模组等级（默认最高级 = 满配）
+ * @param {{deploys?:number, windowSec?:number}} [opts.axis] - **轴参数**（玩法层）：爆发型技能的实际部署次数与轴长。
+ *   不传则用补丁里的默认理想轴；轴长属玩法层参数，描述推导不出，需用户给定。
  */
-export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9, moduleSpec, moduleLevel } = {}) {
+export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9, moduleSpec, moduleLevel, axis } = {}) {
   // 模组先行：产出"修改后的干员对象"，让既有天赋/减益/特性提取器全部复用，避免语义分叉
   const mod = applyModule(op, resolveModule(op, moduleSpec), moduleLevel)
   const eop = mod.op
@@ -313,6 +315,10 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
         totalHits: override.burstPatch.totalHits,
         windowSec: override.burstPatch.windowSec ?? 10,
         label: override.burstPatch.label,
+        // 轴参数（玩法层，用户给定）优先于补丁里的默认理想轴
+        ...(axis?.deploys ? { deploys: axis.deploys } : {}),
+        ...(axis?.windowSec ? { windowSec: axis.windowSec } : {}),
+        axisFromUser: !!(axis?.deploys || axis?.windowSec),
       }
     : null
   const trap = !burst && isTrapDamageSkill

@@ -46,6 +46,13 @@ export interface EvaluationResult {
     panel: { atk: number; baseInterval: number; cost: number }
     talentList: string[]
     trait: string | null
+    burst?: {
+      perDeployHits: number; hitMult: number; deploys: number; windowSec: number
+      maxDeploysPerSkill: number; skillWindowSec: number; axisFromUser?: boolean
+    } | null
+    trap?: { mult: number; cdSec: number; cnt?: number } | null
+    element?: { type: string; perHitRatio: number } | null
+    nextAttack?: boolean
     moduleApplied: { entry: { name: string; type: string } | null; level: { level: number } | null; attr: Record<string, number>; warnings: string[] } | null
   }
 }
@@ -78,7 +85,7 @@ export const api = {
   },
   detail: (id: string) => req<Record<string, unknown>>(`/api/operators/${encodeURIComponent(id)}`),
   scenarios: () => req<{ scenarios: unknown[]; threats: unknown[]; baseline: unknown[] }>('/api/scenarios'),
-  evaluate: (p: { query: string; skillIndex?: number; moduleSpec?: string; moduleLevel?: number; damageType?: string }) =>
+  evaluate: (p: { query: string; skillIndex?: number; moduleSpec?: string; moduleLevel?: number; damageType?: string; axis?: { deploys?: number; windowSec?: number } }) =>
     post<EvaluationResult>('/api/evaluate', p),
   compare: (queries: string[], skillIndex = 2) => post<{ rows: CompareRow[] }>('/api/compare', { queries, skillIndex }),
   listCustom: () => req<{ id: number; name: string; data: Record<string, unknown>; updated_at: string }[]>('/api/custom'),

@@ -99,6 +99,9 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
   const [busy, setBusy] = useState(false)
   const [ai, setAi] = useState<{ ok: boolean; disabled?: boolean; error?: string; form?: string; confidence?: string; reasoning?: string; patches?: Record<string, unknown>; model?: string; ms?: number } | null>(null)
   const [aiBusy, setAiBusy] = useState(false)
+  // 轴参数（玩法层）：仅爆发型技能需要。留空 = 用补丁里的理想轴
+  const [axisD, setAxisD] = useState('')
+  const [axisW, setAxisW] = useState('')
 
   useEffect(() => { if (op) run() /* eslint-disable-next-line */ }, [op])
 
@@ -113,7 +116,10 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
     if (!op) return
     setBusy(true)
     try {
-      setData(await api.evaluate({ query: op.id, skillIndex: skill, moduleSpec: mod || undefined, damageType: dmg }))
+      setData(await api.evaluate({
+        query: op.id, skillIndex: skill, moduleSpec: mod || undefined, damageType: dmg,
+        axis: axisD || axisW ? { deploys: axisD ? Number(axisD) : undefined, windowSec: axisW ? Number(axisW) : undefined } : undefined,
+      }))
     } catch (e) { onError((e as Error).message); setData(null) } finally { setBusy(false) }
   }
   if (!op) return <section className="empty">请先在「干员浏览」里选择一名干员 <button onClick={onPick}>去选择</button></section>
@@ -150,6 +156,17 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
         <button onClick={askAi} disabled={aiBusy} title="把技能原文交给模型做长尾机制解析（需在「模型设置」配置 provider）">
           {aiBusy ? 'AI 解析中…' : 'AI 解析技能描述'}
         </button>
+        {r?.burst && (
+          <span className="axis">
+            轴参数：
+            <input style={{ width: 62 }} placeholder={`${r.burst.deploys}`} value={axisD} onChange={(e) => setAxisD(e.target.value)} title="轴内部署次数（留空=理想轴）" />
+            次部署 /
+            <input style={{ width: 62 }} placeholder={`${r.burst.windowSec}`} value={axisW} onChange={(e) => setAxisW(e.target.value)} title="轴长（秒）" />
+            秒
+            <button onClick={run}>按此轴重算</button>
+            {r.burst.axisFromUser && <em className="muted">（当前为用户给定轴）</em>}
+          </span>
+        )}
       </div>
 
       {ai && (
