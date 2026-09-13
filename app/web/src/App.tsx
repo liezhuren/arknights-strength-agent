@@ -131,6 +131,8 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
   const [dmg, setDmg] = useState('auto')
   const [busy, setBusy] = useState(false)
   const [ai, setAi] = useState<{ ok: boolean; disabled?: boolean; error?: string; form?: string; confidence?: string; reasoning?: string; patches?: Record<string, unknown>; model?: string; ms?: number } | null>(null)
+  // 口径说明（后端 splitSections 切出来的 notes）：默认收起，需要时展开
+  const [showNotes, setShowNotes] = useState(false)
   const [aiBusy, setAiBusy] = useState(false)
   // 轴参数（玩法层）：仅爆发型技能需要。留空 = 用补丁里的理想轴
   const [axisD, setAxisD] = useState('')
@@ -241,11 +243,23 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
           )}
           {r.moduleApplied?.warnings?.map((w, i) => <p key={i} className="warn">⚠ {w}</p>)}
           {data.charts && <ChartsView charts={data.charts} />}
+          {sections.some((s) => s.notes.length > 0) && (
+            <label className="notes-toggle">
+              <input type="checkbox" checked={showNotes} onChange={(e) => setShowNotes(e.target.checked)} />
+              显示口径说明（各栏的假设、数据来源与边界；默认收起）
+            </label>
+          )}
           <div className="sections">
             {sections.map((s) => (
               <div className="panel" key={s.title}>
                 <h3>{s.title}</h3>
                 <pre>{s.content.join('\n')}</pre>
+                {showNotes && s.notes.length > 0 && (
+                  <div className="notes">
+                    <span className="notes-tag">口径</span>
+                    <pre>{s.notes.join('\n').trim()}</pre>
+                  </div>
+                )}
               </div>
             ))}
           </div>

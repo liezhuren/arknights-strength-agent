@@ -45,6 +45,14 @@ details.ai-note > summary:hover { color: var(--fg); }
 .ai-note-body li { margin: 3px 0; }
 .ai-note-body b { color: var(--fg); }
 .ai-note-body code { color: var(--accent); }
+/* .notes-toggle = 口径说明的总开关（默认收起，不占视觉重量） */
+.notes-toggle { display: flex; align-items: center; gap: 6px; margin: 10px 0 2px; font-size: 12px; color: var(--muted); cursor: pointer; user-select: none; }
+.notes-toggle:hover { color: var(--fg); }
+.notes-toggle input { accent-color: var(--accent); cursor: pointer; }
+/* .notes = 展开后的口径说明块（与正文视觉区隔，标明是"假设与边界"而非结论） */
+.notes { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); display: flex; gap: 8px; align-items: flex-start; }
+.notes-tag { flex: none; font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; margin-top: 2px; }
+.notes pre { margin: 0; color: var(--muted); font-size: 12px; white-space: pre-wrap; }
 .axis-params { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 
 table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
