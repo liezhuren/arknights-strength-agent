@@ -80,7 +80,9 @@ node tools/survival-eval.mjs 泥岩         # 只看 ④ 生存栏（无技能�
 node tools/compare.mjs 银灰 史尔特尔       # 分场景对比
 node tools/dump-op.mjs 望                 # 读原文（解析机制前必做）
 node tools/evaluate-custom.mjs examples/custom-demo.json
-node engine/test.mjs                      # 63 断言回归
+node engine/test.mjs                      # 76 断言回归
+node tools/verify-summons.mjs             # 召唤物专项（33 断言：分类/数值/防双算/不渗入本体）
+node tools/build-summons.mjs              # 重建召唤物数据（含同时存在数/限时寿命抽取）
 node tools/smoke.mjs                      # 全量冒烟（1362 次，意外异常须 0）
 node tools/anchors.mjs                    # 生成锚点表（输出+生存+模组，改动数值逻辑后跑）
 node tools/crosscheck-prts-modules.mjs    # 模组数值 × PRTS 交叉校验（写 docs/module-prts-crosscheck.md）
@@ -100,7 +102,7 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 | 模块 | 状态 | 验证方式 |
 |---|---|---|
 | 数据层 | ✅ 454 干员（含 38 异格）/ 994 技能 / 2130 敌人 / 6 场景 / 391 有模组（21 特限） | 数据集 JSON 校验 |
-| 数值引擎 | ✅ 63/63 断言 | `node engine/test.mjs` |
+| 数值引擎 | ✅ 76/76 断言（63 输出/生存 + 13 召唤物） | `node engine/test.mjs` |
 | 输出栏 | ✅ 分场景 DPS / 覆盖率 / 费效 / 主力技能形态 | `node tools/anchors.mjs` 对照 |
 | 穿透 | ✅ 无视固定防御/无视%防御/无视固定法抗 | 艾拉 S2 无视800防 |
 | **天赋穿透（条件感知）** | ✅ 无条件型计入 / 叠层型按叠满 / 条件型仅标注（18 干员受影响） | 史尔特尔 无视22抗、早露 条件型未计入 |
@@ -111,6 +113,9 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 | **生存·离散受击模型** | ✅ 逐次受击 + 击间回血（连续模型会误报，见 §5 坑） | 水月对法术·高压 1 击即倒★新 |
 | 元素损伤 | ✅ 累积 + 爆发收益（PRTS 2.7.61 数值） | 酒神爆发 197.3、塑心 S1 666.7 |
 | 陷阱/棋子 | ✅ trap 通道（倍率×cnt/cd） | 望 S3 1492、多萝西 172.8 |
+| **召唤物通道** | ✅ `summon` 通道（独立输出线；伤害型 41 / 功能型 8 不计） | 凯尔希 Mon3tr 701.0、令弦惊 548.7、维什戴尔 777.0(上限2331)★新 |
+| **召唤物分类判据** | ✅ 三条判据（倍率键 / atk>100 / 人工核对例外）+ 治疗型排除 | 医疗探机不计 DPS、沙之碑/铁钳号计入★新 |
+| **通道互斥（防双算）** | ✅ 陷阱师产出归 `trap`，`summon` 通道硬排除 | 罗宾/霜华/多萝西/钼铅/望 只走 trap★新 |
 | 单次窗口爆发 | ✅ burst 通道（部署次数×每次枚数，分层口径） | 望 S3：每次部署 11191 / 单次技能 89528 / 轴 179056 |
 | 天赋计入 | ✅ atk 加法%/攻速/防御/生命（118 干员含攻击力天赋） | 报告显示天赋清单 |
 | **通用描述模式库（第一层）** | ✅ 额外目标/停止攻击/连击/同时攻击/充能/蓄力/对空/减速/闪避/自回/减伤 | 未打补丁的水月自动解析 3 目标 |
@@ -171,6 +176,14 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 
 ---
 
+### 4.7 召唤物层（`tools/summon.mjs` + `engine/summonDps`，2026 新增）
+- **独立输出线**：不并入 `skillDps`/`avgDps`，报告单列并写"不相加"
+- **分类三判据**（缺一会把最大的漏掉或把治疗无人机算成输出）：倍率键 >1 / atk>100 / 人工核对例外；再排除治疗型
+- **通道互斥**：陷阱师产出归 `trap`，`summon` 硬排除（`TRAP_CHANNEL_IDS`）—— 否则双算
+- **同时存在数默认 1**：`cnt`/「可以使用5个」是总数；令/麦哲伦/电弧的召唤物是"技能功能模式"，
+  同一时刻只有 1 种 → **不能乘 3**。只有直接点名该召唤物的「最多存在N个」才采信
+- **未建模**：召唤物自身技能（`skillIds` 已记录）→ 当前是"仅普攻"下限
+
 ## 5. 踩坑记录（最容易重复犯错，务必看）
 
 | 坑 | 教训 |
@@ -207,6 +220,15 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 | 爆发通道默认不吃 DEF/RES | `burstDeployDamage` 原为 `atk×段数×倍率` → 爆发干员跨场景恒定。已加 **可选** `mitigation:{def,res}`（**默认关闭以保锚点**：望 179056 不变），基准表/泛用性传入实际 DEF/RES |
 | **pnpm/npm 安装依赖失败（ECONNREFUSED）** | 根因是 ~/.npmrc 写死 proxy=http://127.0.0.1:7897 而该代理常不在线（node fetch 直连正常）。解法：临时把 ~/.npmrc 换成只含 registry 的内容 → pnpm install → 立刻还原；或用 app/web/.npmrc.local |
 | 用 PowerShell 改含中文的源码 | `Set-Content` 与内联 `node -e` 的引号转义都会破坏内容 → 一律用 write/edit 工具 |
+| **召唤物的 `cnt` 当同时存在数** | `cnt`/「可以使用5个」是**总数/携带上限**。令/麦哲伦/电弧写作「最多同时部署3个」，而它们的召唤物是**技能功能模式**（同一时刻只 1 种）→ 乘 3 会高估 3 倍 |
+| **陷阱师产出进 `summon` 通道** | 罗宾「夹子」/霜华「迎宾踏垫」/多萝西「共振装置」/钼铅/望 已归 `trap` 通道 → 再进 summon 就是**双算**（与"陷阱师 atk_scale 误当普攻倍率"同类） |
+| **只按 `atk_scale` 筛伤害型召唤物** | 倍率键是"有则一定是伤害"，但**没有不代表不是** —— Mon3tr/令/乌尔比安/维什戴尔都是纯普攻，会被漏掉 |
+| **占位装置判据写成 `atk=100 && interval=1`** | 会误杀真召唤物（沙之碑 5000 血/阻挡3、铁钳号 6000 血）→ 占位是 **`atk=100 且 间隔=1 且 生命=100`** |
+| **治疗型召唤物当输出** | 赫默医疗探机 atk125/0.5 是**治疗量**；巫恋诅咒娃娃是减攻减防图腾 → `kind: support` 单列，不计 DPS |
+| **用文本「持续N秒」当召唤物寿命** | 那是减益/护盾时长（夜烟 抗性-23% 持续1秒、罗比菈塔 护盾 25s）→ 只认黑匣子 `attack@tokenduration`，或语义层带原文引用的条目 |
+| **`attack@tokenduration` 读错层级** | 它在**干员天赋 `talents[].candidates[].blackboard`**，不在召唤物自身技能里（召唤物技能只有 `skcom_withdraw`）|
+| **采信 LLM 给的 token id** | 子代理**编造了 4 个 id**（打字机真实 `token_10026_bgsnow_subbow`，它写 `10014`）→ 关联一律按 `owner+name`/代号段**确定性**解析 |
+| **采信 LLM 的 `existence` 判定** | 它把麦哲伦无人机判成 `skillOnly` 却引用了**电弧的句子**；无人机实际"携带即有、不绑技能" → 引用与结论不对应的判定一律不采信 |
 
 **网络事实**：`curl` 的 schannel 在沙箱内不可用；**用 `node fetch` 抓 HTTPS 可以**（PRTS/GitHub 都通）。git 需带 `-c http.proxy= -c https.proxy= -c http.sslBackend=openssl`（本机 7897 代理常不在线）。
 
@@ -227,7 +249,7 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 
 ```bash
 # 1. 确认工程状态未坏
-node E:/github/arknights-strength-agent/engine/test.mjs        # 期望 PASS=63 FAIL=0
+node E:/github/arknights-strength-agent/engine/test.mjs        # 期望 PASS=76 FAIL=0
 # 2. 跑一个已知干员，确认报告四栏正常
 node E:/github/arknights-strength-agent/tools/evaluate.mjs 水月 auto 2
 # 3. 确认模组层正常（三配置对照）
@@ -236,6 +258,9 @@ node E:/github/arknights-strength-agent/tools/module-eval.mjs 水月
 # 4. 确认生存栏正常（含无技能干员路径）
 node E:/github/arknights-strength-agent/tools/survival-eval.mjs 泥岩   # 期望 每击 278 / 可挨 15 击
 node E:/github/arknights-strength-agent/tools/survival-eval.mjs 杜林   # 1★ 无技能也能评
+# 5. 确认召唤物通道正常（独立输出线，不与本体相加）
+node E:/github/arknights-strength-agent/tools/verify-summons.mjs       # 期望 PASS=33 FAIL=0
+node E:/github/arknights-strength-agent/tools/evaluate.mjs 凯尔希      # 期望出现「召唤物：Mon3tr … 701.0 DPS」
 # 5. 全量冒烟（可选，稍慢）
 node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异常 0
 # 6. 读三份文档补齐上下文（DELIVERY 讲"做成了什么/依据/验证"，HANDOFF 讲"怎么接着做"）
@@ -251,7 +276,7 @@ node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异
 
 ## 8. 未完成项
 
-### 已完成（1–11）
+### 已完成（1–12）
 1. ✅ 模组启用开关（`--module` + `tools/module-eval.mjs` 三配置对照）
 2. ✅ 模组数值补全（505 个 ADVANCED 模组；**PRTS 交叉校验 105/105 一致**）
 3. ✅ 生存维度 v1（承伤/自回/闪避/减伤/屏障/抵抗/免疫/团队生存）
@@ -263,16 +288,24 @@ node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异
 9. ✅ **AI 解析沉淀闭环**（`mechanism_parses` 表 + 缓存命中 + 导出 overrides 审核片段；**AI 只提议不入引擎**）
 10. ✅ **轴参数化**（`axis:{deploys,windowSec}`；默认仍为理想轴，锚点不变）
 11. ✅ 版本控制（GitHub: `liezhuren/arknights-strength-agent`）
+12. ✅ **召唤物通道（`summon`）** —— 独立输出线，见 `docs/dps-calculation.md` §17。
+    数据 `data/summons.json`（引擎可见 73：伤害型 41 / 功能型 8 / 装置 24）、接线 `tools/summon.mjs`、
+    引擎 `summonDps()`、验证 `tools/verify-summons.mjs`（**33 断言**）。
+    锚点：Mon3tr 701.0 · 令弦惊 548.7 · 打字机 541.3 · 魂灵之影 777.0（上限 2331）· 小自在 209.5 · 蓄水炮 243.8。
+    ⚠ 三条口径教训（**都造成过 2–3 倍误差**）：① `cnt`/「可以使用5个」是总数不是同时数
+    ② 令/麦哲伦/电弧的召唤物是"技能功能模式"，同一时刻只有 1 种，不能乘 3
+    ③ 陷阱师产出归 `trap` 通道，召唤物通道必须排除（否则双算）
 
 ### 仍然未做（诚实清单）
-12. **召唤物机制**（令/凯尔希/麦哲伦等）：独立通道**未建** —— 这类干员的召唤物输出目前完全没算，是最大的剩余缺口。
-    ⚠ **侦察已完成，见 `docs/summon-recon.md`**（召唤物名录 74 条的位置与分类、主要战斗召唤物面板、
-    引擎通道设计、验证清单、待解决项：**干员↔召唤物关联**尚未打通）。**接续实现请先读该文档。**
-13. **模组条件型特性折算**：对空/距离类（阻挡类已按"持续阻挡假设"计入）
-14. **模组 `※` 叠加备注**：PRTS 有（如"多个伏击客X模组之间减速可叠加"），未采集、未建模
-15. **模式库扩容**：蓄力的强化数值取法、优先攻击的索敌影响、"对空"对场景的意义
-16. **生存多敌人集火模型**：当前按单敌人给数，集火按线性放大需人工判断
-17. **基础特性的范围/索敌规则**：`character_table` 只给文本+数值，范围几何未建模（技能 `rangeId` 也未入库）
+13. **召唤物自身的技能**：`skillIds` 已记录、未建模 —— 已知会显著改伤害的有弦惊「宁作吾」攻速+25%、
+    逍遥「笑鸣瑟」4.5 倍、打字机「锐笔速写」2.55 倍、机械水獭「爆破回收」6 倍 →
+    **当前召唤物数值是"仅普攻"的下限**，报告已标注。
+14. **召唤物自身生存**未进 ④ 生存栏（Mon3tr 生命 5433/阻挡3 不算进本体承伤）
+15. **模组条件型特性折算**：对空/距离类（阻挡类已按"持续阻挡假设"计入）
+16. **模组 `※` 叠加备注**：PRTS 有（如"多个伏击客X模组之间减速可叠加"），未采集、未建模
+17. **模式库扩容**：蓄力的强化数值取法、优先攻击的索敌影响、"对空"对场景的意义
+18. **生存多敌人集火模型**：当前按单敌人给数，集火按线性放大需人工判断
+19. **基础特性的范围/索敌规则**：`character_table` 只给文本+数值，范围几何未建模（技能 `rangeId` 也未入库）
 
 ### 已知口径限制（设计边界，非缺陷）
 - **敌人伤害类型不在游戏数据层**（由 prefab 决定）→ 来袭画像的伤害类型按"名字可确定判定"的锚点敌人设定
@@ -327,5 +360,13 @@ node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异
 | **泛用性·能天使** | 通用型：稳健线 6/6 但**波动比 0.07 · 护甲衰减 95%**（高甲短板） |
 | **泛用性·艾雅法拉 / 望** | 通用型：RES 0→90 衰减 90%（对法抗极敏感） |
 | **场景基准表 p50** | 清杂 411 / 中甲中抗 224 / 高甲 73 / 高抗 263 / Boss 120 / 极高抗 328 |
-| 引擎自测 | PASS=63 FAIL=0 |
+| **召唤物·凯尔希 Mon3tr** | 单体 **701.0**（1402/2.0） · 基准口径 vs400防 501.0（**独立于本体，不相加**） |
+| **召唤物·令** | 3 种形态取最强「弦惊」**548.7**（823/1.5） · 本体技能期 30.0（本体不攻击，输出全在召唤物） |
+| **召唤物·鸿雪「打字机」** | **541.3**（866/1.6） · 限时 25s（文本声明） |
+| **召唤物·维什戴尔「魂灵之影」** | 基准 1 个 **777.0** · 「最多存在3个」→ 上限 2331（**唯一有多副本证据的**） |
+| **召唤物·夕「小自在」** | **209.5**（398/1.9） · 限时 25s（黑匣子 `attack@tokenduration`） |
+| **召唤物·温蒂 工程蓄水炮** | **243.8**（585/2.4） · 限时 20s |
+| **通道互斥** | 罗宾/霜华/多萝西/钼铅/望 **不在** summon 通道（归 trap/burst） |
+| 引擎自测 | PASS=76 FAIL=0 |
+| 召唤物专项 | `node tools/verify-summons.mjs` → PASS=33 FAIL=0 |
 | 全量冒烟 | `node tools/smoke.mjs` → 意外异常 0 |

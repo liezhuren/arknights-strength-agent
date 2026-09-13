@@ -19,6 +19,7 @@ import {
   burstDeployDamage,
   burstTotalDamage,
   burstDps,
+  summonDps,
 } from '../engine/dps-engine.mjs'
 import { SKILL_OVERRIDES, MODULE_OVERRIDES } from './overrides.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
@@ -29,6 +30,7 @@ import { formatSurvivalSection } from './survival.mjs'
 import { formatRotationSection } from './rotation.mjs'
 import { formatVersatilitySection } from './versatility.mjs'
 import { formatDifficultySection } from './difficulty.mjs'
+import { summonFor, formatSummonSection } from './summon.mjs'
 
 const DATA = JSON.parse(
   fs.readFileSync(path.resolve(import.meta.dirname, '../data/operators.json'), 'utf8'),
@@ -330,6 +332,8 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
         ...(override?.trapPatch ?? {}),
       }
     : null
+  // 召唤物通道：独立输出线（不与本体 DPS 相加）。只有伤害型召唤物计入，其余在报告中标注。
+  const summon = summonFor(eop.name)
   const eng = makeOperator({
     name: `${eop.name}·${lv.name ?? skillRef.id}`,
     rarity: RARITY_NUM[eop.rarity] ?? 5,
@@ -348,6 +352,7 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
     targetCount: 1,
     burst,
     trap,
+    summon,
     penetrate: (() => {
       // 三个来源相加：技能 blackboard、模组特性（如艾雅法拉 X 无视10法抗）、天赋（如史尔特尔 无视22法抗）
       const src = [extractPenetrate(bb), extractPenetrate(mod.traitBlackboard), talentPen]
@@ -455,6 +460,13 @@ export function evaluateEngine(eng, meta = {}) {
     burstDps: eng.burst ? burstDps(eng, { scope: 'axis' }) : 0,
     burstSkillTotal: eng.burst ? burstTotalDamage(eng, { scope: 'skill' }) : 0,
     burstSkillDps: eng.burst ? burstDps(eng, { scope: 'skill' }) : 0,
+    // 召唤物：独立输出线（不并入上面的 skillDps/avgDps，报告单列）
+    // 基准与本体一致：物理 vs 400防 / 法术 vs 50抗（召唤物伤害类型默认跟随召唤师）
+    summon: meta.summon ?? eng.summon ?? null,
+    summonDps: (meta.summon ?? eng.summon) ? summonDps(eng) : 0,
+    summonDpsBench: (meta.summon ?? eng.summon)
+      ? summonDps(eng, { mitigation: physical ? { def: 400, res: 0 } : { def: 0, res: 50 } })
+      : 0,
     talentBonuses: meta.talentBonuses ?? null,
     talentList: meta.talentList ?? [],
     trait: meta.trait ?? null,
@@ -590,6 +602,13 @@ export function formatReport(r) {
     const bonus = r.trap.multBonusPct ? `，联动+${Math.round(r.trap.multBonusPct * 100)}%` : ''
     const pen = r.trap.resPenetrate ? `，无视${r.trap.resPenetrate}法抗` : ''
     lines.push(`陷阱/棋子：触发 DPS ${r.trapDps.toFixed(1)}（每次×${r.trap.mult}${bonus}${pen}，每 ${r.trap.cdSec}s 产 ${r.trap.cnt ?? 1} 个假设全触发；本体普攻另算，真实触发随敌人走位波动）`)
+  }
+  if (r.summon) {
+    for (const l of formatSummonSection(r)) lines.push(l)
+    if (r.summonDpsBench) {
+      const bk = r.damageType === 'physical' ? 'vs400防' : 'vs50抗'
+      lines.push(`        基准口径（${bk}）：召唤物 ${r.summonDpsBench.toFixed(1)} DPS —— **独立于上方本体数值，不相加**`)
+    }
   }
   const b = r.benchmark
   if (r.nextAttack) {

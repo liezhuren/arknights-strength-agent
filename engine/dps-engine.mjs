@@ -70,6 +70,7 @@ export function makeOperator(o) {
     element: o.element ?? null, // 元素损伤：{ type, perHitRatio, isDot }（每击或每秒附带 ATK×ratio 的累积量）
     trap: o.trap ?? null, // 陷阱/棋子：{ mult, cdSec, cnt, targets }（触发伤害倍率/产陷阱CD秒/每轮产数/每次触发目标数假设）
     burst: o.burst ?? null, // 单次窗口爆发技能：{ totalHits, hitMult, windowSec, label }（总段数×每段倍率，窗口秒）
+    summon: o.summon ?? null, // 召唤物：{ units:[{name,atk,interval,hits,mult,damageType?}], concurrency, coverage, note }
     penetrate: o.penetrate ?? null, // 破甲：{ defFixed, defPct, resFixed }（无视固定防御/无视防御百分比/无视固定法抗）
     enemyDebuff: o.enemyDebuff ?? null, // 对敌减益（自身受益）：{ defPct, defFlat, resFlat }（减防%/减防点数/减抗点数）
     talents: o.talents ?? [],
@@ -364,3 +365,69 @@ export function burstDps(op, { windowSec, scope = 'axis', mitigation = null } = 
   const win = Math.max(windowSec ?? fallback ?? 10, 0.1)
   return burstTotalDamage(op, { scope, mitigation }) / win
 }
+
+// ---------- 召唤物（summon：独立输出线，不与本体 DPS 相加）----------
+
+/**
+ * 召唤物单体 DPS = ATK × 段数 × 倍率 ÷ 间隔（可含减伤）。
+ * @param {object} unit - { atk, interval, hits?, mult?, damageType? }
+ * @param {string} defaultType - 单位未声明 damageType 时用召唤师的伤害类型（召唤物与本体同源）
+ * @param {object} op - 提供穿透（本体穿透对召唤物同样生效）
+ * @param {object|null} mitigation - { def, res }
+ */
+function summonUnitDps(unit, defaultType, op, mitigation) {
+  const interval = Math.max(unit.interval ?? 1.5, 0.01)
+  const perHitRaw = (unit.atk ?? 0) * (unit.hits ?? 1) * (unit.mult ?? 1)
+  if (perHitRaw <= 0) return 0
+  if (!mitigation) return perHitRaw / interval
+  // 减伤在"每击伤害"上做（与 hitDamage 同口径：含 5% 下限），再除以间隔 —— 不要在 DPS 上减防
+  const type = unit.damageType ?? defaultType
+  let perHit = perHitRaw
+  if (type === 'magical') {
+    const effRes = Math.max((mitigation.res ?? 0) - (op.penetrate?.resFixed ?? 0), 0)
+    perHit = Math.max(Math.floor(perHitRaw * (1 - effRes / 100)), Math.floor(perHitRaw * 0.05))
+  } else if (type !== 'true') {
+    const effDef = Math.max((mitigation.def ?? 0) * (1 - (op.penetrate?.defPct ?? 0)) - (op.penetrate?.defFixed ?? 0), 0)
+    perHit = Math.max(Math.floor(perHitRaw - effDef), Math.floor(perHitRaw * 0.05))
+  }
+  return perHit / interval
+}
+
+/**
+ * 召唤物合计 DPS（一条独立输出线）。
+ *
+ * 口径要点（重要，防止误用）：
+ * 1. **与本体分开报**，不并入 `skillDps`/`avgDps` —— 召唤物的攻击是另一条输出线。
+ * 2. **与主力技能互斥/并列关系由调用方判断**：召唤师（令/麦哲伦）同一时刻只有一种召唤物在场，
+ *    其本体技能期常为 `noAttack` → 合计 = Σ(召唤物 × 同时存在数)，而不是"本体 + 召唤物"。
+ * 3. 同名单位只取 `concurrency` 个（按单位 DPS 降序取前 N），对应"最多同时部署 N 个"。
+ * 4. 不套用本体技能倍率（`skill.attackMult`）—— 召唤物用自己的面板与自己的技能。
+ * 5. `coverage` 处理限时召唤物（如夕"小自在"持续 25s）的在场占比；默认 1。
+ * 6. 召唤物**自身的技能尚未建模**（如弦惊"宁作吾"攻速+25%、逍遥"笑鸣瑟"4.5 倍、
+ *    打字机"锐笔速写"2.55 倍）→ 本函数给出的是**普攻下限**，报告须标注。
+ *
+ * @param {object} op - makeOperator 产物（需 summon 字段）
+ * @param {object} [opts]
+ * @param {object|null} [opts.mitigation] - { def, res } 敌人减伤（不传 = 不吃防御，与 burst 一致）
+ * @returns {number}
+ */
+export function summonDps(op, { mitigation = null } = {}) {
+  const s = op.summon
+  if (!s || !Array.isArray(s.units) || s.units.length === 0) return 0
+  const concurrency = Math.max(s.concurrency ?? 1, 1)
+  const coverage = Math.min(Math.max(s.coverage ?? 1, 0), 1)
+  const perUnit = s.units
+    .map((u) => summonUnitDps(u, op.damageType, op, mitigation))
+    .sort((a, b) => b - a)
+  const total = perUnit.slice(0, concurrency).reduce((a, b) => a + b, 0)
+  return total * coverage
+}
+
+/**
+ * 召唤物在技能期的 DPS（限时/技能绑定召唤物用；口径同 summonDps，仅按 coverage 折算）。
+ * 名字保持与 burst/skill 侧一致，便于报告统一呈现。
+ */
+export function summonSkillDps(op, { mitigation = null } = {}) {
+  return summonDps(op, { mitigation })
+}
+

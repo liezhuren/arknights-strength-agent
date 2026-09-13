@@ -2,7 +2,7 @@
 
 > **用途**：项目交付与总结用。要"续做"请看 [HANDOFF.md](./HANDOFF.md)（含恢复步骤与踩坑）；
 > 本文讲**做成了什么、依据是什么、怎么验证的、还差什么**。
-> **最后更新**：召唤物数据管线落地时。
+> **最后更新**：召唤物（`summon`）通道建成时。
 
 ---
 
@@ -63,12 +63,14 @@ E:\github\arknights-strength-agent\
 │   ├── branch-traits.mjs       状态型分支（阵法术师/解放者 两态）
 │   ├── extra-metrics.mjs       ②团队增益栏 + ③控制栏
 │   ├── patterns.mjs            第一层：通用描述模式库
-│   ├── overrides.mjs           第二层：LLM 解析补丁（含召唤物兜底位）
+│   ├── overrides.mjs           第二层：LLM 解析补丁（召唤物兜底位保留）
 │   ├── build-dataset.mjs       数据管线 → data/operators.json
 │   ├── build-modules.mjs       模组数值 → data/modules.json
 │   ├── build-threat-scenarios.mjs  来袭画像 → data/threat-scenarios.json
 │   ├── build-scenario-baseline.mjs 场景基准线 → data/scenario-baseline.json
-│   ├── build-summons.mjs       召唤物 → data/summons.json
+│   ├── build-summons.mjs       召唤物 → data/summons.json（含分类判据/同时存在数/限时寿命）
+│   ├── summon.mjs              召唤物接线层（data → 引擎 `summon` 字段 + 报告行）
+│   ├── verify-summons.mjs      召唤物专项验证（33 断言，含"通道不双算"）
 │   ├── module-eval.mjs         模组三配置对照（无/默认/特限）
 │   ├── survival-eval.mjs       ④ 生存栏独立入口（**不依赖技能**，1★ 也能评）
 │   ├── evaluate-custom.mjs     自创干员评测（schema 校验）
@@ -79,7 +81,7 @@ E:\github\arknights-strength-agent\
 ├── data\                       数据集（**入库**）
 │   ├── operators.json          454 干员 / 994 技能 / 649 天赋（含分支特性与模组元数据，9.6 MB）
 │   ├── modules.json            898 模组（**505 个含战斗数值**，1.4 MB）
-│   ├── summons.json            74 召唤物（50 输出型 / 14 功能型 / 10 装置，23 KB）
+│   ├── summons.json            74 召唤物（引擎可见 73：**伤害型 41 / 功能型 8** / 装置 24，29 KB）
 │   ├── scenarios.json          6 标准场景
 │   ├── threat-scenarios.json   5 档来袭画像（锚点为真实敌人）
 │   ├── scenario-baseline.json  全库 433 干员 × 6 场景可用线
@@ -129,7 +131,7 @@ E:\github\arknights-strength-agent\
 | 稳态持续 | 覆盖率模型（周期 = 充能 + 持续） |
 | 单次窗口爆发 | `burst`（部署次数 × 每次枚数，分层口径） |
 | 陷阱/棋子触发 | `trap`（倍率 × 产出数 / CD） |
-| **召唤物** | `summon` ⏳ 数据已备，通道待建 |
+| **召唤物** | `summon` ✅ **已建成**（独立输出线，41 个伤害型召唤物；与 `trap` 互斥以防双算） |
 | 元素累积 | `element`（累积速率 + 爆发收益） |
 | 下次攻击强化 | `nextAttack`（每 N 次攻击 1 次强化） |
 | 技能期停止攻击 | `noAttack`（技能期普攻不计） |
@@ -188,11 +190,12 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 
 | 套件 | 命令 | 断言数 | 验证什么 |
 |---|---|---|---|
-| 引擎 | `node engine/test.mjs` | **63** | 伤害公式/攻速/SP/覆盖率/强化攻击/元素/陷阱/爆发/穿透/减益/生存/召唤物 |
+| 引擎 | `node engine/test.mjs` | **76** | 伤害公式/攻速/SP/覆盖率/强化攻击/元素/陷阱/爆发/穿透/减益/生存/**召唤物（13 条）** |
 | 数据库 | `node app/db/verify.mjs` | **16** | 检索/详情/场景/自制干员/历史 + **DB 还原对象进评测管线数值=锚点** |
 | API | `node app/server/verify.mjs` | **30** | 全部接口 + **经 API 的数值=锚点** + 轴参数等比缩放 + 图表值与文本一致 |
 | 模型接入 | `node app/server/verify-llm.mjs` | **18** | 用**本地 mock provider** 验协议（URL/鉴权头/请求体/system 提示）+ 降级路径 + 沉淀与缓存 |
 | 全量冒烟 | `node tools/smoke.mjs` | 1362 次调用 | 454 干员 × {无模组/默认/特限}，**意外异常必须为 0** |
+| **召唤物专项** | `node tools/verify-summons.mjs` | **33** | 分类判据 / 数值手工验算 / **通道不双算** / 不渗入本体 DPS |
 
 **另有**：
 - `node tools/anchors.mjs` —— 生成锚点表（输出+生存+模组三配置），改数值逻辑后必跑
@@ -224,6 +227,8 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 | 回转 | 能天使首轮 **10s** / 银灰 15s / 水月 30s / 史尔特尔 永续 |
 | PRTS 模组对账 | **105/105 一致**，0 不一致 |
 | 召唤物关联 | 代号段匹配 **73/74**（唯一未关联为地图装置） |
+| **召唤物 DPS** | Mon3tr **701.0** · 令弦惊 **548.7** · 打字机 541.3 · 魂灵之影 777.0（「最多存在3个」→ 上限 2331）· 小自在 209.5 · 蓄水炮 243.8（**独立输出线，不与本体相加**）|
+| **通道互斥** | 罗宾/霜华/多萝西/钼铅/望 **不在** summon 通道（归 trap/burst，防双算） |
 
 ---
 
@@ -237,6 +242,9 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 | 召唤物关联 | 以为需要 LLM 兜底 | **代号段匹配确定性解决**（`char_003_kalts` ↔ `token_10002_kalts_mon3tr`），73/74 | 实测 |
 | `deepseek-flash` 视觉能力 | 我据 HTTP 状态码判断"**不支持**图片" | **支持**（官方文档 + 真实图片测试双重确认）；我那张 1×1 PNG 是坏样本 | 用户提供官方文档 + 真图复测 |
 | 变更 CSS 类名 | —— | `.bar` 同时用作"筛选行容器"与"图表横条"→ 筛选行被套蓝色背景且延伸满屏 | 用户截图指出 |
+| **召唤物的"同时存在数"** | 打算用天赋 `cnt`/「可以使用5个」作倍数 | **不能**：那是总数；且令/麦哲伦/电弧的召唤物是"技能功能模式"，同时只有 1 种 → 默认取 1，只采信**直接点名该召唤物**的「最多存在N个」 | 维什戴尔 S3「召唤2个魂灵之影（最多存在3个）」是唯一一条真·多副本 |
+| **`atk_scale` 能否筛伤害型召唤物** | 以为"没有倍率键 = 不打人" | **不能**：Mon3tr/令/乌尔比安/维什戴尔都是纯普攻无倍率键 → 改为三条判据并列 | 实测 41 条伤害型 |
+| **AI 给的 token id 与语义判定** | 打算直接采信子代理产出 | **只采信带原文引用且可核的事实**：它编造了 4 个 id（打字机真实 `token_10026_bgsnow_subbow`），还把麦哲伦无人机误判为 `skillOnly` 却引用电弧的句子 | 复核后改为按 `owner+name` 关联 |
 
 ---
 
@@ -270,13 +278,14 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 
 | # | 项 | 状态 |
 |---|---|---|
-| 1 | **召唤物通道** | ⏳ **数据已就绪**（`data/summons.json`：50 输出型/14 功能型/10 装置），**引擎通道与报告行未建** —— 输出型召唤物的伤害目前仍未计入 |
-| 2 | 模组条件型特性折算 | 对空/距离类只标注不计入（阻挡类已按"持续阻挡假设"计入）|
-| 3 | 模组 `※` 叠加备注 | PRTS 有（如"多个伏击客X模组间减速可叠加"），未采集 |
-| 4 | 模式库扩容 | 蓄力强化数值取法、优先攻击索敌、"对空"对场景的意义 |
-| 5 | 生存多敌人集火模型 | 现按单敌人给数，集火靠人工判断 |
-| 6 | 基础特性的范围/索敌几何 | 技能 `rangeId` 未入库，范围形状未建模 |
-| 7 | 召唤物自身技能 | `summons.json` 已记录 `skillIds`，但未建模 |
+| 1 | **召唤物通道** | ✅ **已完成**（`summon` 通道 + `tools/verify-summons.mjs` 33 断言；Mon3tr 701.0 / 令弦惊 548.7 / 维什戴尔 777.0） |
+| 2 | **召唤物自身技能** | ⏳ `skillIds` 已记录未建模 → 当前召唤物数值是"仅普攻"**下限**（弦惊攻速+25%、逍遥4.5倍、打字机2.55倍…）|
+| 3 | 召唤物自身生存 | ⏳ 未进 ④ 生存栏（Mon3tr 5433 血/阻挡3 不算进本体承伤）|
+| 4 | 模组条件型特性折算 | 对空/距离类只标注不计入（阻挡类已按"持续阻挡假设"计入）|
+| 5 | 模组 `※` 叠加备注 | PRTS 有（如"多个伏击客X模组间减速可叠加"），未采集 |
+| 6 | 模式库扩容 | 蓄力强化数值取法、优先攻击索敌、"对空"对场景的意义 |
+| 7 | 生存多敌人集火模型 | 现按单敌人给数，集火靠人工判断 |
+| 8 | 基础特性的范围/索敌几何 | 技能 `rangeId` 未入库，范围形状未建模 |
 
 ### 已知口径限制（设计边界，非缺陷）
 - 结论是**量级评判**，不追求复现理论极限轴；轴级参数需用户给（已支持）
@@ -311,7 +320,7 @@ node tools/build-scenario-baseline.mjs  # → data/scenario-baseline.json
 node app/db/build-db.mjs                # → app/db/arknights.db
 
 # 验证（应全绿）
-node engine/test.mjs                    # PASS=63 FAIL=0
+node engine/test.mjs                    # PASS=76 FAIL=0
 node app/db/verify.mjs                  # PASS=16 FAIL=0
 node app/server/index.mjs --port 8787 & # 起服务
 node app/server/verify.mjs              # PASS=30 FAIL=0
@@ -327,7 +336,7 @@ cd app/web && pnpm install && pnpm build && cd ../..
 
 ## 12. 后续建议（按性价比排序）
 
-1. **召唤物通道**（数据已就绪，工作量最小、收益最大 —— 50 个输出型召唤物目前完全没算）
+1. **召唤物自身技能建模**（`skillIds` 已在数据里 —— 这是当前最大的精度缺口，会让召唤物数值从"下限"变准）
 2. 模组条件型特性折算（对空/距离）→ 模组数值利用率提升
 3. 生存集火模型（多敌人压力）
 4. 召唤物自身技能建模（`skillIds` 已在数据里）

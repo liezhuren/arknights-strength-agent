@@ -20,6 +20,7 @@ import {
   burstTotalDamage,
   burstDps,
   burstDeployDamage,
+  summonDps,
 } from './dps-engine.mjs'
 import { incomingHit, incomingDps, dodgeMultiplier, surviveSim, survival } from './survival.mjs'
 
@@ -296,6 +297,70 @@ assert('泥岩对杂兵站得住', sv2.sustained === true)
 // 泥岩技能期防御 1084 → 对 1000/2.6s 精英每击 50（原 398）
 const sv3 = survival({ atk: 1000, interval: 2.6, damageType: 'physical' }, { maxHp: 3928, def: 1084 })
 assert('泥岩技能期对精英每击 50', sv3.perHit === 50)
+
+// ---- 召唤物（summon：独立输出线，不与本体 DPS 相加）----
+// Mon3tr：atk1402 / 间隔2.0，单独 DPS = 701
+const mon3tr = makeOperator({
+  name: '测试·Mon3tr',
+  damageType: 'physical',
+  atk: 1402,
+  baseInterval: 2,
+  cost: 10,
+  summon: { units: [{ name: 'Mon3tr', atk: 1402, interval: 2 }], concurrency: 1 },
+  skill: { spType: 'auto', spCost: 30, duration: 25, attackMult: 1 },
+})
+assert('召唤物·Mon3tr = 1402/2.0 = 701', Math.abs(summonDps(mon3tr) - 701) < 1e-9)
+assert('召唤物·不吃本体技能倍率', Math.abs(summonDps({ ...mon3tr, skill: { ...mon3tr.skill, attackMult: 9 } }) - 701) < 1e-9)
+
+// 令·弦惊：atk823 / 间隔1.5 = 548.67
+const ling = makeOperator({
+  name: '测试·弦惊',
+  damageType: 'magical',
+  atk: 549,
+  baseInterval: 1.6,
+  summon: { units: [{ name: '弦惊', atk: 823, interval: 1.5 }], concurrency: 1 },
+})
+assert('召唤物·弦惊 = 823/1.5 ≈ 548.7', Math.abs(summonDps(ling) - 823 / 1.5) < 1e-9)
+
+// 多单位求和 + 上限截断：清平549/1.25=439.2、逍遥406/1.6=253.75、弦惊548.7
+const lingAll = makeOperator({
+  name: '测试·令三态',
+  damageType: 'magical',
+  summon: {
+    units: [
+      { name: '清平', atk: 549, interval: 1.25 },
+      { name: '逍遥', atk: 406, interval: 1.6 },
+      { name: '弦惊', atk: 823, interval: 1.5 },
+    ],
+    concurrency: 3,
+  },
+})
+assert('召唤物·多单位求和', Math.abs(summonDps(lingAll) - (549 / 1.25 + 406 / 1.6 + 823 / 1.5)) < 1e-9)
+// 同时存在数 = 1 时只取最高的一个（弦惊），而不是三者相加
+const lingOne = makeOperator({ ...lingAll, summon: { ...lingAll.summon, concurrency: 1 } })
+assert('召唤物·上限截断取最高单位', Math.abs(summonDps(lingOne) - 823 / 1.5) < 1e-9)
+// 同时存在数超过单位数不报错
+assert('召唤物·同时数超单位数不放大', Math.abs(summonDps({ ...lingAll, summon: { ...lingAll.summon, concurrency: 9 } }) - (549 / 1.25 + 406 / 1.6 + 823 / 1.5)) < 1e-9)
+
+// 无伤害召唤物（治疗/装置）atk 为 0 → 0，不能污染 DPS
+assert('召唤物·无伤害单位 = 0', summonDps(makeOperator({ summon: { units: [{ name: '医疗探机', atk: 0, interval: 0.5 }] } })) === 0)
+assert('召唤物·无 summon 字段 = 0', summonDps(makeOperator({ atk: 500 })) === 0)
+assert('召唤物·空 units = 0', summonDps(makeOperator({ summon: { units: [] } })) === 0)
+
+// 限时召唤物覆盖率（夕"小自在"持续 25s）
+const dusk = makeOperator({ summon: { units: [{ atk: 398, interval: 1.9 }], concurrency: 1, coverage: 1 } })
+assert('召唤物·限时按覆盖率折算', Math.abs(summonDps({ ...dusk, summon: { ...dusk.summon, coverage: 0.5 } }) - (398 / 1.9) * 0.5) < 1e-9)
+
+// 减伤：Mon3tr 对 400 防 → 每击 (1402−400)=1002，再 ÷2.0 = 501（减伤在每击上做）
+assert('召唤物·物理减伤 (1402−400)/2 = 501', Math.abs(summonDps(mon3tr, { mitigation: { def: 400, res: 0 } }) - 501) < 1e-9)
+// 法术召唤物对 50 法抗：(823×(1−0.5))/1.5
+assert('召唤物·法术减伤按法抗', Math.abs(summonDps(ling, { mitigation: { def: 0, res: 50 } }) - Math.floor(823 * 0.5) / 1.5) < 1e-9)
+// 单位自带伤害类型优先（麦哲伦 龙腾.L 是法术无人机，本体是物理狙击）
+const mgllan = makeOperator({
+  damageType: 'physical',
+  summon: { units: [{ name: '龙腾.L', atk: 509, interval: 1, damageType: 'magical' }], concurrency: 1 },
+})
+assert('召唤物·单位自带伤害类型优先', Math.abs(summonDps(mgllan, { mitigation: { def: 9999, res: 0 } }) - 509) < 1e-9)
 
 // ---- 输出画像 ----
 console.log('\n===== 法术歼灭 输出画像（平均DPS，物理行看DEF / 法术列看RES） =====')

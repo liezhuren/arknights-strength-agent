@@ -110,3 +110,26 @@ for (const name of ['水月', '能天使', '艾雅法拉', '史尔特尔']) {
   }
   console.log(`| ${name} | ${cells.join(' | ')} |`)
 }
+
+// 召唤物锚点（§17 通道：独立输出线，不与本体相加）
+console.log('\n## 召唤物锚点（独立输出线，不与本体 DPS 相加）\n')
+console.log('| 干员 | 召唤物 | 期望值 |')
+console.log('|---|---|---|')
+for (const name of ['凯尔希', '令', '鸿雪', '维什戴尔', '夕', '温蒂']) {
+  const op = findOperator(name)
+  if (!op) { console.log(`| ${name} | 数据集缺失 | — |`); continue }
+  const r = evaluate(op, { damageType: 'auto', skillIndex: 2 })
+  if (!r.summon) { console.log(`| ${name} | 无召唤物通道 | — |`); continue }
+  const m = r.summon.meta
+  const per = r.summon.units[0]
+  const bits = [
+    `${m.mode} atk${per.atk}/${per.interval}s`,
+    `单体 ${(per.atk / per.interval).toFixed(1)}`,
+    `基准 1 个 → ${r.summonDps.toFixed(1)}`,
+    `基准口径 ${r.summonDpsBench.toFixed(1)}`,
+  ]
+  if (m.maxCopies > 1) bits.push(`最多存在 ${m.maxCopies} 个 → 上限 ${(r.summonDps * m.maxCopies).toFixed(0)}`)
+  if (m.durationSec) bits.push(`限时 ${m.durationSec}s`)
+  if (m.modeCount > 1) bits.push(`${m.modeCount} 种形态取最强`)
+  console.log(`| ${name} | ${m.mode} | ${bits.join(' / ')} |`)
+}
