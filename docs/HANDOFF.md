@@ -258,6 +258,10 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 | **`attack@tokenduration` 读错层级** | 它在**干员天赋 `talents[].candidates[].blackboard`**，不在召唤物自身技能里（召唤物技能只有 `skcom_withdraw`）|
 | **采信 LLM 给的 token id** | 子代理**编造了 4 个 id**（打字机真实 `token_10026_bgsnow_subbow`，它写 `10014`）→ 关联一律按 `owner+name`/代号段**确定性**解析 |
 | **采信 LLM 的 `existence` 判定** | 它把麦哲伦无人机判成 `skillOnly` 却引用了**电弧的句子**；无人机实际"携带即有、不绑技能" → 引用与结论不对应的判定一律不采信 |
+| **条件型减伤当无条件** | 泥岩「受到来自【萨卡兹】敌人的伤害降低30%」、止颂「阻挡时…降低35%」被当成对所有敌人生效 → 承伤偏低、生存偏高（泥岩每击 278 应为 **398**，可挨 15 击应为 **10 击**）。与"条件型穿透只标注"同一类错误 |
+| **六套验证全都没覆盖减伤** | 这个 bug 逃过了引擎/DB/API/LLM/召唤物/条件型/射程**全部**套件 → 新增 `tools/verify-survival.mjs`（17 断言）补上生存栏覆盖 |
+| **元素损伤数值出处标错** | 标为"PRTS"，实际就在**游戏数据仓库**的 `gamedata_const.json` → `termDescriptionDict`（描述文本形式，`ba.dt.*2` = "·我方"版）→ 已改为 `tools/build-element.mjs` 解析落库并加一致性断言 |
+| **"数值来自游戏客户端"这类说法太满** | Kengxxiao/ArknightsGameData 是**第三方维护的提取仓库**，不是官方源；且"每一项都能追到出处"会把**我自己拍的场景假设**（受击频率 0.5/秒、陷阱全触发、冷却≈持续）一起罩进去 → README 已改为明确区分"数据来源"与"我的假设" |
 | **把召唤物技能的 `atk_scale` 当普攻倍率** | 那是**一次性入场/触发伤害**（梅尔「爆破回收」6×、傀影「夜幕突袭」3×、W 2.8×）→ 套上去会把持续 DPS 算成 6 倍。第一版判据"有倍率键即建模"一次命中 19 条，**其中 16 条是错的** |
 | **叠层判定排在关键词排除之后** | 傀影「血色乐章」描述含"部署后立即"→ 被一次性入场规则误杀。叠层"每击消耗一层"是**最强的普攻强化证据**，必须最先判 |
 | **召唤物 `attack_speed=60` 当成 60 秒** | `attack_speed` 是**百分比**（+60% → 间隔 ÷1.6）；`base_attack_time` 才是秒差 |
@@ -301,7 +305,7 @@ node E:/github/arknights-strength-agent/tools/evaluate.mjs 水月 auto 2
 node E:/github/arknights-strength-agent/tools/module-eval.mjs 水月
 #    期望：902.6 → 1032.0(AMB-X) → 1623.9(特限)，且特限行提示"仅集成战略生效"
 # 4. 确认生存栏正常（含无技能干员路径）
-node E:/github/arknights-strength-agent/tools/survival-eval.mjs 泥岩   # 期望 每击 278 / 可挨 15 击
+node E:/github/arknights-strength-agent/tools/survival-eval.mjs 泥岩   # 期望 每击 398 / 可挨 10 击（条件减伤不计入）
 node E:/github/arknights-strength-agent/tools/survival-eval.mjs 杜林   # 1★ 无技能也能评
 # 5. 确认召唤物通道正常（独立输出线，不与本体相加）
 node E:/github/arknights-strength-agent/tools/verify-summons.mjs       # 期望 PASS=33 FAIL=0
@@ -419,7 +423,7 @@ node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异
 | 望·天下劫（burst） | 每次部署 11191 / 单次技能 89528·14s / 轴 179056·78s→2296 |
 | 早露·条件型穿透 | 无视60%防御 **未计入**（条件：重量≥3 的敌人） |
 | 提丰·叠层型穿透 | 无视50%防御 按叠满计入并标注 |
-| **生存·泥岩**（vs 物理·精英 384.6DPS） | 生命 3928 / 防御 602 → 每击 278 · 可挨 15 击 · 39.0s；减伤 30% |
+| **生存·泥岩**（vs 物理·精英 384.6DPS） | 生命 3928 / 防御 602 → 每击 **398** · 可挨 **10 击** · **26.0s**；⚠ 减伤 30% 是**条件型**（仅来自【萨卡兹】）→ **未计入**（2026 修正：原 278/15击/39.0s 是错误地把条件减伤当无条件算） |
 | **生存·星熊[X 模组]** | 生命 3850 / 防御 1460（含追加 防御+20%） → 每击 50 · **站得住** |
 | **生存·水月[Y]** | 物理·精英 每击 644 · 3 击 · 7.8s；物法闪避各 65% → 等效生命 ×2.86 |
 | **生存·水月[特限]** | 自回 70.3 HP/s → 对物理·精英 可挨 4 击 · 10.4s |

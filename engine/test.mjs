@@ -388,6 +388,26 @@ assert('召唤物·单位自带伤害类型优先', Math.abs(summonDps(mgllan, {
   assert('泥岩 ×2 狂暴 每击 (3500−602)×0.7 = 2028', ny.perHitGroup === 2028, `${ny.perHitGroup}`)
 }
 
+// ---- 元素损伤：引擎内表 与 从游戏数据解析出的表 必须一致 ----
+// 数值就在游戏数据仓库的 gamedata_const.json → termDescriptionDict（描述文本形式），
+// 此前手抄且出处误标为 PRTS。tools/build-element.mjs 解析它，这里锁定两者一致。
+{
+  const { readFileSync } = await import('node:fs')
+  let parsed = null
+  try {
+    parsed = JSON.parse(readFileSync(new URL('../data/element-breaks.json', import.meta.url), 'utf8')).elements
+  } catch { /* 数据文件不存在时跳过（引擎测试应能独立运行） */ }
+  if (parsed) {
+    for (const [k, v] of Object.entries(ELEMENT_BREAK_ON_ENEMY)) {
+      const p = parsed[k]
+      assert(`元素「${k}」直伤与数据一致`, p && p.burstDamage === v.burstDamage, `${k}: 表 ${v.burstDamage} vs 数据 ${p?.burstDamage}`)
+      assert(`元素「${k}」dot 与数据一致`, p && p.dotPerSec === v.dotPerSec, `${k}`)
+      assert(`元素「${k}」时长与数据一致`, p && p.durationSec === v.durationSec, `${k}: 表 ${v.durationSec} vs 数据 ${p?.durationSec}`)
+    }
+    assert('元素种类数一致', Object.keys(parsed).length === Object.keys(ELEMENT_BREAK_ON_ENEMY).length)
+  }
+}
+
 // ---- 输出画像 ----
 console.log('\n===== 法术歼灭 输出画像（平均DPS，物理行看DEF / 法术列看RES） =====')
 for (const row of dpsProfile(caster, { defs: [0, 400, 800], ress: [0, 50, 90] })) {

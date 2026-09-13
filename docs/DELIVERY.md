@@ -52,7 +52,7 @@ E:\github\arknights-strength-agent\
 ├── engine\                     数值引擎（纯数学，零依赖）
 │   ├── dps-engine.mjs          伤害/攻速/SP/覆盖率/元素/陷阱/爆发/召唤物/穿透/减益
 │   ├── survival.mjs            生存数学（离散受击/闪避/等效生命）
-│   └── test.mjs                **63 条断言**（node engine/test.mjs）
+│   └── test.mjs                **99 条断言**（node engine/test.mjs）
 ├── tools\                      评测管线
 │   ├── evaluate.mjs            主入口：数据集干员 → 引擎输入 → 多栏报告
 │   ├── modules.mjs             模组启用层（构造"模组修改后的干员对象"）
@@ -76,6 +76,8 @@ E:\github\arknights-strength-agent\
 │   ├── verify-summons.mjs      召唤物专项验证（56 断言，含"通道不双算"）
 │   ├── verify-conditional.mjs  条件型专项验证（38 断言，含"不污染锚点"）
 │   ├── verify-ranges.mjs       射程几何专项验证（29 断言，含"管线不丢字段"）
+│   ├── verify-survival.mjs     生存栏专项验证（17 断言，含"条件型减伤不计入"）
+│   ├── build-element.mjs       元素损伤爆发数值（gamedata_const → data/element-breaks.json）
 │   ├── module-eval.mjs         模组三配置对照（无/默认/特限）
 │   ├── survival-eval.mjs       ④ 生存栏独立入口（**不依赖技能**，1★ 也能评）
 │   ├── evaluate-custom.mjs     自创干员评测（schema 校验）
@@ -211,7 +213,7 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 
 | 套件 | 命令 | 断言数 | 验证什么 |
 |---|---|---|---|
-| 引擎 | `node engine/test.mjs` | **86** | 伤害公式/攻速/SP/覆盖率/强化攻击/元素/陷阱/爆发/穿透/减益/生存/**召唤物/集火** |
+| 引擎 | `node engine/test.mjs` | **99** | 伤害公式/攻速/SP/覆盖率/强化攻击/元素/陷阱/爆发/穿透/减益/生存/**召唤物/集火** |
 | 数据库 | `node app/db/verify.mjs` | **16** | 检索/详情/场景/自制干员/历史 + **DB 还原对象进评测管线数值=锚点** |
 | **API 冒烟** | `node app/server/verify.mjs` | **41** | 全部接口 + **经 API 的数值=锚点** + 轴参数等比缩放 + 图表值与文本一致 + **栏位双形态** |
 | 模型接入 | `node app/server/verify-llm.mjs` | **18** | 用**本地 mock provider** 验协议（URL/鉴权头/请求体/system 提示）+ 降级路径 + 沉淀与缓存 |
@@ -219,6 +221,7 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 | **召唤物专项** | `node tools/verify-summons.mjs` | **56** | 分类判据 / 数值手工验算 / **通道不双算** / 不渗入本体 / 自身技能 / 触发伤害 / 技能空间 |
 | **条件型专项** | `node tools/verify-conditional.mjs` | **38** | 对空加成 / 索敌来源含特性 / 蓄力两态 / **模组条件型（含 override 语义）**，且**不污染锚点** |
 | **射程专项** | `node tools/verify-ranges.mjs` | **29** | 形状几何 / **管线不丢字段** / 渲染 / 不污染数值 |
+| **生存栏专项** | `node tools/verify-survival.mjs` | **17** | 条件型减伤**不计入**硬扛 / 泥岩止颂锚点 / 集火口径 / 无条件减伤仍生效 |
 
 **另有**：
 - `node tools/anchors.mjs` —— 生成锚点表（输出+生存+模组三配置），改数值逻辑后必跑
@@ -244,7 +247,7 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 | 望·天下劫（爆发） | 每次部署 11191 / 单次技能 89528·14s / **轴 179056·78s→2296** |
 | 玛恩纳·未照耀的荣光 | 技能期 **11645.8**（解放者蓄力 ×5）/ 平A 0 |
 | 蜜蜡（阵法术师两态） | 常态 防御 615 → 技能期 205，**可挨 11 击 → 4 击（×0.36）** |
-| 泥岩（vs 物理·精英） | 每击 278 / 可挨 15 击 / 39.0s（减伤 30%） |
+| 泥岩（vs 物理·精英） | 每击 **398** / 可挨 **10 击** / **26.0s**（⚠ 减伤 30% 仅对【萨卡兹】→ 条件型，**未计入**）|
 | 星熊[X 模组] | 防御 1460（含追加 防御+20%）→ **站得住** |
 | 泛用性 | 银灰 全能型(6/6·0.54)；**能天使 通用型（护甲衰减 95%、波动比 0.07）** |
 | 回转 | 能天使首轮 **10s** / 银灰 15s / 水月 30s / 史尔特尔 永续 |
@@ -358,7 +361,7 @@ node tools/build-scenario-baseline.mjs  # → data/scenario-baseline.json
 node app/db/build-db.mjs                # → app/db/arknights.db
 
 # 验证（应全绿）
-node engine/test.mjs                    # PASS=76 FAIL=0
+node engine/test.mjs                    # PASS=99 FAIL=0
 node app/db/verify.mjs                  # PASS=16 FAIL=0
 node app/server/index.mjs --port 8787 & # 起服务
 node app/server/verify.mjs              # PASS=30 FAIL=0

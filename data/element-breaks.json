@@ -1,0 +1,79 @@
+{
+ "builtAt": "2026-09-13",
+ "source": "ArknightsGameData(zh_CN) gamedata_const.json → termDescriptionDict（条目 ba.dt.*2 = \"·我方\"版）",
+ "notes": [
+  "元素损伤爆发数值以**描述文本**形式存放在 termDescriptionDict，需解析文本（不是独立数值字段）",
+  "此前这四个值手抄在 engine 里、且出处误标为 PRTS —— 实际就在游戏数据仓库中",
+  "解析按通用模板（立即受到N点 / 每秒受到N点 / N秒冷却 / 法抗-N / 降N防 / N层麻痹 / N%虚弱）",
+  "领袖敌人的损伤条为 2000，普通与精英为 1000（该值在描述里也写了）"
+ ],
+ "count": 4,
+ "elements": {
+  "凋亡损伤": {
+   "burstDamage": 0,
+   "dotPerSec": 800,
+   "durationSec": 15,
+   "effects": {
+    "resDown": 0,
+    "defDown": 0,
+    "palsyStacks": 0,
+    "weakPct": 0.5
+   },
+   "quote": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），使敌人附加50%虚弱但期间逐渐恢复，每秒受到800点元素伤害。15秒冷却"
+  },
+  "灼燃损伤": {
+   "burstDamage": 7000,
+   "dotPerSec": 0,
+   "durationSec": 10,
+   "effects": {
+    "resDown": 20,
+    "defDown": 0,
+    "palsyStacks": 0,
+    "weakPct": 0
+   },
+   "quote": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到7000点元素伤害且期间法术抗性-20。10秒冷却"
+  },
+  "神经损伤": {
+   "burstDamage": 6000,
+   "dotPerSec": 0,
+   "durationSec": 10,
+   "effects": {
+    "resDown": 0,
+    "defDown": 0,
+    "palsyStacks": 3,
+    "weakPct": 0
+   },
+   "quote": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到6000点元素伤害且获得3层麻痹。10秒冷却"
+  },
+  "侵蚀损伤": {
+   "burstDamage": 5000,
+   "dotPerSec": 0,
+   "durationSec": 8,
+   "effects": {
+    "resDown": 0,
+    "defDown": 120,
+    "palsyStacks": 0,
+    "weakPct": 0
+   },
+   "quote": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到5000点元素伤害且永久降低120点防御力（可叠加）。8秒冷却"
+  }
+ },
+ "raw": {
+  "ba.dt.apoptosis2": {
+   "termName": "凋亡损伤·我方",
+   "description": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），使敌人附加50%虚弱但期间逐渐恢复，每秒受到800点元素伤害。15秒冷却"
+  },
+  "ba.dt.burning2": {
+   "termName": "灼燃损伤·我方",
+   "description": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到7000点元素伤害且期间法术抗性-20。10秒冷却"
+  },
+  "ba.dt.neural2": {
+   "termName": "神经损伤·我方",
+   "description": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到6000点元素伤害且获得3层麻痹。10秒冷却"
+  },
+  "ba.dt.erosion2": {
+   "termName": "侵蚀损伤·我方",
+   "description": "累计满时爆发（普通、精英敌人1000点、领袖2000点累计值），敌人立即受到5000点元素伤害且永久降低120点防御力（可叠加）。8秒冷却"
+  }
+ }
+}

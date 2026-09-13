@@ -33,9 +33,31 @@ const norm = (v) => (Math.abs(v) <= 1 ? { pct: v, flat: 0 } : { pct: 0, flat: v 
  * @param {object} bb
  * @param {string} desc
  */
+/**
+ * 判断减伤是否带**适用条件**（有则不计入硬扛，只标注）。
+ * 判据是描述里的**限定语**，不是数值 —— 全库仅 2 条命中：
+ *   泥岩「受到来自【萨卡兹】敌人的伤害降低30%」→ 只对特定势力
+ *   止颂「阻挡时，受到来自非自身阻挡敌人的物理和法术伤害降低35%」→ 只对未被自己挡住的人
+ * @returns {string|null} 条件描述，无则 null
+ */
+function drCondition(desc) {
+  const d = String(desc ?? '')
+  const pats = [
+    [/来自【([^】]+)】/, (m) => `仅来自【${m[1]}】的敌人`],
+    [/来自(非自身阻挡|非阻挡)/, () => '仅来自**未被自身阻挡**的敌人'],
+    [/阻挡时[，,]?\s*受到/, () => '仅**阻挡敌人时**'],
+    [/对(空中|远程|近战)/, (m) => `仅对${m[1]}敌人`],
+  ]
+  for (const [re, fmt] of pats) {
+    const m = d.match(re)
+    if (m) return fmt(m)
+  }
+  return null
+}
+
 function survivalFromBb(bb, desc) {
   const d = strip(desc)
-  const out = { defPct: 0, defFlat: 0, resPct: 0, resFlat: 0, hpPct: 0, drPct: 0, drFlat: 0, healPctMax: 0, healFlat: 0, shieldPctMax: 0, dodgeP: 0, dodgeM: 0, blockCnt: null, taunt: null, resist: 0, undying: null, healAlly: null, notes: [] }
+  const out = { defPct: 0, defFlat: 0, resPct: 0, resFlat: 0, hpPct: 0, drPct: 0, drFlat: 0, drConditional: [], healPctMax: 0, healFlat: 0, shieldPctMax: 0, dodgeP: 0, dodgeM: 0, blockCnt: null, taunt: null, resist: 0, undying: null, healAlly: null, notes: [] }
   const toEnemy = /敌人|敌军|目标|使其/.test(d) && !/自身|自己/.test(d)
 
   if (typeof bb.def === 'number') {
@@ -57,10 +79,19 @@ function survivalFromBb(bb, desc) {
     out.notes.push(`生命+${Math.round(bb.max_hp * 100)}%`)
   }
   // 伤害减免：点数或百分比
+  // ⚠ **条件感知**（2026 修正）：减伤常带适用条件，条件不满足时是**白送减伤** ——
+  //   泥岩「受到来自【萨卡兹】敌人的伤害降低30%」、止颂「阻挡时，受到来自非自身阻挡敌人的
+  //   伤害降低35%」。此前一律无条件计入 → 承伤偏低、生存偏高（真实建模错误）。
+  //   与"条件型穿透只标注"同一原则：不再默认计入，改为单独列出。
   if (typeof bb.damage_resistance === 'number') {
     const v = Math.abs(bb.damage_resistance)
-    if (v <= 1) { out.drPct += v; out.notes.push(`减伤${Math.round(v * 100)}%`) }
-    else { out.drFlat += v; out.notes.push(`减伤${v}点/击`) }
+    const cond = drCondition(d)
+    const label = v <= 1 ? `减伤 ${Math.round(v * 100)}%` : `减伤 ${v} 点/击`
+    if (cond) {
+      out.drConditional.push({ pct: v <= 1 ? v : 0, flat: v <= 1 ? 0 : v, label, condition: cond })
+      out.notes.push(`${label}（**条件型**：${cond}，未计入硬扛）`)
+    } else if (v <= 1) { out.drPct += v; out.notes.push(`${label}`) }
+    else { out.drFlat += v; out.notes.push(`${label}`) }
   }
   // 自回
   if (typeof bb.hp_recovery_per_sec_by_max_hp_ratio === 'number') {
@@ -113,10 +144,11 @@ function survivalFromBb(bb, desc) {
 
 /** 合并多个效果的生存画像。 */
 function mergeEffects(list) {
-  const acc = { defPct: 0, defFlat: 0, resPct: 0, resFlat: 0, hpPct: 0, drPct: 0, drFlat: 0, healPctMax: 0, healFlat: 0, shieldPctMax: 0, dodgeP: 0, dodgeM: 0, blockCnt: null, taunt: null, resist: 0, undying: null, healAlly: null, notes: [] }
+  const acc = { defPct: 0, defFlat: 0, resPct: 0, resFlat: 0, hpPct: 0, drPct: 0, drFlat: 0, drConditional: [], healPctMax: 0, healFlat: 0, shieldPctMax: 0, dodgeP: 0, dodgeM: 0, blockCnt: null, taunt: null, resist: 0, undying: null, healAlly: null, notes: [] }
   for (const e of list) {
     if (!e) continue
     for (const k of ['defPct', 'defFlat', 'resPct', 'resFlat', 'hpPct', 'drPct', 'drFlat', 'healPctMax', 'healFlat', 'shieldPctMax', 'dodgeP', 'dodgeM']) acc[k] += e[k] ?? 0
+    if (e.drConditional?.length) acc.drConditional.push(...e.drConditional)
     if (e.blockCnt !== null) acc.blockCnt = e.blockCnt
     if (e.taunt !== null) acc.taunt = e.taunt
     acc.resist = Math.max(acc.resist, e.resist ?? 0)
@@ -200,6 +232,8 @@ export function extractSurvival(op, skillIndex = 2, talentBonus = { atkPct: 0, a
       shield: maxHp * e.shieldPctMax,
       drFlat: e.drFlat,
       drPct: e.drPct,
+      // 条件型减伤（如泥岩仅对【萨卡兹】、止颂仅对未被自身阻挡的敌人）：**未计入硬扛**，仅展示
+      drConditional: e.drConditional ?? [],
       dodge: { physical: e.dodgeP, magical: e.dodgeM },
       healPerSec: maxHp * e.healPctMax + e.healFlat,
     }
@@ -237,6 +271,7 @@ export function extractSurvival(op, skillIndex = 2, talentBonus = { atkPct: 0, a
 function hasSurvivalDelta(e) {
   if (!e) return false
   return ['defPct', 'defFlat', 'resPct', 'resFlat', 'hpPct', 'drPct', 'drFlat', 'healPctMax', 'healFlat', 'shieldPctMax', 'dodgeP', 'dodgeM'].some((k) => (e[k] ?? 0) !== 0)
+    || (e.drConditional?.length ?? 0) > 0
 }
 
 /** 对全部来袭画像做生存计算（导出：软件层的图表直接复用同一口径）。 */
@@ -275,7 +310,7 @@ export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct
   }
   // 集火档位（§22）：2/3/5 个敌人**同时**命中的结果（只看压力最大的两档，避免刷屏）
   const groupTiers = [2, 3]
-  lines.push('  多敌人集火（同时命中口径：敌方 ATK ×N、间隔不变；数值已含自身减伤 —— **比线性放大更致命**）：')
+  lines.push('  多敌人集火（同时命中口径：敌方 ATK ×N、间隔不变 —— **比线性放大更致命**）：')
   const pressure = [...killed].sort((a, b) => (a.seconds ?? 1e9) - (b.seconds ?? 1e9))[0]
   for (const n of groupTiers) {
     const g = pressure.group?.find((x) => x.enemies === n)
@@ -306,6 +341,10 @@ export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct
   if (n.healPerSec) selfEffects.push(`自回 ${n.healPerSec.toFixed(1)} HP/s`)
   if (n.drPct) selfEffects.push(`减伤 ${Math.round(n.drPct * 100)}%`)
   if (n.drFlat) selfEffects.push(`减伤 ${n.drFlat} 点/击`)
+  // 条件型减伤：**不计入硬扛**（条件不满足就是白送减伤），单列并说明条件
+  for (const c of n.drConditional ?? []) {
+    selfEffects.push(`${c.label}（**条件型，未计入硬扛**：${c.condition}）`)
+  }
   if (n.shield) selfEffects.push(`屏障 ${Math.round(n.shield)}`)
   if (s.resist) selfEffects.push('抵抗（异常状态时长减半）')
   if (s.undying !== null) selfEffects.push(`保命机制（生命不低于 ${s.undying ? Math.round(s.undying * 100) + '%' : '1'}）`)
