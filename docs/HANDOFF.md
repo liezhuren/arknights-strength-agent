@@ -238,7 +238,8 @@ node E:/github/arknights-strength-agent/tools/survival-eval.mjs 泥岩   # 期�
 node E:/github/arknights-strength-agent/tools/survival-eval.mjs 杜林   # 1★ 无技能也能评
 # 5. 全量冒烟（可选，稍慢）
 node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异常 0
-# 6. 读三份文档补齐上下文
+# 6. 读三份文档补齐上下文（DELIVERY 讲"做成了什么/依据/验证"，HANDOFF 讲"怎么接着做"）
+#    docs/DELIVERY.md（项目全貌与交付清单）→ docs/HANDOFF.md（本文）→ docs/dps-calculation.md
 #    docs/HANDOFF.md（本文）→ PROJECT-DESIGN.md → docs/dps-calculation.md（§13 模组 / §14 生存）
 # 7. 读 skill（评测流程与检查清单）
 #    ~/.dsh/skills/arknights-evaluator/SKILL.md
