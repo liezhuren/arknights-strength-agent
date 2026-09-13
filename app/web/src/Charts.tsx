@@ -1,10 +1,11 @@
 // Charts.tsx —— 图形化呈现（纯 SVG/CSS，不引图表库）
 // 设计：每个图都**直接从 API 的 charts 结构化数据**画，与文本报告同源同口径。
+// 类名约定见 styles.css：.cbar = 图表横条（.bar 是筛选行容器，勿混用）
 import type { Charts } from './api'
 
 const pct = (v: number) => `${(v * 100).toFixed(0)}%`
 
-/** 泛用性：六场景横向条 + 可用线标记（p25 虚线 / p50 实线） */
+/** 泛用性：六场景横向条 + 可用线标记（p25 灰线 / p50 白线） */
 function VersatilityChart({ v }: { v: Charts['versatility'] }) {
   const max = Math.max(...v.rows.map((r) => Math.max(r.value, r.p50)), 1)
   return (
@@ -14,20 +15,17 @@ function VersatilityChart({ v }: { v: Charts['versatility'] }) {
         <span className={`chip ${v.tier === '全能型' ? 'good' : v.tier === '特化型' ? 'bad' : ''}`}>{v.tier}</span>
         <span className="muted">稳健线 {v.coverageP50}/6 · 基本线 {v.coverageP25}/6 · 波动比 {v.worstOverMedian.toFixed(2)}</span>
       </div>
-      {v.rows.map((r) => {
-        const w = (r.value / max) * 100
-        return (
-          <div className="row" key={r.id}>
-            <span className="row-label">{r.name}<em>DEF{r.def}/RES{r.res}</em></span>
-            <div className="track">
-              <div className={`bar ${r.ok50 ? 'ok' : r.ok25 ? 'mid' : 'low'}`} style={{ width: `${w}%` }} />
-              <span className="mark m25" style={{ left: `${(r.p25 / max) * 100}%` }} title={`基本可用线 ${Math.round(r.p25)}`} />
-              <span className="mark m50" style={{ left: `${(r.p50 / max) * 100}%` }} title={`稳健线 ${Math.round(r.p50)}`} />
-            </div>
-            <span className="row-val">{Math.round(r.value)}</span>
+      {v.rows.map((r) => (
+        <div className="chartrow" key={r.id}>
+          <span className="rl">{r.name}<em>DEF{r.def}/RES{r.res}</em></span>
+          <div className="track">
+            <div className={`cbar ${r.ok50 ? 'ok' : r.ok25 ? 'mid' : 'low'}`} style={{ width: `${(r.value / max) * 100}%` }} />
+            <span className="mark m25" style={{ left: `${(r.p25 / max) * 100}%` }} title={`基本可用线 ${Math.round(r.p25)}`} />
+            <span className="mark m50" style={{ left: `${(r.p50 / max) * 100}%` }} title={`稳健线 ${Math.round(r.p50)}`} />
           </div>
-        )
-      })}
+          <span className="rv">{Math.round(r.value)}</span>
+        </div>
+      ))}
       <div className="legend">
         <span><i className="sw ok" /> 达稳健线</span>
         <span><i className="sw mid" /> 达基本线</span>
@@ -57,7 +55,7 @@ function DecayChart({ decay, phys }: { decay: Charts['decay']; phys: boolean }) 
         <polyline points={pts.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#4da3ff" strokeWidth="2" />
         {pts.map((p) => <circle key={p.x} cx={p.x} cy={p.y} r="3" fill="#4da3ff" />)}
       </svg>
-      <div className="axis">
+      <div className="decay-axis">
         {pts.map((p) => <span key={p.x} style={{ left: `${(p.x / W) * 100}%` }}>{p.x}<em>{Math.round(p.value)}</em></span>)}
       </div>
     </div>
@@ -77,7 +75,7 @@ function RotationChart({ r }: { r: NonNullable<Charts['rotation']> }) {
   const total = (r.cycle ?? 1) || 1
   const chargeW = ((r.firstUse ?? 0) / total) * 100
   const durW = (r.duration / total) * 100
-  // 窄段不显示文字（否则会被 overflow 裁成半截字，看起来像坏掉的色条）
+  // 窄段不渲染文字，否则会被 overflow 裁成半截字（看起来像坏掉的色条）
   const label = (w: number, text: string) => (w >= 17 ? text : '')
   return (
     <div className="chart">
@@ -115,13 +113,13 @@ function SurvivalChart({ s }: { s: Charts['survival'] }) {
         const sk = skillMap.get(x.id)
         const better = sk && sk.perHit < x.perHit
         return (
-          <div className="row" key={x.id}>
-            <span className="row-label">{x.id}<em>{x.dps} DPS</em></span>
+          <div className="chartrow" key={x.id}>
+            <span className="rl">{x.id}<em>{x.dps} DPS</em></span>
             <div className="track">
-              <div className={`bar ${x.sustained ? 'ok' : 'mid'}`} style={{ width: `${(x.perHit / maxHit) * 100}%` }} />
-              {sk && <div className="bar ghost" style={{ width: `${(sk.perHit / maxHit) * 100}%` }} title={`技能期每击 ${sk.perHit}`} />}
+              <div className={`cbar ${x.sustained ? 'ok' : 'mid'}`} style={{ width: `${(x.perHit / maxHit) * 100}%` }} />
+              {sk && <div className="cbar ghost" style={{ width: `${(sk.perHit / maxHit) * 100}%` }} title={`技能期每击 ${sk.perHit}`} />}
             </div>
-            <span className="row-val">
+            <span className="rv">
               每击 {x.perHit} · {x.sustained ? '站得住' : `${x.hitsToDie} 击 / ${x.seconds}s`}
               {better && <em className="up">技能期 →{sk!.perHit}</em>}
             </span>

@@ -177,7 +177,7 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
           {aiBusy ? 'AI 解析中…' : 'AI 解析技能描述'}
         </button>
         {r?.burst && (
-          <span className="axis">
+          <span className="axis-params">
             轴参数：
             <input style={{ width: 62 }} placeholder={`${r.burst.deploys}`} value={axisD} onChange={(e) => setAxisD(e.target.value)} title="轴内部署次数（留空=理想轴）" />
             次部署 /
