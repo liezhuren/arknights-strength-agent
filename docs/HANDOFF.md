@@ -49,6 +49,7 @@ tools/build-dataset.mjs        数据管线（454 干员 / 994 技能 / 模组�
 tools/build-scenarios.mjs      6 标准场景
 tools/build-enemy-scenarios.mjs 2130 敌人分层
 docs/dps-calculation.md        计算链路、公式、全部假设与已知不严谨项 ★改模型前必读（§13 模组 / §14 生存）
+docs/LESSONS.md                **踩坑与经验交接（跨项目通用）** —— 新项目起步先读这份 ★新
 docs/eval-standards.md         四栏评测标准（输出/团队增益/控制/生存）
 docs/module-prts-crosscheck.md PRTS 模组数值交叉校验报告（子代理产出）
 docs/data-inventory.md         数据资产清单与字段结构
@@ -312,14 +313,16 @@ node E:/github/arknights-strength-agent/tools/verify-summons.mjs       # 期望 
 node E:/github/arknights-strength-agent/tools/evaluate.mjs 凯尔希      # 期望出现「召唤物：Mon3tr … 701.0 DPS」
 # 5. 全量冒烟（可选，稍慢）
 node E:/github/arknights-strength-agent/tools/smoke.mjs       # 期望 意外异常 0
-# 6. 读三份文档补齐上下文（DELIVERY 讲"做成了什么/依据/验证"，HANDOFF 讲"怎么接着做"）
+# 6. 读文档补齐上下文（三份 + 一份经验总结）
 #    docs/DELIVERY.md（项目全貌与交付清单）→ docs/HANDOFF.md（本文）→ docs/dps-calculation.md
-#    docs/HANDOFF.md（本文）→ PROJECT-DESIGN.md → docs/dps-calculation.md（§13 模组 / §14 生存）
+#    docs/dps-calculation.md → PROJECT-DESIGN.md
+#    docs/LESSONS.md ← **可迁移的踩坑与经验**（跨项目通用，新项目起步先读这份）
 # 7. 读 skill（评测流程与检查清单）
 #    ~/.dsh/skills/arknights-evaluator/SKILL.md
 ```
-若测试数不是 63，说明上次会话后又有改动：读 PROJECT-DESIGN 末尾组件表 + 文件时间戳定位
-（**本项目不是 git 仓库，没有版本控制** —— 改动前建议手工备份关键文件）。
+若测试数与本文档记载不符，说明上次会话后又有改动：读 `git log` + `docs/DELIVERY.md` 组件表定位。
+（本项目已是 **git 仓库**：`git@github.com:liezhuren/arknights-strength-agent.git`，分支 `master`。
+ 提交信息含中文，**用 `git commit -F <文件>`**，不要写进命令行 —— PowerShell 会打乱编码。）
 
 ---
 
