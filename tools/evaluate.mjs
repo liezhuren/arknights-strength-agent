@@ -545,11 +545,12 @@ export function evaluate(op, opts = {}) {
     talentList: talent.list,
     teamBuffSection: formatTeamBuffSection(eop, skillIndex),
     controlSection: formatControlSection(eop, skillIndex),
+    // 同上：原始数据，门禁在展示层
     survivalSection: formatSurvivalSection(eop, skillIndex, talent),
     rotationSection: formatRotationSection(eop, skillIndex, eng),
-    versatilitySection: gate.verified
-      ? formatVersatilitySection(eng)
-      : '输出 DPS 未给出：天赋与元素未参与建模，规则层数值不成立。\n接入模型解析后，本栏会自动显示数值。',
+    // 注意：这里返回**原始数据**，不按展示门禁裁剪 —— 回归工具（anchors.mjs 等）
+    // 直接读这个字段。门禁只发生在展示层（formatReport / app/server 的 sections）。
+    versatilitySection: formatVersatilitySection(eng),
     difficultySection: formatDifficultySection(eop, eng, skillIndex),
     moduleList: modulesOf(op).map((m) => `${m.name}(${m.type}${m.isSpecial ? '·特限' : ''}${m.hasCombatData ? '' : '·无数值'})`),
     moduleApplied: eng._module,
@@ -648,7 +649,8 @@ export function formatReport(r) {
   if (r.summon) {
     for (const l of formatSummonSection(r)) lines.push(l)
     // 召唤物自身生存（§23）：独立实体，不与本体 ④ 合并
-    for (const l of formatSummonSurvival(r.operator)) lines.push(l)
+    // 生存门禁：与本体 ④ 同源（同样受天赋未建模影响）→ 一并关闭
+    if (!dpsOff) for (const l of formatSummonSurvival(r.operator)) lines.push(l)
     if (r.summonDpsBench && !dpsOff) {
       const bk = r.damageType === 'physical' ? 'vs400防' : 'vs50抗'
       lines.push(`        基准口径（${bk}）：召唤物 ${r.summonDpsBench.toFixed(1)} DPS —— **独立于上方本体数值，不相加**`)
@@ -722,7 +724,11 @@ export function formatReport(r) {
   if (r.rotationSection) lines.push('', r.rotationSection)
   if (r.teamBuffSection) lines.push('', r.teamBuffSection)
   if (r.controlSection) lines.push('', r.controlSection)
-  if (r.survivalSection) lines.push('', r.survivalSection)
+  if (r.survivalSection && !dpsOff) lines.push('', r.survivalSection)
+  if (dpsOff) {
+    lines.push('', '④ 生存栏未给出：防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。',
+      '   接入文本解析后，本栏会自动显示。')
+  }
   return lines.join('\n')
 }
 

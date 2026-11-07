@@ -25,7 +25,7 @@ export interface Charts {
     normal: { id: string; dps: number; perHit: number; hitsToDie: number | null; seconds: number | null; sustained: boolean }[]
     skill: { id: string; dps: number; perHit: number; hitsToDie: number | null; seconds: number | null; sustained: boolean }[] | null
     stateNote: string | null; immune: string[]; healPerSec: number; dodge: { physical: number; magical: number }
-  }
+  } | null
   difficulty: { tier: string; score: number; factors: { kind: string; level: number; text: string }[] }
   decay: { x: number; value: number }[]
 }

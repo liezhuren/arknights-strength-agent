@@ -99,7 +99,7 @@ function RotationChart({ r }: { r: NonNullable<Charts['rotation']> }) {
 }
 
 /** 生存：分档硬扛（每击伤害 + 可挨击数） */
-function SurvivalChart({ s }: { s: Charts['survival'] }) {
+function SurvivalChart({ s }: { s: NonNullable<Charts['survival']> }) {
   const rows = s.normal
   const maxHit = Math.max(...rows.map((x) => x.perHit), 1)
   const skillMap = new Map((s.skill ?? []).map((x) => [x.id, x]))
@@ -174,7 +174,17 @@ export default function ChartsView({ charts }: { charts: Charts }) {
       )}
       {charts.decay.length > 0 && <DecayChart decay={charts.decay} phys={charts.versatility?.phys ?? true} />}
       {charts.rotation && <RotationChart r={charts.rotation} />}
-      <SurvivalChart s={charts.survival} />
+      {charts.survival ? (
+        <SurvivalChart s={charts.survival} />
+      ) : (
+        <div className="chart">
+          <div className="chart-head"><h3>生存 · 分档硬扛</h3></div>
+          <p className="muted">
+            未给出：承伤推算依赖防御/生命/减伤/闪避——这些天赋尚未参与建模，
+            按面板裸值算会系统性高估生存（接入文本解析后自动出现）。
+          </p>
+        </div>
+      )}
       <DifficultyChart d={charts.difficulty} />
     </div>
   )

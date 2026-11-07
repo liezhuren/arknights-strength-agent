@@ -100,7 +100,10 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
       rotation: r.rotationSection,
       teamBuff: r.teamBuffSection,
       control: r.controlSection,
-      survival: r.survivalSection,
+      // 生存栏同样依赖"天赋未消费"的前提：防御/生命/减伤/闪避天赋都没进模型
+      survival: dpsGated
+        ? '④ 生存栏未给出：防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。\n接入模型解析后，本栏会自动显示数值。'
+        : r.survivalSection,
     }),
     operator: { id: op.id, name: op.name, rarity: op.rarity, profession: op.profession, subProfessionId: op.subProfessionId },
     modules: modulesOf(op).map((m) => ({ id: m.id, name: m.name, type: m.type, isSpecial: !!m.isSpecial, hasCombatData: !!m.hasCombatData })),
@@ -116,14 +119,17 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
       rotation: rot
         ? { spLabel: rot.spLabel, spCost: rot.spCost, initSp: rot.initSp, rate: rot.rate, firstUse: rot.firstUse, duration: rot.duration, cycle: rot.cycle, coverage: rot.coverage, downtime: rot.downtime, permanent: rot.permanent, casts60: rot.casts60, casts90: rot.casts90, ammo: rot.ammo }
         : null,
-      survival: {
-        normal: slim(normalRows),
-        skill: skillRows ? slim(skillRows) : null,
-        stateNote: sv.stateNote,
-        immune: sv.immune,
-        healPerSec: sv.normal.panel.healPerSec,
-        dodge: sv.normal.panel.dodge,
-      },
+      // 生存分档 = 面板防御/生命 + 敌人来袭画像；防御/闪避/减伤类天赋未参与建模 → 门禁时不给
+      survival: dpsGated
+        ? null
+        : {
+            normal: slim(normalRows),
+            skill: skillRows ? slim(skillRows) : null,
+            stateNote: sv.stateNote,
+            immune: sv.immune,
+            healPerSec: sv.normal.panel.healPerSec,
+            dodge: sv.normal.panel.dodge,
+          },
       difficulty: { tier: diff.tier, score: diff.score, factors: diff.factors.map((f) => ({ kind: f.kind, level: f.level, text: f.text })) },
       // 属性衰减曲线（物理看 DEF，法术看 RES）—— 同样是干员 DPS 派生
       decay: dpsGated
