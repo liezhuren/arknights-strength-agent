@@ -75,13 +75,18 @@ export const CHANNEL_OVERRIDES = {
   //   合计 4687.8 DPS（视频 4683，误差 0.1%）
   '塔露拉|skchr_oxi_3': {
     kind: 'summon_wave',
-    balls: 16,
-    ballAtkScale: 5.78,
-    fieldAtkScalePerSec: 1.258,
     durationSec: 36,
-    leaderFactor: 0.9002,
-    elementTotal: 91800,
-    note: '帧表实测：非过载 80 帧/颗 ×7 + 过载 60 帧/颗 ×9 = 16 颗，36s 结算；元素伤害占 54%',
+    // 释放节奏来自帧表（60fps）：2 帧首颗 → 每 80 帧一颗至 542 帧（7 颗）；
+    // 543 帧进入过载 → 每 60 帧一颗至 1082 帧（9 颗）。合计 16 颗。
+    phases: [
+      { windowSec: 9.033, intervalSec: 1.3333, firstDelaySec: 0.033 },
+      { windowSec: 8.983, intervalSec: 1.0, firstDelaySec: 0 },
+    ],
+    perBallAtkScale: 5.78,      // 7080 / 1225（技能期 ATK）
+    fieldAtkScalePerSec: 1.258, // (168759.6−113280)/36/1225
+    elementShare: 0.544,        // 91800 / 168759.6
+    leaderFactor: 0.9002,       // 151918.4 / 168759.6
+    note: '帧表实测：非过载 80 帧/颗 ×7 + 过载 60 帧/颗 ×9 = 16 颗，36s 结算；元素占 54%',
     source: 'B 站「血狼破军」塔露拉三技能帧分析（2026-11）',
   },
 }

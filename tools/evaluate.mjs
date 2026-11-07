@@ -23,6 +23,7 @@ import {
 } from '../engine/dps-engine.mjs'
 import { SKILL_OVERRIDES, MODULE_OVERRIDES, CHANNEL_OVERRIDES } from './overrides.mjs'
 import { assessModeling, describeModeling, dpsGate } from './model-coverage.mjs'
+import { computeChannel } from './channels.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
 import { analyzeDescription } from './patterns.mjs'
 import { resolveModule, applyModule, extractTalentPenetrate, formatAttr, modulesOf } from './modules.mjs'
@@ -545,22 +546,8 @@ export function evaluate(op, opts = {}) {
   if (chan) {
     // 技能期 ATK = 面板 ATK × 技能倍率（eng.atk 本身不含 attackMult）
     const atk = eng.atk * (eng.skill?.attackMult ?? 1)
-    const ballDamage = chan.balls * chan.ballAtkScale * atk
-    const fieldDamage = chan.fieldAtkScalePerSec * atk * chan.durationSec
-    const totalDamage = ballDamage + fieldDamage
-    const dps = totalDamage / chan.durationSec
-    channel = {
-      kind: chan.kind,
-      balls: chan.balls,
-      perBallDamage: ballDamage / chan.balls,
-      totalDamage,
-      durationSec: chan.durationSec,
-      dps,
-      leaderDps: dps * (chan.leaderFactor ?? 1),
-      elementTotal: chan.elementTotal ?? null,
-      note: chan.note,
-      source: chan.source,
-    }
+    const c = computeChannel(chan, atk)
+    if (c.ok) channel = c
   }
   // 有通道校准 → DPS 门禁对该干员放行（生存仍单独门禁：生存天赋还没进模型）
   const gate = channel ? { verified: true, reason: null, via: 'channel' } : dpsGate(modeling)
