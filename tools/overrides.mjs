@@ -84,8 +84,8 @@ export const CHANNEL_OVERRIDES = {
     ],
     // 3.371 是 2.5(heatwave) × 1.18(天赋满潜) × (1000/875)。1000 = 875 面板 + 90 满信赖 + 35 潜能
     // （后两项来自 ArknightsGameData 的 favorKeyFrames / potentialRanks，已存在但尚未并入面板）
-    perBallAtkScale: 3.371,
-    fieldAtkScalePerSec: 0.7337, // 55479.6 / 36 / 2100（技能期 ATK 已按 +140%→×2.4 修正）
+    perBallAtkScale: 2.95,      // = 2.5(heatwave) × 1.18(天赋满潜)；信赖+潜能已并入面板
+    fieldAtkScalePerSec: 0.59,  // = 0.15/0.3(零散说法:每0.3s造成攻击力15%) × 1.18(天赋)
     // 灼燃爆发期间伤害改为元素伤害：视频元素总伤 91800 ÷ 单颗 7080 ≈ 13 颗
     elementBalls: 13,
     elementShare: 0.544,        // 91800 / 168759.6

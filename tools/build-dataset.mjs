@@ -101,11 +101,24 @@ function extractSkills(skillRefs) {
   })
 }
 
-/** 提取潜能加成（每潜 blackboard） */
+/** 提取潜能加成（每潜 blackboard + 属性修饰符）
+ *  ⚠ 早期只取 `blackboard`，而游戏数据里潜能的实际收益在
+ *  `buff.attributes.attributeModifiers`（如「攻击力+35」）—— 导致潜能对面板零贡献。
+ *  这里把 ATTRIBUTE 修饰符按类型汇总，满潜 = 各潜相加。 */
 function extractPotentials(potentialRanks) {
-  return (potentialRanks ?? []).map((p) => ({
-    blackboard: p.blackboard ?? [],
-  }))
+  return (potentialRanks ?? []).map((p) => {
+    const mods = p?.buff?.attributes?.attributeModifiers ?? []
+    const attrs = {}
+    for (const m of mods) {
+      if (m?.formulaItem !== 'ADDITION' || typeof m.value !== 'number') continue
+      attrs[m.attributeType] = (attrs[m.attributeType] ?? 0) + m.value
+    }
+    return {
+      blackboard: p.blackboard ?? [],
+      description: p.description ?? null,
+      attrs,
+    }
+  })
 }
 
 /** 提取信赖加成关键帧（最后一档 = 满信赖） */

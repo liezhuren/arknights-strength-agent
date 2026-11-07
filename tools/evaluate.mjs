@@ -265,7 +265,24 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
   // 模组先行：产出"修改后的干员对象"，让既有天赋/减益/特性提取器全部复用，避免语义分叉
   const mod = applyModule(op, resolveModule(op, moduleSpec), moduleLevel)
   const eop = mod.op
-  const panel = eop.panel ?? {}
+  // ── 面板 = 精英化满级 + 满信赖 + 满潜能 ───────────────────────────────
+  // 信赖/潜能是**每个干员都有**的通用加成（不是特例），数据来自 character_table 的
+  // favorKeyFrames（满信赖档）与 potentialRanks 的 attributeModifiers。
+  // 早期两者都没并入面板 → 全库基础攻击普遍偏低约 10–14%。
+  // 满潜约定：各潜的 ATTRIBUTE 修饰符相加（与模组"满级取 L3"同一约定）。
+  const favor = eop.favor ?? {}
+  const potSum = (key) => (eop.potentials ?? []).reduce((a, p) => a + (p?.attrs?.[key] ?? 0), 0)
+  const add = (...vals) => vals.reduce((a, v) => a + (Number(v) || 0), 0)
+  const panel = {
+    ...eop.panel,
+    atk: add(eop.panel?.atk, favor.atk, potSum('ATK')),
+    maxHp: add(eop.panel?.maxHp, favor.maxHp, potSum('MAX_HP')),
+    def: add(eop.panel?.def, favor.def, potSum('DEF')),
+    magicResistance: add(eop.panel?.magicResistance, favor.magicResistance, potSum('MAGIC_RESISTANCE')),
+    cost: add(eop.panel?.cost, favor.cost, potSum('COST')),
+    blockCnt: add(eop.panel?.blockCnt, favor.blockCnt, potSum('BLOCK_CNT')),
+    attackSpeed: add(eop.panel?.attackSpeed, favor.attackSpeed, potSum('ATTACK_SPEED')),
+  }
   const si = resolveSkillIndex(eop, skillIndex)
   const skillRef = eop.skills?.[si.index]
   if (!skillRef) throw new Error(`${eop.name} 没有可用技能（无技能干员无法做输出评测，请从面板/机制维度评估）`)
