@@ -82,7 +82,9 @@ export const CHANNEL_OVERRIDES = {
       { windowSec: 9.033, intervalSec: 1.3333, firstDelaySec: 0.033 },
       { windowSec: 8.983, intervalSec: 1.0, firstDelaySec: 0 },
     ],
-    perBallAtkScale: 3.371,     // = 2.5(heatwave) × 1.18(天赋满潜) × (1000/875 信赖100+潜能25)
+    // 3.371 是 2.5(heatwave) × 1.18(天赋满潜) × (1000/875)。1000 = 875 面板 + 90 满信赖 + 35 潜能
+    // （后两项来自 ArknightsGameData 的 favorKeyFrames / potentialRanks，已存在但尚未并入面板）
+    perBallAtkScale: 3.371,
     fieldAtkScalePerSec: 0.7337, // 55479.6 / 36 / 2100（技能期 ATK 已按 +140%→×2.4 修正）
     elementShare: 0.544,        // 91800 / 168759.6
     leaderFactor: 0.9002,       // 151918.4 / 168759.6
