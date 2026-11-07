@@ -28,6 +28,9 @@ tools/probe-*.mjs
 Thumbs.db
 desktop.ini
 
+# ---- 本地启动器（个人快捷入口，不入库）----
+start-app.*
+
 # ---- 说明：data/*.json **要**入库（11 MB）—— 它们是从游戏数据仓库构建的产物，
 #      不入库的话别人克隆后无法直接运行（需另克隆 ArknightsGameData 并跑 tools/build-*.mjs）。
 #      游戏数据仓库本身在仓库之外（E:\github\ArknightsGameData），不属于本项目。
