@@ -447,13 +447,22 @@ function ParseSink({ onError }: { onError: (s: string) => void }) {
 function SettingsPanel({ onError }: { onError: (s: string) => void }) {
   const [cfg, setCfg] = useState<ConfigView | null>(null)
   const [edit, setEdit] = useState<Record<string, { apiKey?: string; model?: string; baseURL?: string }>>({})
+  // 保存反馈：之前保存成功没有任何提示，而 Key 输入框是非受控的（输入后仍显示明文），
+  // 用户会以为没保存成功。savedAt 给提示，nonce 用来强制重建输入框清掉明文。
+  const [savedAt, setSavedAt] = useState<string | null>(null)
+  const [nonce, setNonce] = useState(0)
   useEffect(() => { api.config().then(setCfg).catch((e) => onError((e as Error).message)) }, [])
   const providers = useMemo(() => Object.entries(cfg?.providers ?? {}), [cfg])
 
   async function save() {
     if (!cfg) return
-    try { setCfg(await api.saveConfig({ provider: cfg.provider, providers: edit })); setEdit({}) }
-    catch (e) { onError((e as Error).message) }
+    try {
+      const next = await api.saveConfig({ provider: cfg.provider, providers: edit })
+      setCfg(next)
+      setEdit({})
+      setNonce((n) => n + 1)
+      setSavedAt(new Date().toLocaleTimeString())
+    } catch (e) { onError((e as Error).message) }
   }
   if (!cfg) return <section className="empty">读取配置中…</section>
   return (
@@ -466,6 +475,7 @@ function SettingsPanel({ onError }: { onError: (s: string) => void }) {
           {providers.map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
         <button onClick={save}>保存</button>
+        {savedAt && <span className="chip good">已保存 {savedAt}</span>}
       </div>
       <table>
         <thead><tr><th>provider</th><th>Base URL</th><th>模型</th><th>API Key</th></tr></thead>
@@ -473,9 +483,19 @@ function SettingsPanel({ onError }: { onError: (s: string) => void }) {
           {providers.map(([k, v]) => (
             <tr key={k}>
               <td><b>{v.label}</b></td>
-              <td><input defaultValue={v.baseURL} onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], baseURL: e.target.value } }))} /></td>
-              <td><input defaultValue={v.model} onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], model: e.target.value } }))} /></td>
-              <td><input placeholder={v.apiKey || '未设置（本地存储，不回显）'} onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], apiKey: e.target.value } }))} /></td>
+              <td><input key={`base-${k}-${nonce}`} defaultValue={v.baseURL} onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], baseURL: e.target.value } }))} /></td>
+              <td><input key={`model-${k}-${nonce}`} defaultValue={v.model} onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], model: e.target.value } }))} /></td>
+              <td>
+                <input
+                  key={`key-${k}-${nonce}`}
+                  type="password"
+                  placeholder={v.apiKey || '未设置（本地存储，不回显）'}
+                  onChange={(e) => setEdit((s) => ({ ...s, [k]: { ...s[k], apiKey: e.target.value } }))}
+                />
+                <span className={`chip ${v.apiKey ? 'good' : ''}`} style={{ marginLeft: 6 }}>
+                  {v.apiKey ? `已设置 ${v.apiKey}` : '未设置'}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>
