@@ -552,7 +552,9 @@ export function evaluate(op, opts = {}) {
   if (chan) {
     // 技能期 ATK = 面板 ATK × 技能倍率（eng.atk 本身不含 attackMult）
     const atk = eng.atk * (eng.skill?.attackMult ?? 1)
-    const c = computeChannel(chan, atk)
+    // 通道按引擎基准口径结算：物理 vs 400防 / 法术 vs 50抗（元素部分自动无视法抗）
+    const target = eng.damageType === 'physical' ? { def: 400, res: 0 } : { def: 0, res: 50 }
+    const c = computeChannel(chan, atk, target)
     if (c.ok) channel = c
   }
   // 有通道校准 → DPS 门禁对该干员放行（生存仍单独门禁：生存天赋还没进模型）
@@ -716,7 +718,9 @@ export function formatReport(r) {
     // 通道类技能（引导/波次）：伤害不走普攻循环，直接给通道总伤与 DPS
     const c = r.channel
     lines.push(`通道 DPS（${c.kind}）：${c.dps.toFixed(1)} · 对领袖 ${c.leaderDps.toFixed(1)}`)
-    lines.push(`   总伤 ${Math.round(c.totalDamage)} / ${c.durationSec}s · 火球 ${c.balls} 颗 × ${Math.round(c.perBallDamage)}${c.elementTotal ? ` · 其中元素伤害 ${Math.round(c.elementTotal)}` : ''}`)
+    lines.push(`   总伤 ${Math.round(c.totalDamage)} / ${c.durationSec}s · 火球 ${c.balls} 颗 × ${Math.round(c.perBallDamage)}`
+      + ` · 其中元素 ${c.elementBalls}/${c.balls} 颗（${Math.round(c.elementDamage)}，无视法抗）`)
+    lines.push(`   基准 法抗${c.res} · 木桩(RES0) 口径 ${c.rawDps.toFixed(1)} DPS —— 后者用于与社区实测对账`)
     lines.push(`   校准依据：${c.note}（来源：${c.source}）`)
   } else if (!r.dpsGate?.verified) {
     lines.push('输出 DPS：未给出 —— 天赋与元素未参与建模，规则层数值不成立')

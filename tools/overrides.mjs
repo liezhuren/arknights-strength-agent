@@ -86,6 +86,8 @@ export const CHANNEL_OVERRIDES = {
     // （后两项来自 ArknightsGameData 的 favorKeyFrames / potentialRanks，已存在但尚未并入面板）
     perBallAtkScale: 3.371,
     fieldAtkScalePerSec: 0.7337, // 55479.6 / 36 / 2100（技能期 ATK 已按 +140%→×2.4 修正）
+    // 灼燃爆发期间伤害改为元素伤害：视频元素总伤 91800 ÷ 单颗 7080 ≈ 13 颗
+    elementBalls: 13,
     elementShare: 0.544,        // 91800 / 168759.6
     leaderFactor: 0.9002,       // 151918.4 / 168759.6
     note: '帧表实测：非过载 80 帧/颗 ×7 + 过载 60 帧/颗 ×9 = 16 颗，36s 结算；元素占 54%',

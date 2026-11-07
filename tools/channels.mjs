@@ -50,7 +50,7 @@ export function phaseCount(phase) {
  *            leaderDps?:number, elementTotal?:number|null, durationSec?:number, note?:string, source?:string,
  *            breakdown?:Array<{windowSec:number, intervalSec:number, count:number}>}}
  */
-export function computeChannel(params, skillAtk) {
+export function computeChannel(params, skillAtk, target = {}) {
   if (!params || typeof params !== 'object') return { ok: false, error: '通道参数为空' }
   const durationSec = Number(params.durationSec)
   if (!Number.isFinite(durationSec) || durationSec <= 0) return { ok: false, error: 'durationSec 非法' }
@@ -63,26 +63,50 @@ export function computeChannel(params, skillAtk) {
   }))
   const balls = breakdown.reduce((a, b) => a + b.count, 0)
 
-  const perBallDamage = Number(params.perBallAtkScale ?? 0) * skillAtk
-  const ballDamage = balls * perBallDamage
-  const fieldDamage = Number(params.fieldAtkScalePerSec ?? 0) * skillAtk * durationSec
+  // ── 伤害类型分流（通用机制，不是某个干员的特判）─────────────────────
+  // 元素伤害**无视法抗**；法术伤害按 RES 减免。用 `elementBalls` 表示"有多少颗转成元素"，
+  // 这是"目标处于元素爆发期间时伤害改为元素"这类机制的通用表达。
+  const res = Math.max(0, Math.min(Number(target.res ?? 0), 100))
+  const def = Math.max(0, Number(target.def ?? 0))
+  const perBallRaw = Number(params.perBallAtkScale ?? 0) * skillAtk
+  const elementBalls = Math.max(0, Math.min(Number(params.elementBalls ?? 0), balls))
+  const magicBalls = balls - elementBalls
+
+  const elementDamage = elementBalls * perBallRaw
+  const magicDamage = magicBalls * perBallRaw * (1 - res / 100)
+  const ballDamage = elementDamage + magicDamage
+
+  const fieldRaw = Number(params.fieldAtkScalePerSec ?? 0) * skillAtk * durationSec
+  // 地板默认按法术结算（吃法抗）；`fieldDamageType: 'element'` 时不减免
+  const fieldIsElement = params.fieldDamageType === 'element'
+  const fieldDamage = fieldIsElement ? fieldRaw : fieldRaw * (1 - res / 100)
+
   const totalDamage = ballDamage + fieldDamage
   const dps = totalDamage / durationSec
+  // RES=0 的木桩口径（与社区"dph/总伤"实测对账用）
+  const rawTotal = balls * perBallRaw + fieldRaw
 
   return {
     ok: true,
     kind: params.kind ?? 'unknown',
     balls,
-    perBallDamage,
+    elementBalls,
+    magicBalls,
+    perBallDamage: perBallRaw,
+    elementDamage,
+    magicDamage,
     ballDamage,
     fieldDamage,
     totalDamage,
     durationSec,
     dps,
     leaderDps: dps * (Number(params.leaderFactor) || 1),
-    elementTotal: Number.isFinite(Number(params.elementShare))
-      ? totalDamage * Number(params.elementShare)
-      : null,
+    res,
+    def,
+    // 木桩口径（RES=0）—— 用于和视频/社区实测对账
+    rawTotalDamage: rawTotal,
+    rawDps: rawTotal / durationSec,
+    elementTotal: elementDamage || null,
     note: params.note ?? null,
     source: params.source ?? null,
     breakdown,
