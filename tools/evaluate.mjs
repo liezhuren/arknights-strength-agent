@@ -290,9 +290,15 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
   // 两者同时存在时（全库仅 4 个技能：玛恩纳S3/薄绿S2/机械师S3/断崖S2），描述里的主攻击一律用 attack@atk_scale，
   // 裸 atk_scale 是附带效果（如薄绿技能结束时的范围伤害）—— 早期取裸 atk_scale 会把玛恩纳 S3 算成 0.12 倍。
   const mainScale = bb['attack@atk_scale'] ?? bb.atk_scale
+  // ⚠ `atk` 是**加算**语义：描述「攻击力 +{atk:0%}」且 atk=1.4 表示 +140%，
+  //   伤害倍率应为 1+1.4 = **2.4**，不是 1.4。早期直接拿 bb.atk 当倍率，
+  //   导致全库所有"攻击力+X%"技能 DPS 系统性偏低（银灰 S3 少算 1.5 倍、塔露拉 S3 少算 1.71 倍）。
+  //   判据用描述里的格式占位符 `{atk:0%}`（按百分比渲染）；纯点数加成不是倍率。
+  const atkIsPct = typeof bb.atk === 'number' && /\{atk:[^}]*%\}/.test(lv?.description ?? '')
+  const atkMultFromBb = atkIsPct ? 1 + bb.atk : 1
   const attackMult = isTrapDamageSkill
-    ? (override?.attackMult ?? bb.atk ?? 1)
-    : (override?.attackMult ?? mainScale ?? bb.atk ?? 1)
+    ? (override?.attackMult ?? atkMultFromBb)
+    : (override?.attackMult ?? mainScale ?? atkMultFromBb)
   const resolvedDmg = damageType === 'auto' ? null : damageType
   const finalDmg = (override?.damageType ?? resolvedDmg) ?? inferDamageType(lv.description) ?? (
     eop.profession === 'CASTER' || eop.subProfessionId === 'artsfghter' ? 'magical' : 'physical'

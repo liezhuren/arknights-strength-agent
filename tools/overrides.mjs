@@ -82,8 +82,8 @@ export const CHANNEL_OVERRIDES = {
       { windowSec: 9.033, intervalSec: 1.3333, firstDelaySec: 0.033 },
       { windowSec: 8.983, intervalSec: 1.0, firstDelaySec: 0 },
     ],
-    perBallAtkScale: 5.78,      // 7080 / 1225（技能期 ATK）
-    fieldAtkScalePerSec: 1.258, // (168759.6−113280)/36/1225
+    perBallAtkScale: 3.371,     // = 2.5(heatwave) × 1.18(天赋满潜) × (1000/875 信赖100+潜能25)
+    fieldAtkScalePerSec: 0.7337, // 55479.6 / 36 / 2100（技能期 ATK 已按 +140%→×2.4 修正）
     elementShare: 0.544,        // 91800 / 168759.6
     leaderFactor: 0.9002,       // 151918.4 / 168759.6
     note: '帧表实测：非过载 80 帧/颗 ×7 + 过载 60 帧/颗 ×9 = 16 颗，36s 结算；元素占 54%',
