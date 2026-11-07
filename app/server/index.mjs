@@ -244,7 +244,8 @@ const routes = {
       description: lv.description ?? '',
       blackboard: Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value])),
       trait: op.trait?.description ?? undefined,
-      talent: op.talents?.[0]?.description ?? undefined,
+      // 全部天赋都喂进去（原先只传第一条 → 多天赋干员漏解析）
+      talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
     })
     // 成功则**沉淀入库**（AI 提议；是否并入 overrides.mjs 由人工审核决定）
     if (r.ok) {
