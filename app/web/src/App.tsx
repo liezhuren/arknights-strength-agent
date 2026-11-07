@@ -233,8 +233,11 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
             const gated = !r.dpsGate?.verified
             return (
               <div className="cards">
-                {!gated && <Card title="技能期 DPS" value={bench[`skillDps${key}`]?.toFixed(1) ?? '—'} />}
-                {!gated && <Card title="平均 DPS" value={bench[`avgDps${key}`]?.toFixed(1) ?? '—'} />}
+                {/* 通道类技能：DPS 来自校准通道（与实测帧表对齐），不是普攻循环 */}
+                {r.channel && <Card title="通道 DPS" value={r.channel.dps.toFixed(1)} />}
+                {r.channel && <Card title="对领袖 DPS" value={r.channel.leaderDps.toFixed(1)} />}
+                {!r.channel && !gated && <Card title="技能期 DPS" value={bench[`skillDps${key}`]?.toFixed(1) ?? '—'} />}
+                {!r.channel && !gated && <Card title="平均 DPS" value={bench[`avgDps${key}`]?.toFixed(1) ?? '—'} />}
                 <Card title="覆盖率" value={`${((r.coverage ?? 0) * 100).toFixed(1)}%`} />
                 {!gated && <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />}
                 {/* 基础面板：事实数据，始终展示 */}

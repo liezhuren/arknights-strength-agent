@@ -77,6 +77,21 @@ export interface EvaluationResult {
     } | null
     /** DPS 展示门禁：verified=false 时整站不展示任何干员 DPS 数值 */
     dpsGate?: { verified: boolean; reason: string | null } | null
+    /** 生存栏独立门禁（防御/生命/减伤/闪避类天赋未建模时不展示承伤推算） */
+    survivalGate?: { verified: boolean; reason: string | null } | null
+    /** 通道类技能（引导/波次）的校准结果；存在时用它替代普攻循环 DPS */
+    channel?: {
+      kind: string
+      balls: number
+      perBallDamage: number
+      totalDamage: number
+      durationSec: number
+      dps: number
+      leaderDps: number
+      elementTotal: number | null
+      note: string
+      source: string
+    } | null
     moduleApplied: { entry: { name: string; type: string } | null; level: { level: number } | null; attr: Record<string, number>; warnings: string[] } | null
   }
 }

@@ -127,12 +127,18 @@ export function dpsGate(m) {
   }
 }
 
-/** 把判定渲染成报告行（紧跟 DPS 数字之前）。没有 modeling 时返回空数组。 */
-export function describeModeling(m) {
+/**
+ * 把判定渲染成报告行（紧跟 DPS 数字之前）。没有 modeling 时返回空数组。
+ * @param {object} m
+ * @param {{skipBlocking?:boolean, skipElement?:boolean}} [opts]
+ *   skipBlocking  通道已建模（CHANNEL_OVERRIDES 命中）→ blocking 缺口已解决，不再报警
+ *   skipElement   元素伤害已计入通道总伤 → 不再提示"元素未计入"
+ */
+export function describeModeling(m, opts = {}) {
   if (!m) return []
   const lines = []
-  const blocking = m.gaps.filter((x) => x.severity === SEVERITY_BLOCKING)
-  const material = m.gaps.filter((x) => x.severity === SEVERITY_MATERIAL)
+  const blocking = opts.skipBlocking ? [] : m.gaps.filter((x) => x.severity === SEVERITY_BLOCKING)
+  const material = m.gaps.filter((x) => x.severity === SEVERITY_MATERIAL && !(opts.skipElement && x.code === 'talent-element-unmodeled'))
   const notes = m.gaps.filter((x) => x.severity === SEVERITY_NOTE)
 
   // blocking 与 material 要**各自独立打印**：被 blocked 不代表"数值偏低"不存在，

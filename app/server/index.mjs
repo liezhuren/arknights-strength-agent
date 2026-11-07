@@ -88,6 +88,8 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
   // DPS 门禁：未接入文本解析时，任何 DPS 派生视图都不生成（用户定调：
   // 没有天赋/元素参与的 DPS 不成立，不该出现在界面上）
   const dpsGated = !r.dpsGate?.verified
+  // 泛用性/衰减来自规则层的六场景 DPS，通道校准不会喂进去 → 必须单独判
+  const ruleDpsOk = r.dpsGate?.verified && !r.channel && r.modeling?.level !== 'blocked'
   const GATE_NOTE = '输出 DPS 未给出：天赋与元素未参与建模，规则层数值不成立。\n接入模型解析后，本栏会自动显示数值。'
   return {
     result: r,
@@ -95,13 +97,13 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
     // 各栏的**展示形态**（标题剥掉元信息、结尾口径旁白分离）——
     // 网页渲染这个；`result` 里的 *Section 原文（含旁白）保留给 LLM/agent 与终端报告
     sections: splitSections({
-      versatility: dpsGated ? GATE_NOTE : r.versatilitySection,
+      versatility: ruleDpsOk ? r.versatilitySection : GATE_NOTE,
       difficulty: r.difficultySection,
       rotation: r.rotationSection,
       teamBuff: r.teamBuffSection,
       control: r.controlSection,
-      // 生存栏同样依赖"天赋未消费"的前提：防御/生命/减伤/闪避天赋都没进模型
-      survival: dpsGated
+      // 生存栏同样依赖"天赋未消费"的前提：防御/生命/减伤/闪避天赋都没进模型 → 独立门禁
+      survival: !r.survivalGate?.verified
         ? '④ 生存栏未给出：防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。\n接入模型解析后，本栏会自动显示数值。'
         : r.survivalSection,
     }),
@@ -109,7 +111,7 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
     modules: modulesOf(op).map((m) => ({ id: m.id, name: m.name, type: m.type, isSpecial: !!m.isSpecial, hasCombatData: !!m.hasCombatData })),
     charts: {
       // 泛用性 = 六场景干员输出分布 → 纯 DPS 派生，门禁关闭时不给
-      versatility: dpsGated
+      versatility: !ruleDpsOk
         ? null
         : {
             rows: v.rows.map((x) => ({ id: x.id, name: x.name, def: x.def, res: x.res, value: x.value, p25: x.p25, p50: x.p50, ok25: x.ok25, ok50: x.ok50 })),
@@ -119,8 +121,8 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
       rotation: rot
         ? { spLabel: rot.spLabel, spCost: rot.spCost, initSp: rot.initSp, rate: rot.rate, firstUse: rot.firstUse, duration: rot.duration, cycle: rot.cycle, coverage: rot.coverage, downtime: rot.downtime, permanent: rot.permanent, casts60: rot.casts60, casts90: rot.casts90, ammo: rot.ammo }
         : null,
-      // 生存分档 = 面板防御/生命 + 敌人来袭画像；防御/闪避/减伤类天赋未参与建模 → 门禁时不给
-      survival: dpsGated
+      // 生存分档 = 面板防御/生命 + 敌人来袭画像；防御/闪避/减伤类天赋未参与建模 → 独立门禁
+      survival: !r.survivalGate?.verified
         ? null
         : {
             normal: slim(normalRows),
@@ -132,7 +134,7 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
           },
       difficulty: { tier: diff.tier, score: diff.score, factors: diff.factors.map((f) => ({ kind: f.kind, level: f.level, text: f.text })) },
       // 属性衰减曲线（物理看 DEF，法术看 RES）—— 同样是干员 DPS 派生
-      decay: dpsGated
+      decay: !ruleDpsOk
         ? []
         : (r.damageType === 'physical' ? [0, 200, 400, 800, 1200] : [0, 20, 50, 80, 95])
             .map((x) => ({ x, value: scenarioValue(r.engine, r.damageType === 'physical' ? x : 0, r.damageType === 'physical' ? 0 : x) })),

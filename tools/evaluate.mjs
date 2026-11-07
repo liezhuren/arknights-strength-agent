@@ -21,7 +21,7 @@ import {
   burstDps,
   summonDps,
 } from '../engine/dps-engine.mjs'
-import { SKILL_OVERRIDES, MODULE_OVERRIDES } from './overrides.mjs'
+import { SKILL_OVERRIDES, MODULE_OVERRIDES, CHANNEL_OVERRIDES } from './overrides.mjs'
 import { assessModeling, describeModeling, dpsGate } from './model-coverage.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
 import { analyzeDescription } from './patterns.mjs'
@@ -538,7 +538,32 @@ export function evaluate(op, opts = {}) {
   const talent = extractTalentBonuses(eop)
   // 先判定建模覆盖度/门禁，再构造结果 —— 泛用性栏本身是 DPS 派生，需要在生成处就关掉
   const modeling = assessModeling({ op: eop, eng, lv })
-  const gate = dpsGate(modeling)
+  // 通道校准（非普攻循环类技能）：有校准项就按通道算，并可解锁 DPS 展示
+  const skillId = eop.skills?.[eng._skillIndex ?? skillIndex]?.id
+  const chan = CHANNEL_OVERRIDES[`${op.name}|${skillId}`] ?? null
+  let channel = null
+  if (chan) {
+    // 技能期 ATK = 面板 ATK × 技能倍率（eng.atk 本身不含 attackMult）
+    const atk = eng.atk * (eng.skill?.attackMult ?? 1)
+    const ballDamage = chan.balls * chan.ballAtkScale * atk
+    const fieldDamage = chan.fieldAtkScalePerSec * atk * chan.durationSec
+    const totalDamage = ballDamage + fieldDamage
+    const dps = totalDamage / chan.durationSec
+    channel = {
+      kind: chan.kind,
+      balls: chan.balls,
+      perBallDamage: ballDamage / chan.balls,
+      totalDamage,
+      durationSec: chan.durationSec,
+      dps,
+      leaderDps: dps * (chan.leaderFactor ?? 1),
+      elementTotal: chan.elementTotal ?? null,
+      note: chan.note,
+      source: chan.source,
+    }
+  }
+  // 有通道校准 → DPS 门禁对该干员放行（生存仍单独门禁：生存天赋还没进模型）
+  const gate = channel ? { verified: true, reason: null, via: 'channel' } : dpsGate(modeling)
   const adjustNotes = []
   if (eng._skillAdjusted) adjustNotes.push(`该干员无该技能，已回退至最高可用技能 S${skillIndex + 1}`)
   if (eng._masteryAdjusted !== null) adjustNotes.push(`该技能无专三数据，已按最高可用等级（下标 ${eng._masteryAdjusted}）计算`)
@@ -583,6 +608,12 @@ export function evaluate(op, opts = {}) {
   result.modeling = modeling
   // DPS 展示门禁：规则层数值不进界面（DPS 必须含天赋/元素才算成立）
   result.dpsGate = gate
+  result.channel = channel
+  // 生存单独门禁：防御/生命/减伤/闪避类天赋仍未进模型，即使 DPS 已由通道解锁
+  result.survivalGate = {
+    verified: false,
+    reason: '防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。',
+  }
   return result
 }
 
@@ -601,6 +632,8 @@ export function formatReport(r) {
   // DPS 门禁（用户定调）：规则层的一切 DPS 派生通道都不展示。
   // 覆盖率/回转/面板/控制/生存（承伤）不属于 DPS，照常输出。
   const dpsOff = !r.dpsGate?.verified
+  // 生存单独门禁（防御/生命/减伤/闪避类天赋未建模）
+  const survOff = !r.survivalGate?.verified
   const lines = [
     `【${r.operator}】${r.rarity} · ${r.profession} · 技能「${r.skill}」(${r.damageType})`,
     `面板：ATK ${r.panel.atk.toFixed(1)} · 生命 ${Math.round(r.panel.maxHp)} · 防御 ${Math.round(r.panel.def)} · 法抗 ${Math.round(r.panel.res)} · 阻挡 ${r.panel.block} · 间隔 ${r.panel.baseInterval.toFixed(2)}s · 费用 ${r.panel.cost}${r.talentBonuses && (r.talentBonuses.atkPct || r.talentBonuses.aspd) ? `（含天赋：${[r.talentBonuses.atkPct ? `攻击${r.talentBonuses.atkPct >= 0 ? '+' : ''}${Math.round(r.talentBonuses.atkPct * 100)}%` : '', r.talentBonuses.aspd ? `攻速${r.talentBonuses.aspd >= 0 ? '+' : ''}${r.talentBonuses.aspd}` : ''].filter(Boolean).join('，')}）` : ''}`,
@@ -641,7 +674,7 @@ export function formatReport(r) {
   } else {
     lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
   }
-  if (r.element && !dpsOff) {
+  if (r.element && !dpsOff && !r.channel) {
     lines.push(`元素损伤：${r.element.type}累积 ${r.elementAccrualPerSec.toFixed(1)}/秒（技能期） · 爆发收益约 ${r.elementBurstAvgDps.toFixed(1)}/秒（普通敌人）/ ${r.elementBurstAvgDpsLeader.toFixed(1)}/秒（领袖，条2000）`)
     lines.push(`          损伤条1000，爆条后冷却≈爆发持续；数值源 PRTS(2.7.61)，假设标注见 docs/dps-calculation.md`)
   }
@@ -682,11 +715,17 @@ export function formatReport(r) {
   }
   const b = r.benchmark
   // 建模覆盖度：紧贴 DPS 数字之前打印，防止把估算当成测量结果
-  for (const l of describeModeling(r.modeling)) lines.push(l)
+  for (const l of describeModeling(r.modeling, { skipBlocking: !!r.channel, skipElement: !!(r.channel && r.channel.elementTotal) })) lines.push(l)
   const blocked = r.modeling?.level === 'blocked'
   // DPS 门禁（用户定调）：没有天赋/元素参与建模的 DPS 不成立 → 整段不给数字。
   // 保留覆盖率（那是回转事实，不是输出结论）。
-  if (!r.dpsGate?.verified) {
+  if (r.channel) {
+    // 通道类技能（引导/波次）：伤害不走普攻循环，直接给通道总伤与 DPS
+    const c = r.channel
+    lines.push(`通道 DPS（${c.kind}）：${c.dps.toFixed(1)} · 对领袖 ${c.leaderDps.toFixed(1)}`)
+    lines.push(`   总伤 ${Math.round(c.totalDamage)} / ${c.durationSec}s · 火球 ${c.balls} 颗 × ${Math.round(c.perBallDamage)}${c.elementTotal ? ` · 其中元素伤害 ${Math.round(c.elementTotal)}` : ''}`)
+    lines.push(`   校准依据：${c.note}（来源：${c.source}）`)
+  } else if (!r.dpsGate?.verified) {
     lines.push('输出 DPS：未给出 —— 天赋与元素未参与建模，规则层数值不成立')
     lines.push(`   ${r.dpsGate?.reason ?? ''}`)
   } else if (r.nextAttack) {
@@ -733,8 +772,8 @@ export function formatReport(r) {
   if (r.rotationSection) lines.push('', r.rotationSection)
   if (r.teamBuffSection) lines.push('', r.teamBuffSection)
   if (r.controlSection) lines.push('', r.controlSection)
-  if (r.survivalSection && !dpsOff) lines.push('', r.survivalSection)
-  if (dpsOff) {
+  if (r.survivalSection && !survOff) lines.push('', r.survivalSection)
+  if (survOff) {
     lines.push('', '④ 生存栏未给出：防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。',
       '   接入文本解析后，本栏会自动显示。')
   }
