@@ -11,10 +11,11 @@ export interface SearchResult { total: number; rows: OperatorRow[] }
 export interface ModuleInfo { id: string; name: string; type: string; isSpecial: boolean; hasCombatData: boolean }
 
 export interface Charts {
+  /** 泛用性 = 六场景干员输出分布：纯 DPS 派生，DPS 门禁关闭时为 null */
   versatility: {
     rows: { id: string; name: string; def: number; res: number; value: number; p25: number; p50: number; ok25: boolean; ok50: boolean }[]
     coverageP25: number; coverageP50: number; worstOverMedian: number; decayPct: number; phys: boolean; tier: string
-  }
+  } | null
   rotation: {
     spLabel: string; spCost: number; initSp: number; rate: number | null; firstUse: number | null
     duration: number; cycle: number | null; coverage: number; downtime: number | null
@@ -74,12 +75,17 @@ export interface EvaluationResult {
       skillDpsUsable: boolean
       gaps: { code: string; severity: 'blocking' | 'material' | 'note'; label: string; detail?: string }[]
     } | null
+    /** DPS 展示门禁：verified=false 时整站不展示任何干员 DPS 数值 */
+    dpsGate?: { verified: boolean; reason: string | null } | null
     moduleApplied: { entry: { name: string; type: string } | null; level: { level: number } | null; attr: Record<string, number>; warnings: string[] } | null
   }
 }
 export interface CompareRow {
   query: string; name?: string; skill?: string; damageType?: string
-  benchmark?: Record<string, number>; coverage?: number
+  /** DPS 门禁关闭时为 null（不返回规则层数值） */
+  benchmark?: Record<string, number> | null; coverage?: number
+  /** true 表示该行 DPS 未给出（缺天赋/元素建模） */
+  dpsGated?: boolean
   tier?: string | null; difficulty?: string | null; firstUse?: string | null
   error?: string
 }

@@ -6,7 +6,7 @@ import type { Charts } from './api'
 const pct = (v: number) => `${(v * 100).toFixed(0)}%`
 
 /** 泛用性：六场景横向条 + 可用线标记（p25 灰线 / p50 白线） */
-function VersatilityChart({ v }: { v: Charts['versatility'] }) {
+function VersatilityChart({ v }: { v: NonNullable<Charts['versatility']> }) {
   const max = Math.max(...v.rows.map((r) => Math.max(r.value, r.p50)), 1)
   return (
     <div className="chart">
@@ -161,8 +161,18 @@ function DifficultyChart({ d }: { d: Charts['difficulty'] }) {
 export default function ChartsView({ charts }: { charts: Charts }) {
   return (
     <div className="charts">
-      <VersatilityChart v={charts.versatility} />
-      <DecayChart decay={charts.decay} phys={charts.versatility.phys} />
+      {charts.versatility ? (
+        <VersatilityChart v={charts.versatility} />
+      ) : (
+        <div className="chart">
+          <div className="chart-head"><h3>泛用性 · 六场景输出</h3></div>
+          <p className="muted">
+            未给出：泛用性是六场景 DPS 分布。DPS 需要天赋与元素一起参与建模才成立，
+            规则层数值不展示（接入文本解析后自动出现）。
+          </p>
+        </div>
+      )}
+      {charts.decay.length > 0 && <DecayChart decay={charts.decay} phys={charts.versatility?.phys ?? true} />}
       {charts.rotation && <RotationChart r={charts.rotation} />}
       <SurvivalChart s={charts.survival} />
       <DifficultyChart d={charts.difficulty} />

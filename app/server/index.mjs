@@ -85,13 +85,17 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
     id: x.threat.id, dps: x.threat.dps, perHit: x.perHit,
     hitsToDie: x.hitsToDie, seconds: x.seconds, sustained: x.sustained,
   }))
+  // DPS 门禁：未接入文本解析时，任何 DPS 派生视图都不生成（用户定调：
+  // 没有天赋/元素参与的 DPS 不成立，不该出现在界面上）
+  const dpsGated = !r.dpsGate?.verified
+  const GATE_NOTE = '输出 DPS 未给出：天赋与元素未参与建模，规则层数值不成立。\n接入模型解析后，本栏会自动显示数值。'
   return {
     result: r,
     report: formatReport(r),
     // 各栏的**展示形态**（标题剥掉元信息、结尾口径旁白分离）——
     // 网页渲染这个；`result` 里的 *Section 原文（含旁白）保留给 LLM/agent 与终端报告
     sections: splitSections({
-      versatility: r.versatilitySection,
+      versatility: dpsGated ? GATE_NOTE : r.versatilitySection,
       difficulty: r.difficultySection,
       rotation: r.rotationSection,
       teamBuff: r.teamBuffSection,
@@ -101,11 +105,14 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
     operator: { id: op.id, name: op.name, rarity: op.rarity, profession: op.profession, subProfessionId: op.subProfessionId },
     modules: modulesOf(op).map((m) => ({ id: m.id, name: m.name, type: m.type, isSpecial: !!m.isSpecial, hasCombatData: !!m.hasCombatData })),
     charts: {
-      versatility: {
-        rows: v.rows.map((x) => ({ id: x.id, name: x.name, def: x.def, res: x.res, value: x.value, p25: x.p25, p50: x.p50, ok25: x.ok25, ok50: x.ok50 })),
-        coverageP25: v.coverageP25, coverageP50: v.coverageP50, worstOverMedian: v.worstOverMedian,
-        decayPct: v.decayPct, phys: v.phys, tier: v.tier,
-      },
+      // 泛用性 = 六场景干员输出分布 → 纯 DPS 派生，门禁关闭时不给
+      versatility: dpsGated
+        ? null
+        : {
+            rows: v.rows.map((x) => ({ id: x.id, name: x.name, def: x.def, res: x.res, value: x.value, p25: x.p25, p50: x.p50, ok25: x.ok25, ok50: x.ok50 })),
+            coverageP25: v.coverageP25, coverageP50: v.coverageP50, worstOverMedian: v.worstOverMedian,
+            decayPct: v.decayPct, phys: v.phys, tier: v.tier,
+          },
       rotation: rot
         ? { spLabel: rot.spLabel, spCost: rot.spCost, initSp: rot.initSp, rate: rot.rate, firstUse: rot.firstUse, duration: rot.duration, cycle: rot.cycle, coverage: rot.coverage, downtime: rot.downtime, permanent: rot.permanent, casts60: rot.casts60, casts90: rot.casts90, ammo: rot.ammo }
         : null,
@@ -118,9 +125,11 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
         dodge: sv.normal.panel.dodge,
       },
       difficulty: { tier: diff.tier, score: diff.score, factors: diff.factors.map((f) => ({ kind: f.kind, level: f.level, text: f.text })) },
-      // 属性衰减曲线（物理看 DEF，法术看 RES）
-      decay: (r.damageType === 'physical' ? [0, 200, 400, 800, 1200] : [0, 20, 50, 80, 95])
-        .map((x) => ({ x, value: scenarioValue(r.engine, r.damageType === 'physical' ? x : 0, r.damageType === 'physical' ? 0 : x) })),
+      // 属性衰减曲线（物理看 DEF，法术看 RES）—— 同样是干员 DPS 派生
+      decay: dpsGated
+        ? []
+        : (r.damageType === 'physical' ? [0, 200, 400, 800, 1200] : [0, 20, 50, 80, 95])
+            .map((x) => ({ x, value: scenarioValue(r.engine, r.damageType === 'physical' ? x : 0, r.damageType === 'physical' ? 0 : x) })),
     },
   }
 }
@@ -156,7 +165,9 @@ const routes = {
       const v = r.versatilitySection ? null : null
       return {
         query: q, name: op.name, skill: r.skill, damageType: r.damageType,
-        benchmark: r.benchmark, coverage: r.coverage, tier: /分级：\*\*(.+?)\*\*/.exec(r.versatilitySection ?? '')?.[1] ?? null,
+        // DPS 门禁：未接入文本解析时不返回 benchmark 数值，避免对比页展示规则层 DPS
+        benchmark: r.dpsGate?.verified ? r.benchmark : null,
+        dpsGated: !r.dpsGate?.verified, coverage: r.coverage, tier: /分级：\*\*(.+?)\*\*/.exec(r.versatilitySection ?? '')?.[1] ?? null,
         difficulty: /分级：\*\*(.+?)\*\*/.exec(r.difficultySection ?? '')?.[1] ?? null,
         firstUse: /首轮可用 ([\d.]+)s/.exec(r.rotationSection ?? '')?.[1] ?? null,
       }

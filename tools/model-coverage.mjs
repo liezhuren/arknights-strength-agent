@@ -107,6 +107,26 @@ export function assessModeling({ op, eng, lv }) {
   }
 }
 
+/**
+ * DPS 展示门禁。
+ *
+ * 判据（用户定调）：**DPS 只有在"从技能文本 + 天赋文本解析出参数 → 进入引擎计算"
+ * 这条链路上才成立**。只吃面板与 blackboard 的规则层结果，天然把天赋机制和元素
+ * 排除在外 —— 那不是"偏小的 DPS"，而是一个没有意义的数，不该出现在界面上。
+ *
+ * 因此 `verified` 只有在 LLM 解析产物已并入该干员的计算输入时才为 true。
+ * 当前解析层尚未接通 → 恒为 false，全库不展示 DPS。
+ */
+export function dpsGate(m) {
+  const verified = m?.verified === true
+  return {
+    verified,
+    reason: verified
+      ? null
+      : '干员 DPS 需要天赋与元素一起参与计算；当前只有规则层（未接入文本解析），因此不给出 DPS 数值。',
+  }
+}
+
 /** 把判定渲染成报告行（紧跟 DPS 数字之前）。没有 modeling 时返回空数组。 */
 export function describeModeling(m) {
   if (!m) return []

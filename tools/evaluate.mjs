@@ -22,7 +22,7 @@ import {
   summonDps,
 } from '../engine/dps-engine.mjs'
 import { SKILL_OVERRIDES, MODULE_OVERRIDES } from './overrides.mjs'
-import { assessModeling, describeModeling } from './model-coverage.mjs'
+import { assessModeling, describeModeling, dpsGate } from './model-coverage.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
 import { analyzeDescription } from './patterns.mjs'
 import { resolveModule, applyModule, extractTalentPenetrate, formatAttr, modulesOf } from './modules.mjs'
@@ -527,6 +527,9 @@ export function evaluate(op, opts = {}) {
   const lv = eop.skills?.[skillIndex]?.levels?.[eng._masteryAdjusted ?? opts.masteryLevel ?? 9]
   const { discoveries: descDiscoveries } = analyzeDescription(lv, { knownKeys: new Set(Object.keys(blackboardOf(lv ?? {}))) })
   const talent = extractTalentBonuses(eop)
+  // 先判定建模覆盖度/门禁，再构造结果 —— 泛用性栏本身是 DPS 派生，需要在生成处就关掉
+  const modeling = assessModeling({ op: eop, eng, lv })
+  const gate = dpsGate(modeling)
   const adjustNotes = []
   if (eng._skillAdjusted) adjustNotes.push(`该干员无该技能，已回退至最高可用技能 S${skillIndex + 1}`)
   if (eng._masteryAdjusted !== null) adjustNotes.push(`该技能无专三数据，已按最高可用等级（下标 ${eng._masteryAdjusted}）计算`)
@@ -544,7 +547,9 @@ export function evaluate(op, opts = {}) {
     controlSection: formatControlSection(eop, skillIndex),
     survivalSection: formatSurvivalSection(eop, skillIndex, talent),
     rotationSection: formatRotationSection(eop, skillIndex, eng),
-    versatilitySection: formatVersatilitySection(eng),
+    versatilitySection: gate.verified
+      ? formatVersatilitySection(eng)
+      : '输出 DPS 未给出：天赋与元素未参与建模，规则层数值不成立。\n接入模型解析后，本栏会自动显示数值。',
     difficultySection: formatDifficultySection(eop, eng, skillIndex),
     moduleList: modulesOf(op).map((m) => `${m.name}(${m.type}${m.isSpecial ? '·特限' : ''}${m.hasCombatData ? '' : '·无数值'})`),
     moduleApplied: eng._module,
@@ -565,7 +570,9 @@ export function evaluate(op, opts = {}) {
   // 建模覆盖度判定：**只判定、不产数** → 接入它不会让锚点漂移。
   // 作用：把"规则层算不到"的缺口从"数字偏小"变成报告里显式可见的一行，
   // 避免用户把 0.0 或 59.3 当成测量结果。
-  result.modeling = assessModeling({ op: eop, eng, lv })
+  result.modeling = modeling
+  // DPS 展示门禁：规则层数值不进界面（DPS 必须含天赋/元素才算成立）
+  result.dpsGate = gate
   return result
 }
 
@@ -581,6 +588,9 @@ function formatSpText(r) {
 
 /** 简洁文本报告（后续 agent 输出格式的雏形）。 */
 export function formatReport(r) {
+  // DPS 门禁（用户定调）：规则层的一切 DPS 派生通道都不展示。
+  // 覆盖率/回转/面板/控制/生存（承伤）不属于 DPS，照常输出。
+  const dpsOff = !r.dpsGate?.verified
   const lines = [
     `【${r.operator}】${r.rarity} · ${r.profession} · 技能「${r.skill}」(${r.damageType})`,
     `面板：ATK ${r.panel.atk.toFixed(1)} · 间隔 ${r.panel.baseInterval.toFixed(2)}s · 费用 ${r.panel.cost}${r.talentBonuses && (r.talentBonuses.atkPct || r.talentBonuses.aspd) ? `（含天赋：${[r.talentBonuses.atkPct ? `攻击${r.talentBonuses.atkPct >= 0 ? '+' : ''}${Math.round(r.talentBonuses.atkPct * 100)}%` : '', r.talentBonuses.aspd ? `攻速${r.talentBonuses.aspd >= 0 ? '+' : ''}${r.talentBonuses.aspd}` : ''].filter(Boolean).join('，')}）` : ''}`,
@@ -621,16 +631,16 @@ export function formatReport(r) {
   } else {
     lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
   }
-  if (r.element) {
+  if (r.element && !dpsOff) {
     lines.push(`元素损伤：${r.element.type}累积 ${r.elementAccrualPerSec.toFixed(1)}/秒（技能期） · 爆发收益约 ${r.elementBurstAvgDps.toFixed(1)}/秒（普通敌人）/ ${r.elementBurstAvgDpsLeader.toFixed(1)}/秒（领袖，条2000）`)
     lines.push(`          损伤条1000，爆条后冷却≈爆发持续；数值源 PRTS(2.7.61)，假设标注见 docs/dps-calculation.md`)
   }
-  if (r.burst) {
+  if (r.burst && !dpsOff) {
     lines.push(`单次窗口爆发：每次部署 ${r.burst.perDeployHits}枚 × ${r.burst.hitMult} = ${r.burstDeployDamage.toFixed(0)}`)
     lines.push(`          单次技能(${r.burst.maxDeploysPerSkill}部署/${r.burst.skillWindowSec}s)：总伤 ${r.burstSkillTotal.toFixed(0)} → ${r.burstSkillDps.toFixed(0)} DPS`)
     lines.push(`          理想轴(${r.burst.deploys}部署/${r.burst.windowSec}s)：总伤 ${r.burstTotalDamage.toFixed(0)} → ${r.burstDps.toFixed(0)} DPS`)
   }
-  if (r.trap) {
+  if (r.trap && !dpsOff) {
     const bonus = r.trap.multBonusPct ? `，联动+${Math.round(r.trap.multBonusPct * 100)}%` : ''
     const pen = r.trap.resPenetrate ? `，无视${r.trap.resPenetrate}法抗` : ''
     lines.push(`陷阱/棋子：触发 DPS ${r.trapDps.toFixed(1)}（每次×${r.trap.mult}${bonus}${pen}，每 ${r.trap.cdSec}s 产 ${r.trap.cnt ?? 1} 个假设全触发；本体普攻另算，真实触发随敌人走位波动）`)
@@ -639,7 +649,7 @@ export function formatReport(r) {
     for (const l of formatSummonSection(r)) lines.push(l)
     // 召唤物自身生存（§23）：独立实体，不与本体 ④ 合并
     for (const l of formatSummonSurvival(r.operator)) lines.push(l)
-    if (r.summonDpsBench) {
+    if (r.summonDpsBench && !dpsOff) {
       const bk = r.damageType === 'physical' ? 'vs400防' : 'vs50抗'
       lines.push(`        基准口径（${bk}）：召唤物 ${r.summonDpsBench.toFixed(1)} DPS —— **独立于上方本体数值，不相加**`)
     }
@@ -663,7 +673,12 @@ export function formatReport(r) {
   // 建模覆盖度：紧贴 DPS 数字之前打印，防止把估算当成测量结果
   for (const l of describeModeling(r.modeling)) lines.push(l)
   const blocked = r.modeling?.level === 'blocked'
-  if (r.nextAttack) {
+  // DPS 门禁（用户定调）：没有天赋/元素参与建模的 DPS 不成立 → 整段不给数字。
+  // 保留覆盖率（那是回转事实，不是输出结论）。
+  if (!r.dpsGate?.verified) {
+    lines.push('输出 DPS：未给出 —— 天赋与元素未参与建模，规则层数值不成立')
+    lines.push(`   ${r.dpsGate?.reason ?? ''}`)
+  } else if (r.nextAttack) {
     const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
     lines.push(`基准${key}：强化周期平均 DPS ${b[`cycleAvgDps${key}`].toFixed(1)} · 总平均 ${b[`avgDps${key}`].toFixed(1)} · 费效 ${b[`costEff${key}`].toFixed(1)}`)
   } else {

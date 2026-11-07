@@ -229,35 +229,24 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
       {r && (
         <>
           {(() => {
-            // 建模覆盖度：数值不可用时**不显示数字**，避免把 0.0 当成测量结果
-            const modeling = r.modeling
-            const blocked = modeling?.level === 'blocked'
-            const skillDps = bench[`skillDps${key}`]?.toFixed(1)
+            // DPS 门禁：没有天赋/元素参与建模的 DPS 不成立 → 整站不显示这几个数字
+            const gated = !r.dpsGate?.verified
             return (
               <div className="cards">
-                <Card
-                  title={blocked ? '技能期 DPS（未建模）' : '技能期 DPS'}
-                  value={blocked ? '不适用' : (skillDps ?? '—')}
-                />
-                <Card title="平均 DPS" value={blocked ? `${bench[`avgDps${key}`]?.toFixed(1) ?? '—'}*` : (bench[`avgDps${key}`]?.toFixed(1) ?? '—')} />
+                {!gated && <Card title="技能期 DPS" value={bench[`skillDps${key}`]?.toFixed(1) ?? '—'} />}
+                {!gated && <Card title="平均 DPS" value={bench[`avgDps${key}`]?.toFixed(1) ?? '—'} />}
                 <Card title="覆盖率" value={`${((r.coverage ?? 0) * 100).toFixed(1)}%`} />
-                <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />
+                {!gated && <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />}
                 <Card title="面板 ATK" value={r.panel.atk.toFixed(1)} />
               </div>
             )
           })()}
-          {r.modeling?.gaps
-            ?.filter((g) => g.severity !== 'note')
-            .map((g) => (
-              <p key={g.code} className="warn">
-                {g.severity === 'blocking' ? '⛔' : '⚠'} {g.label}
-                {g.detail ? ` —— ${g.detail}` : ''}
-              </p>
-            ))}
-          {r.modeling?.level === 'blocked' && (
-            <p className="muted">
-              * 技能期伤害走未建模通道（如引导/召唤），上表只反映普攻部分；
-              「不适用」不等于该技能没有伤害。
+          {!r.dpsGate?.verified && (
+            <p className="warn">
+              {r.dpsGate?.reason}
+              {r.modeling?.level === 'blocked' && r.modeling.gaps.some((g) => g.severity === 'blocking')
+                ? `（该干员的技能还另有未建模通道：${r.modeling.gaps.find((g) => g.severity === 'blocking')?.detail ?? ''}）`
+                : ''}
             </p>
           )}
           {r.trait && <p className="trait-line">分支特性：{r.trait}</p>}
@@ -316,25 +305,47 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
         <input style={{ minWidth: 360 }} value={text} onChange={(e) => setText(e.target.value)} placeholder="用逗号分隔，最多 6 名" />
         <button onClick={run} disabled={busy}>{busy ? '对比中…' : '对比'}</button>
       </div>
-      {!!rows.length && (
-        <table>
-          <thead><tr><th>干员</th><th>技能</th><th>类型</th><th>技能期 DPS</th><th>平均 DPS</th><th>覆盖</th><th>泛用性</th><th>操作难度</th><th>首轮</th></tr></thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.query}>
-                <td><b>{r.name ?? r.query}</b></td>
-                <td className="muted">{r.skill ?? r.error}</td>
-                <td>{r.damageType === 'physical' ? '物理' : r.damageType === 'magical' ? '法术' : r.damageType}</td>
-                <td>{r.benchmark ? (r.benchmark.skillDpsVs400Def ?? r.benchmark.skillDpsVs50Res)?.toFixed(1) : '—'}</td>
-                <td>{r.benchmark ? (r.benchmark.avgDpsVs400Def ?? r.benchmark.avgDpsVs50Res)?.toFixed(1) : '—'}</td>
-                <td>{r.coverage !== undefined ? `${(r.coverage * 100).toFixed(1)}%` : '—'}</td>
-                <td>{r.tier ?? '—'}</td><td>{r.difficulty ?? '—'}</td>
-                <td>{r.firstUse ? `${r.firstUse}s` : '永续/—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {!!rows.length && (() => {
+        // DPS 门禁：未验证时整列去掉，而不是留一列「—」让人猜
+        const gated = rows.every((r) => r.dpsGated)
+        return (
+          <>
+            {gated && (
+              <p className="warn">DPS 与泛用性未给出：天赋与元素未参与建模，规则层数值不成立。</p>
+            )}
+            <table>
+              <thead>
+                <tr>
+                  <th>干员</th><th>技能</th><th>类型</th>
+                  {!gated && <><th>技能期 DPS</th><th>平均 DPS</th></>}
+                  <th>覆盖</th>
+                  {!gated && <th>泛用性</th>}
+                  <th>操作难度</th><th>首轮</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.query}>
+                    <td><b>{r.name ?? r.query}</b></td>
+                    <td className="muted">{r.skill ?? r.error}</td>
+                    <td>{r.damageType === 'physical' ? '物理' : r.damageType === 'magical' ? '法术' : r.damageType}</td>
+                    {!gated && (
+                      <>
+                        <td>{r.benchmark ? (r.benchmark.skillDpsVs400Def ?? r.benchmark.skillDpsVs50Res)?.toFixed(1) : '—'}</td>
+                        <td>{r.benchmark ? (r.benchmark.avgDpsVs400Def ?? r.benchmark.avgDpsVs50Res)?.toFixed(1) : '—'}</td>
+                      </>
+                    )}
+                    <td>{r.coverage !== undefined ? `${(r.coverage * 100).toFixed(1)}%` : '—'}</td>
+                    {!gated && <td>{r.tier ?? '—'}</td>}
+                    <td>{r.difficulty ?? '—'}</td>
+                    <td>{r.firstUse ? `${r.firstUse}s` : '永续/—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )
+      })()}
     </section>
   )
 }
