@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) levels/enemydata/enemy_database.json",
  "notes": [
   "ATK/间隔取自真实敌人（已排除 atk>5000 或 间隔<0.5s 的地图装置/演出类）",
@@ -7,14 +7,14 @@
   "dps = atk / interval，为单敌人对 0 防御目标的每秒伤害（未计我方 DEF/RES/闪避）",
   "多敌人集火时实际压力按敌人数线性放大（评估时需说明假设）"
  ],
- "totalEnemies": 1949,
+ "totalEnemies": 2029,
  "distribution": {
-  "p10": 87.9,
+  "p10": 89.7,
   "p25": 120,
-  "p50": 180,
-  "p75": 266.7,
-  "p90": 416.7,
-  "p95": 538.5,
+  "p50": 183.3,
+  "p75": 269.2,
+  "p90": 425,
+  "p95": 550,
   "p99": 1100
  },
  "profiles": [

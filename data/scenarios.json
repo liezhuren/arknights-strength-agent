@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T03:17:04.420Z",
+  "generatedAt": "2026-11-07T16:01:11.238Z",
   "note": "场景 = 目标敌人 DEF/RES 画像；物理伤害看 DEF，法术伤害看 RES。",
   "scenarios": [
     {

@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) uniequip_table.json + battle_equip_table.json",
  "notes": [
   "attributeBlackboard 为该等级累积总值，取 L3 即满配，勿累加",
@@ -9,9 +9,9 @@
   "scopeTags 含 roguelike 者仅集成战略生效（特限模组）"
  ],
  "stats": {
-  "operators": 393,
-  "modulesWithData": 505,
-  "modulesWithoutData": 393
+  "operators": 403,
+  "modulesWithData": 521,
+  "modulesWithoutData": 403
  },
  "modules": {
   "char_248_mgllan": [
@@ -7959,7 +7959,7 @@
         "isHide": true,
         "pot": 0,
         "name": "陈述苦难",
-        "desc": "自身生命会不断流失（该效果不会使生命降至0）；生命值高于50%时获得+25%攻击力的精力充沛；高于80%效果翻倍；\n在集成战略中，菲亚梅塔精力充沛时，该天赋的攻击力加成提升100%，技能或技能期间的攻击，会以最近部署的另一名干员的攻击范围再度施放",
+        "desc": "自身生命会不断流失（该效果不会使生命降至0）；生命值高于50%时获得+25%攻击力的精力充沛；高于80%效果翻倍；\n在集成战略中，生命流失速度减缓，菲亚梅塔精力充沛时，该天赋的攻击力加成提升100%，技能或技能期间的攻击，会以最后部署的另一名干员的攻击范围再度施放",
         "blackboard": {
          "interval": 0.2,
          "hp_ratio": 0.005,
@@ -8024,7 +8024,7 @@
         "isHide": true,
         "pot": 0,
         "name": "陈述苦难",
-        "desc": "自身生命会不断流失（该效果不会使生命降至0）；生命值高于50%时获得+25%攻击力的精力充沛；高于80%效果翻倍；\n在集成战略中，菲亚梅塔精力充沛时，该天赋的攻击力加成提升100%，技能或技能期间的攻击，会以最近部署的另一名干员的攻击范围再度施放，菲亚梅塔和该干员额外获得30攻速",
+        "desc": "自身生命会不断流失（该效果不会使生命降至0）；生命值高于50%时获得+25%攻击力的精力充沛；高于80%效果翻倍；\n在集成战略中，生命流失速度减缓，菲亚梅塔精力充沛时，该天赋的攻击力加成提升100%，技能或技能期间的攻击，会以最后部署的另一名干员的攻击范围再度施放，菲亚梅塔和该干员额外获得30攻速",
         "blackboard": {
          "interval": 0.2,
          "hp_ratio": 0.005,
@@ -36809,6 +36809,169 @@
       }
      }
     ]
+   },
+   {
+    "id": "uniequip_004_horn",
+    "name": "号角特限证章",
+    "type": "ISW-A",
+    "isSpecial": true,
+    "kind": "ISW",
+    "order": 4,
+    "scopeTags": [
+     "roguelike"
+    ],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 186,
+       "atk": 56,
+       "def": 34
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [
+         "roguelike"
+        ],
+        "tag": "roguelike",
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {}
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "在集成战略中，可以部署在目标点且可以攻击隐匿敌人",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 230,
+       "atk": 69,
+       "def": 42
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root",
+         "11_root"
+        ],
+        "tags": [
+         "roguelike"
+        ],
+        "tag": "roguelike",
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.2,
+         "max_hp": 0.4,
+         "ability_range_forward_extend": 1
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "#"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 2,
+        "name": "军事要塞",
+        "desc": "在场时所有重装干员的攻击力+23%（+3%）；在集成战略中，在场时额外使重装干员攻击力+20%、生命上限+40%，号角身前2格每部署1个友方单位，使号角攻击距离+1，远程攻击目标数+1",
+        "blackboard": {}
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "在集成战略中，可以部署在目标点且可以攻击隐匿敌人",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 257,
+       "atk": 77,
+       "def": 47
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root",
+         "11_root"
+        ],
+        "tags": [
+         "roguelike"
+        ],
+        "tag": "roguelike",
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.3,
+         "max_hp": 0.5,
+         "ability_range_forward_extend": 1,
+         "sp": 5,
+         "sp_max": 10
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "#"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 2,
+        "name": "军事要塞",
+        "desc": "在场时所有重装干员的攻击力+23%（+3%）；在集成战略中，在场时额外使重装干员攻击力+30%、生命上限+50%，号角身前2格每部署1个友方单位，使号角攻击距离+1，远程攻击目标数+1，自身立即获得5点技力（最多获得10点技力）",
+        "blackboard": {}
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "在集成战略中，可以部署在目标点且可以攻击隐匿敌人",
+       "blackboard": {}
+      }
+     }
+    ]
    }
   ],
   "char_493_firwhl": [
@@ -40196,6 +40359,154 @@
       }
      }
     ]
+   },
+   {
+    "id": "uniequip_003_shu",
+    "name": "好时节",
+    "type": "GUA-Y",
+    "isSpecial": false,
+    "kind": "GUA",
+    "order": 2,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 190,
+       "atk": 25,
+       "def": 40
+      },
+      "talents": [],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "受到的伤害减少15%",
+       "blackboard": {
+        "damage_resistance": 0.15
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 240,
+       "atk": 33,
+       "def": 48
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "2"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "天有四时",
+        "desc": "场上有三名不同职业干员时所有干员生命上限+14%、三名相同职业干员时所有干员攻击速度+14，编队中有四名【岁】干员时所有干员攻击力+14%且4秒获得1点技力；上述三个条件达成两种或以上时，则额外使所有干员攻击力+3%",
+        "blackboard": {
+         "max_hp": 0.14,
+         "attack_speed": 14,
+         "atk": 0.14,
+         "interval": 4,
+         "sp": 1
+        }
+       },
+       {
+        "index": -1,
+        "prefabKeys": [
+         "20_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.03
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "受到的伤害减少15%",
+       "blackboard": {
+        "damage_resistance": 0.15
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 300,
+       "atk": 40,
+       "def": 55
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "2"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "天有四时",
+        "desc": "场上有三名不同职业干员时所有干员生命上限+16%、三名相同职业干员时所有干员攻击速度+16，编队中有四名【岁】干员时所有干员攻击力+16%且4秒获得1点技力；上述三个条件达成两种或以上时，则额外使所有干员攻击力+5%",
+        "blackboard": {
+         "max_hp": 0.16,
+         "attack_speed": 16,
+         "atk": 0.16,
+         "interval": 4,
+         "sp": 1
+        }
+       },
+       {
+        "index": -1,
+        "prefabKeys": [
+         "20_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.05
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "受到的伤害减少15%",
+       "blackboard": {
+        "damage_resistance": 0.15
+       }
+      }
+     }
+    ]
    }
   ],
   "char_4121_zuole": [
@@ -43335,6 +43646,165 @@
       }
      }
     ]
+   },
+   {
+    "id": "uniequip_004_mlyss",
+    "name": "“缪尔赛思和朋友们”",
+    "type": "TAC-D",
+    "isSpecial": false,
+    "kind": "TAC",
+    "order": 3,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 50,
+       "atk": 56
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "ep_damage_ratio": 0.12
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "自身与援军造成伤害时附带相当于12%伤害的侵蚀损伤",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 65,
+       "atk": 76
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root",
+         "11"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "ep_damage_ratio": 0.12,
+         "atk_scale": 2,
+         "sp": 45
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "净水即生命",
+        "desc": "可召唤流形来复制待部署干员的大部分属性（生命上限、攻击、防御、法抗、阻挡数、攻击间隔、攻击范围、伤害类型、根据近/远程位获得特殊特性）协助作战，其被击败后会在25秒后自动刷新；缪尔赛思或流形攻击范围内有敌人侵蚀损伤爆发后，对其造成相当于缪尔赛思攻击力200%元素伤害且流形获得45点技力",
+        "blackboard": {
+         "cnt": 1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "自身与援军造成伤害时附带相当于12%伤害的侵蚀损伤",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 70,
+       "atk": 90
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root",
+         "11"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "ep_damage_ratio": 0.12,
+         "atk_scale": 4,
+         "sp": 80
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "净水即生命",
+        "desc": "技能开启时复制目标100%的生命值、攻击力、防御力、法抗，以及阻挡数、攻击间隔、攻击范围、初始伤害类型（不攻击、治疗类型则不继承）",
+        "blackboard": {
+         "cnt": 1,
+         "interval": 25,
+         "block_cnt": 1,
+         "scale": 1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "自身与援军造成伤害时附带相当于12%伤害的侵蚀损伤",
+       "blackboard": {}
+      }
+     }
+    ]
    }
   ],
   "char_427_vigil": [
@@ -45068,6 +45538,166 @@
         "atk_scale": 0.8,
         "atk_scale_m": 0.1
        }
+      }
+     }
+    ]
+   },
+   {
+    "id": "uniequip_003_qiubai",
+    "name": "欲雪时",
+    "type": "LOR-Y",
+    "isSpecial": false,
+    "kind": "LOR",
+    "order": 2,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 190,
+       "atk": 30,
+       "attack_speed": 5
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "cnt": 2,
+         "attack_speed": 12
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在2名及以上敌人时攻击速度+12",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 240,
+       "atk": 40,
+       "attack_speed": 6
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "2"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 2,
+        "name": "落英",
+        "desc": "攻击时有26%（+3%）的几率使目标束缚1.5秒，首次命中敌人时提升至100%且束缚时间提升至3秒",
+        "blackboard": {
+         "prob": 0.26,
+         "duration": 1.5,
+         "duration_advanced": 3
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "cnt": 2,
+         "attack_speed": 12
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在2名及以上敌人时攻击速度+12",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 280,
+       "atk": 50,
+       "attack_speed": 7
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "2"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 2,
+        "name": "落英",
+        "desc": "攻击时有28%（+3%）的几率使目标束缚1.5秒，首次命中敌人时提升至100%且束缚时间提升至3秒",
+        "blackboard": {
+         "prob": 0.28,
+         "duration": 1.5,
+         "duration_advanced": 3
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "cnt": 2,
+         "attack_speed": 12
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在2名及以上敌人时攻击速度+12",
+       "blackboard": {}
       }
      }
     ]
@@ -49758,6 +50388,153 @@
        "desc": "受到的治疗效果提升20%",
        "blackboard": {
         "heal_scale": 1.2
+       }
+      }
+     }
+    ]
+   },
+   {
+    "id": "uniequip_003_ulpia",
+    "name": "“前路”",
+    "type": "CRU-Y",
+    "isSpecial": false,
+    "kind": "CRU",
+    "order": 2,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 360,
+       "atk": 100
+      },
+      "talents": [],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "对被阻挡的敌人伤害提升至{damage_scale:0%}",
+       "blackboard": {
+        "damage_scale": 1.1
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 410,
+       "atk": 130
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "血脉的哺养",
+        "desc": "在场时，【深海猎人】每次击倒一名敌人时，乌尔比安的生命上限提高140，攻击力提高35，最多叠加10（+1）次，其他【深海猎人】干员获得55%的提高效果，叠加9层后乌尔比安的阻挡数+1",
+        "blackboard": {
+         "max_stack_cnt": 10,
+         "max_hp": 140,
+         "atk": 35,
+         "ulpia_t_1[abyssal].max_hp": 77,
+         "ulpia_t_1[abyssal].atk": 19.25,
+         "ulpia_t_1[abyssal].max_stack_cnt": 10,
+         "block_cnt": 1,
+         "add_block_cnt_stack_cnt": 9
+        }
+       },
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {}
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "对被阻挡的敌人伤害提升至{damage_scale:0%}",
+       "blackboard": {
+        "damage_scale": 1.1
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 460,
+       "atk": 150
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "血脉的哺养",
+        "desc": "在场时，【深海猎人】每次击倒一名敌人时，乌尔比安的生命上限提高150，攻击力提高38，最多叠加10（+1）次，其他【深海猎人】干员获得60%的提高效果，叠加9层后乌尔比安的阻挡数+1",
+        "blackboard": {
+         "max_stack_cnt": 10,
+         "max_hp": 150,
+         "atk": 38,
+         "ulpia_t_1[abyssal].max_hp": 90,
+         "ulpia_t_1[abyssal].atk": 22.799999,
+         "ulpia_t_1[abyssal].max_stack_cnt": 10,
+         "block_cnt": 1,
+         "add_block_cnt_stack_cnt": 9
+        }
+       },
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {}
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "对被阻挡的敌人伤害提升至{damage_scale:0%}",
+       "blackboard": {
+        "damage_scale": 1.1
        }
       }
      }
@@ -61873,6 +62650,169 @@
     "levels": []
    },
    {
+    "id": "uniequip_003_halo2",
+    "name": "远方问候",
+    "type": "DEC-X",
+    "isSpecial": false,
+    "kind": "DEC",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 120,
+       "def": 15,
+       "attack_speed": 5
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在敌人时技力自然恢复速度+0.2/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 150,
+       "def": 20,
+       "attack_speed": 6
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10",
+         "11_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.2,
+         "damage_scale": 1.08
+        }
+       },
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "能源解析",
+        "desc": "溯光星源与周围4格的干员获得8%术法充盈，攻击范围内的敌人受到12%（+2%）的脆弱效果，敌人在溯光星源的攻击范围内停留超过6秒后，脆弱效果提升至20%（+2%）",
+        "blackboard": {
+         "halo2_t_1[weak].damage_scale": 1.12,
+         "halo2_t_1[weak].interval": 6,
+         "halo2_t_1[weak].damage_scale_add": 0.08,
+         "halo2_t_1[weak].damage_scale_max": 1.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在敌人时技力自然恢复速度+0.2/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 180,
+       "def": 25,
+       "attack_speed": 7
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10",
+         "11_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.2,
+         "damage_scale": 1.12
+        }
+       },
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "能源解析",
+        "desc": "溯光星源与周围4格的干员获得12%术法充盈，攻击范围内的敌人受到12%（+2%）的脆弱效果，敌人在溯光星源的攻击范围内停留超过5秒后，脆弱效果提升至21%（+2%）",
+        "blackboard": {
+         "halo2_t_1[weak].damage_scale": 1.12,
+         "halo2_t_1[weak].interval": 5,
+         "halo2_t_1[weak].damage_scale_add": 0.09,
+         "halo2_t_1[weak].damage_scale_max": 1.21
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在敌人时技力自然恢复速度+0.2/秒",
+       "blackboard": {}
+      }
+     }
+    ]
+   },
+   {
     "id": "uniequip_002_halo2",
     "name": "探索者的收藏",
     "type": "DEC-Y",
@@ -67027,6 +67967,1533 @@
         "delta_atk_scale": 0.15,
         "max_atk_scale": 1.1,
         "max_stack_cnt": 5
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "char_4217_makoto": [
+   {
+    "id": "uniequip_001_makoto",
+    "name": "结城理证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_makoto",
+    "name": "彼此的声音",
+    "type": "PUM-Y",
+    "isSpecial": false,
+    "kind": "PUM",
+    "order": 2,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 200,
+       "atk": 18,
+       "def": 18
+      },
+      "talents": [],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "受到致命伤时不撤退，切换成作战（替身阻挡数为0但生命值提升），持续20秒后自身再次替换",
+       "blackboard": {
+        "duration": 20,
+        "max_hp": 0.2
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 257,
+       "atk": 27,
+       "def": 27
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "不羁之力",
+        "desc": "结城理切换为状态时停顿周围一定范围内敌人9秒；状态下结城理召唤人格面具作战，攻击间隔增大，攻击力+93%（+5%），生命值+38%，作战能力随技能选择而改变",
+        "blackboard": {
+         "atk": 0.93,
+         "base_attack_time": 0.4,
+         "sluggish": 9,
+         "max_hp_t1": 0.38,
+         "range_id": 0
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "受到致命伤时不撤退，切换成作战（替身阻挡数为0但生命值提升），持续20秒后自身再次替换",
+       "blackboard": {
+        "duration": 20,
+        "max_hp": 0.2
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 304,
+       "atk": 34,
+       "def": 34
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "不羁之力",
+        "desc": "结城理切换为状态时停顿周围一定范围内敌人10秒；状态下结城理召唤人格面具作战，攻击间隔增大，攻击力+100%（+5%），生命值+40%，作战能力随技能选择而改变",
+        "blackboard": {
+         "atk": 1,
+         "base_attack_time": 0.4,
+         "sluggish": 10,
+         "max_hp_t1": 0.4,
+         "range_id": 0
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "受到致命伤时不撤退，切换成作战（替身阻挡数为0但生命值提升），持续20秒后自身再次替换",
+       "blackboard": {
+        "duration": 20,
+        "max_hp": 0.2
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "char_4218_aigis": [
+   {
+    "id": "uniequip_001_aigis",
+    "name": "埃癸斯证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_aigis",
+    "name": "约定的证明",
+    "type": "BRK-X",
+    "isSpecial": false,
+    "kind": "BRK",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 35,
+       "atk": 35,
+       "def": 12
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk_scale": 1.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "部署后起飞，起飞后只攻击空中敌人；技能开启时降落，攻击造成群体物理伤害且攻击地面敌人时攻击力提升至110％",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 60,
+       "atk": 50,
+       "def": 17
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "反暗影特殊压制兵装",
+        "desc": "造成的物理伤害+15%（+2%），受到的物理伤害-15%（+2%）",
+        "blackboard": {
+         "damage_scale": 1.15,
+         "damage_resistance": 0.15
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk_scale": 1.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "部署后起飞，起飞后只攻击空中敌人；技能开启时降落，攻击造成群体物理伤害且攻击地面敌人时攻击力提升至110％",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 80,
+       "atk": 60,
+       "def": 20
+      },
+      "talents": [
+       {
+        "index": 1,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "反暗影特殊压制兵装",
+        "desc": "造成的物理伤害+17%（+2%），受到的物理伤害-17%（+2%）",
+        "blackboard": {
+         "damage_scale": 1.17,
+         "damage_resistance": 0.17
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "-1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk_scale": 1.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "部署后起飞，起飞后只攻击空中敌人；技能开启时降落，攻击造成群体物理伤害且攻击地面敌人时攻击力提升至110％",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4219_yukari": [
+   {
+    "id": "uniequip_001_yukari",
+    "name": "岳羽由加莉证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_yukari",
+    "name": "命运的奖赏",
+    "type": "RAN-X",
+    "isSpecial": false,
+    "kind": "RAN",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 120,
+       "atk": 36,
+       "def": 10
+      },
+      "talents": [
+       {
+        "index": -2,
+        "prefabKeys": [
+         "20_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.08
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "攻击范围内有干员处于技能持续期间时，自身攻击力+{atk:0%}",
+       "blackboard": {
+        "atk": 0.08
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 140,
+       "atk": 42,
+       "def": 15
+      },
+      "talents": [
+       {
+        "index": -2,
+        "prefabKeys": [
+         "20_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.08
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "治愈之风",
+        "desc": "技能结束后，治疗自身和攻击范围内最多3名干员相当于岳羽由加莉攻击力110%的生命值",
+        "blackboard": {
+         "max_target": 3,
+         "heal_scale": 1.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "攻击范围内有干员处于技能持续期间时，自身攻击力+{atk:0%}",
+       "blackboard": {
+        "atk": 0.08
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 160,
+       "atk": 48,
+       "def": 20
+      },
+      "talents": [
+       {
+        "index": -2,
+        "prefabKeys": [
+         "20_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "atk": 0.08
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "治愈之风",
+        "desc": "技能结束后，治疗自身和攻击范围内最多3名干员相当于岳羽由加莉攻击力120%的生命值",
+        "blackboard": {
+         "max_target": 3,
+         "heal_scale": 1.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "攻击范围内有干员处于技能持续期间时，自身攻击力+{atk:0%}",
+       "blackboard": {
+        "atk": 0.08
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "char_393_toledo": [
+   {
+    "id": "uniequip_001_toledo",
+    "name": "德·托莱多证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_toledo",
+    "name": "贵族义务",
+    "type": "UMD-Y",
+    "isSpecial": false,
+    "kind": "UMD",
+    "order": 2,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 135,
+       "def": 13
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.25
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在精英或领袖敌人时技力自然恢复速度+0.25/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 160,
+       "def": 23
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.25
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "“贵族血统”",
+        "desc": "攻击范围内被阻挡的敌人获得20%（+2%）的脆弱效果",
+        "blackboard": {
+         "damage_scale": 1.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在精英或领袖敌人时技力自然恢复速度+0.25/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 180,
+       "def": 30
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.25
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "“贵族血统”",
+        "desc": "攻击范围内被阻挡的敌人获得21%（+2%）的脆弱效果",
+        "blackboard": {
+         "damage_scale": 1.21
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内存在精英或领袖敌人时技力自然恢复速度+0.25/秒",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4232_hbound": [
+   {
+    "id": "uniequip_001_hbound",
+    "name": "旅骨证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_hbound",
+    "name": "看不见的大海",
+    "type": "ALC-X",
+    "isSpecial": false,
+    "kind": "ALC",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 100,
+       "atk": 20
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "场上存在炼金单元时，技力自然恢复速度+0.1/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 120,
+       "atk": 25
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.1
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "潜水作业",
+        "desc": "使自身炼金单元影响范围内地面敌人的物理和法术命中率-13%（-1%）；若敌人重量大于等于3，改为物理和法术命中率-18%（-2%）",
+        "blackboard": {
+         "hitrate": -0.13,
+         "heavy_hitrate": -0.18,
+         "value": 3
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "场上存在炼金单元时，技力自然恢复速度+0.1/秒",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 130,
+       "atk": 30
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "sp_recovery_per_sec": 0.1
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "潜水作业",
+        "desc": "使自身炼金单元影响范围内地面敌人的物理和法术命中率-15%（-1%）；若敌人重量大于等于3，改为物理和法术命中率-20%（-2%）",
+        "blackboard": {
+         "hitrate": -0.15,
+         "heavy_hitrate": -0.2,
+         "value": 3
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "场上存在炼金单元时，技力自然恢复速度+0.1/秒",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4246_dminon": [
+   {
+    "id": "uniequip_001_dminon",
+    "name": "国度证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_dminon",
+    "name": "空瓶罐们",
+    "type": "AMB-X",
+    "isSpecial": false,
+    "kind": "AMB",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 180,
+       "atk": 60
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "move_speed": -0.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内所有敌人移动速度-20%",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 210,
+       "atk": 72
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "move_speed": -0.2
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "实质坍缩",
+        "desc": "自身攻击范围内弥漫“国度”，处于“国度”内的地面敌人攻击速度-18，每秒受到攻击力17%的法术伤害",
+        "blackboard": {
+         "attack_speed": -18,
+         "atk_scale": 0.17
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内所有敌人移动速度-20%",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 230,
+       "atk": 80
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": true,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "move_speed": -0.2
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "实质坍缩",
+        "desc": "自身攻击范围内弥漫“国度”，处于“国度”内的地面敌人攻击速度-20，每秒受到攻击力20%的法术伤害",
+        "blackboard": {
+         "attack_speed": -20,
+         "atk_scale": 0.2
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "攻击范围内所有敌人移动速度-20%",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4169_caledo": [
+   {
+    "id": "uniequip_001_caledo",
+    "name": "镜匠证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_caledo",
+    "name": "“啊哈！”",
+    "type": "PRP-X",
+    "isSpecial": false,
+    "kind": "PRP",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "atk": 25,
+       "def": 15
+      },
+      "talents": [],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "阻挡敌人时，自身造成的元素损伤提升15%",
+       "blackboard": {
+        "ep_damage_scale": 1.15
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "atk": 38,
+       "def": 31
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "工匠的素养",
+        "desc": "生命上限+5%，自身处于元素损伤爆发期间，每秒回复自身2%的最大生命值，若为狂躁损伤爆发，则改为8%（+2%）的最大生命值",
+        "blackboard": {
+         "max_hp": 0.05,
+         "hp_ratio_1": 0.02,
+         "hp_ratio_2": 0.08
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "阻挡敌人时，自身造成的元素损伤提升15%",
+       "blackboard": {
+        "ep_damage_scale": 1.15
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "atk": 60,
+       "def": 50
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "工匠的素养",
+        "desc": "生命上限+10%，自身处于元素损伤爆发期间，每秒回复自身2%的最大生命值，若为狂躁损伤爆发，则改为8%（+2%）的最大生命值",
+        "blackboard": {
+         "max_hp": 0.1,
+         "hp_ratio_1": 0.02,
+         "hp_ratio_2": 0.08
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "TRAIT",
+       "desc": "阻挡敌人时，自身造成的元素损伤提升15%",
+       "blackboard": {
+        "ep_damage_scale": 1.15
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "char_1045_svash2": [
+   {
+    "id": "uniequip_001_svash2",
+    "name": "凛御银灰证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_svash2",
+    "name": "邀约",
+    "type": "CSR-X",
+    "isSpecial": false,
+    "kind": "CSR",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 190,
+       "atk": 40
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 210,
+       "atk": 50
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "开放性开局",
+        "desc": "在场时向待部署区中加入“风雪之眼”，且使待部署区按照部署费用排列；位于“风雪之眼”左侧的干员与自身初始技力+4，攻击力+7%，下次再部署时间-25%",
+        "blackboard": {
+         "respawn_time": 0.75,
+         "sp": 4,
+         "atk": 0.07
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 230,
+       "atk": 65
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": "开放性开局",
+        "desc": "在场时向待部署区中加入“风雪之眼”，且使待部署区按照部署费用排列；位于“风雪之眼”左侧的干员与自身初始技力+4，攻击力+10%，下次再部署时间-25%，且撤退后部署费用的增加上限减少25%",
+        "blackboard": {
+         "respawn_time": 0.75,
+         "sp": 4,
+         "atk": 0.1,
+         "multiplier_max_offset": -0.25
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4199_makiri": [
+   {
+    "id": "uniequip_001_makiri",
+    "name": "松桐证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_makiri",
+    "name": "神明的惦念",
+    "type": "CSR-X",
+    "isSpecial": false,
+    "kind": "CSR",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 150,
+       "def": 35
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 170,
+       "def": 50
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "慢手有筹",
+        "desc": "在战场停留30秒后，仅一次使场上与待部署区的所有重装和辅助干员攻击力+12%（+2%），生命上限+10%",
+        "blackboard": {
+         "interval": 30,
+         "atk": 0.12,
+         "max_hp": 0.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 190,
+       "def": 60
+      },
+      "talents": [
+       {
+        "index": -1,
+        "prefabKeys": [
+         "10_root"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT"
+        ],
+        "isHide": false,
+        "pot": 0,
+        "name": null,
+        "desc": null,
+        "blackboard": {
+         "value": -4
+        }
+       },
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "慢手有筹",
+        "desc": "在战场停留30秒后，仅一次使场上与待部署区的所有重装和辅助干员攻击力+15%（+2%），生命上限+13%",
+        "blackboard": {
+         "interval": 30,
+         "atk": 0.15,
+         "max_hp": 0.13
+        }
+       }
+      ],
+      "trait": {
+       "mode": "add",
+       "tag": null,
+       "target": "DISPLAY",
+       "desc": "首次部署时，待部署区最左侧的干员部署费用-4",
+       "blackboard": {}
+      }
+     }
+    ]
+   }
+  ],
+  "char_4245_alga": [
+   {
+    "id": "uniequip_001_alga",
+    "name": "奥尔佳证章",
+    "type": "ORIGINAL",
+    "isSpecial": false,
+    "kind": "ORIGINAL",
+    "order": 0,
+    "hasCombatData": false,
+    "levels": []
+   },
+   {
+    "id": "uniequip_002_alga",
+    "name": "来自昨天",
+    "type": "INS-X",
+    "isSpecial": false,
+    "kind": "INS",
+    "order": 1,
+    "scopeTags": [],
+    "hasCombatData": true,
+    "levels": [
+     {
+      "level": 1,
+      "attr": {
+       "max_hp": 150,
+       "atk": 20,
+       "def": 20
+      },
+      "talents": [],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "可以攻击到较远敌人，攻击自身未阻挡的敌人时攻击力提升至{atk_scale:0%}",
+       "blackboard": {
+        "atk_scale": 1.3
+       }
+      }
+     },
+     {
+      "level": 2,
+      "attr": {
+       "max_hp": 175,
+       "atk": 28,
+       "def": 28
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "先声夺人",
+        "desc": "周围8格内所有干员攻击力+5%，\n自身攻击范围内存在精英及领袖敌人时周围所有干员攻击力额外+10%（+2%）且自身优先攻击攻击力最高的精英及领袖敌人",
+        "blackboard": {
+         "alga[atk_up].atk": 0.05,
+         "alga[check_enemy].atk": 0.1
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "可以攻击到较远敌人，攻击自身未阻挡的敌人时攻击力提升至{atk_scale:0%}",
+       "blackboard": {
+        "atk_scale": 1.3
+       }
+      }
+     },
+     {
+      "level": 3,
+      "attr": {
+       "max_hp": 190,
+       "atk": 32,
+       "def": 32
+      },
+      "talents": [
+       {
+        "index": 0,
+        "prefabKeys": [
+         "1"
+        ],
+        "tags": [],
+        "tag": null,
+        "targets": [
+         "TALENT_DATA_ONLY"
+        ],
+        "isHide": false,
+        "pot": 4,
+        "name": "先声夺人",
+        "desc": "周围8格内所有干员攻击力+5%，\n自身攻击范围内存在精英及领袖敌人时周围所有干员攻击力额外+12%（+2%）且自身优先攻击攻击力最高的精英及领袖敌人",
+        "blackboard": {
+         "alga[atk_up].atk": 0.05,
+         "alga[check_enemy].atk": 0.12
+        }
+       }
+      ],
+      "trait": {
+       "mode": "override",
+       "tag": null,
+       "target": "TRAIT_DATA_ONLY",
+       "desc": "可以攻击到较远敌人，攻击自身未阻挡的敌人时攻击力提升至{atk_scale:0%}",
+       "blackboard": {
+        "atk_scale": 1.3
        }
       }
      }

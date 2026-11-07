@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) gamedata_const.json → termDescriptionDict（条目 ba.dt.*2 = \"·我方\"版）",
  "notes": [
   "元素损伤爆发数值以**描述文本**形式存放在 termDescriptionDict，需解析文本（不是独立数值字段）",

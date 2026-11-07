@@ -8,7 +8,7 @@
 
 ## 0. 一句话概括
 
-把《明日方舟》的游戏数据（454 名满练干员 / 994 技能 / 898 模组 / 74 召唤物）变成一套**可复算、可解释、可验证**的强度评测系统：
+把《明日方舟》的游戏数据（467 名满练干员 / 1023 技能 / 924 模组 / 75 召唤物）变成一套**可复算、可解释、可验证**的强度评测系统：
 一个零依赖 Node 数值引擎 + 评测管线，外挂一个本地单机软件（React 前端 + SQLite + 可接多模型）。
 
 ---
@@ -82,19 +82,19 @@ E:\github\arknights-strength-agent\
 │   ├── survival-eval.mjs       ④ 生存栏独立入口（**不依赖技能**，1★ 也能评）
 │   ├── evaluate-custom.mjs     自创干员评测（schema 校验）
 │   ├── anchors.mjs             锚点表生成（输出+生存+模组）
-│   ├── smoke.mjs               全量冒烟（454 干员 × 3 配置）
+│   ├── smoke.mjs               全量冒烟（467 干员 × 3 配置）
 │   ├── crosscheck-prts-modules.mjs  PRTS 模组数值交叉校验
 │   └── compare/ scenario-eval/ dump-op/ verify-module-index …
 ├── data\                       数据集（**入库**）
-│   ├── operators.json          454 干员 / 994 技能 / 649 天赋（含分支特性与模组元数据，9.6 MB）
-│   ├── modules.json            898 模组（**505 个含战斗数值**，1.4 MB）
+│   ├── operators.json          467 干员 / 1023 技能 / 670 天赋（含分支特性与模组元数据，10.2 MB）
+│   ├── modules.json            924 模组（**521 个含战斗数值**，1.4 MB）
 │   ├── summons.json            74 召唤物（引擎可见 73：**伤害型 41 / 功能型 8** / 装置 24）
 │   ├── summon-skills.json      95 个召唤物自身技能（§18 伤害改量 / §19 触发伤害 / §23 范围）
 │   ├── ranges.json             73 个射程几何（形状 + tiles/reach/nearest，§24）
 │   ├── scenarios.json          6 标准场景
 │   ├── threat-scenarios.json   5 档来袭画像（锚点为真实敌人）
 │   ├── scenario-baseline.json  全库 433 干员 × 6 场景可用线
-│   └── enemy-scenarios.json    2130 敌人 DEF/RES 分层
+│   └── enemy-scenarios.json    2029 敌人 DEF/RES 分层
 ├── app\                        **独立软件**
 │   ├── db\build-db.mjs         data/*.json → SQLite（6.1 MB）
 │   ├── db\index.mjs            访问层（软件唯一数据入口）
@@ -217,7 +217,7 @@ cd app/web && pnpm dev                    # /api 反代到 8787
 | 数据库 | `node app/db/verify.mjs` | **16** | 检索/详情/场景/自制干员/历史 + **DB 还原对象进评测管线数值=锚点** |
 | **API 冒烟** | `node app/server/verify.mjs` | **41** | 全部接口 + **经 API 的数值=锚点** + 轴参数等比缩放 + 图表值与文本一致 + **栏位双形态** |
 | 模型接入 | `node app/server/verify-llm.mjs` | **18** | 用**本地 mock provider** 验协议（URL/鉴权头/请求体/system 提示）+ 降级路径 + 沉淀与缓存 |
-| 全量冒烟 | `node tools/smoke.mjs` | 1362 次调用 | 454 干员 × {无模组/默认/特限}，**意外异常必须为 0** |
+| 全量冒烟 | `node tools/smoke.mjs` | 1401 次调用 | 467 干员 × {无模组/默认/特限}，**意外异常必须为 0** |
 | **召唤物专项** | `node tools/verify-summons.mjs` | **56** | 分类判据 / 数值手工验算 / **通道不双算** / 不渗入本体 / 自身技能 / 触发伤害 / 技能空间 |
 | **条件型专项** | `node tools/verify-conditional.mjs` | **38** | 对空加成 / 索敌来源含特性 / 蓄力两态 / **模组条件型（含 override 语义）**，且**不污染锚点** |
 | **射程专项** | `node tools/verify-ranges.mjs` | **29** | 形状几何 / **管线不丢字段** / 渲染 / 不污染数值 |

@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) character_table.json (profession=TOKEN)",
  "notes": [
   "召唤物本体在 character_table 的 TOKEN 职业下；token_table.json 不是召唤物名录（只有 trap_* 地图装置）",
@@ -11,11 +11,11 @@
   "召唤物自身技能（skillIds）未建模，仅记录 —— 已知会改变伤害的有弦惊/逍遥/打字机/机械水獭/虚影等"
  ],
  "stats": {
-  "total": 74,
-  "combat": 50,
+  "total": 75,
+  "combat": 51,
   "damage": 42,
-  "support": 8,
-  "linkedByCode": 73,
+  "support": 9,
+  "linkedByCode": 74,
   "linkedByRef": 0,
   "unlinked": 1
  },
@@ -3990,6 +3990,55 @@
       "modeled": false,
       "reason": "无伤害改量键",
       "keys": []
+     }
+    ],
+    "burst": null,
+    "modeledCount": 0
+   }
+  },
+  {
+   "id": "token_10067_toledo_tldptm",
+   "name": "征服者传说",
+   "owner": "德·托莱多",
+   "link": "code",
+   "combat": true,
+   "device": false,
+   "dealsDamage": false,
+   "kind": "support",
+   "atk": 100,
+   "interval": 1,
+   "blockCnt": 3,
+   "maxHp": 6000,
+   "def": 500,
+   "res": 20,
+   "cost": 0,
+   "concurrency": 1,
+   "concurrencyConfidence": "default",
+   "concurrencyQuote": "",
+   "skillIndex": 1,
+   "durationSec": null,
+   "durationSource": null,
+   "skillIds": [
+    null,
+    "sktok_toledo"
+   ],
+   "ownSkill": {
+    "mods": null,
+    "all": [
+     {
+      "index": 1,
+      "id": "sktok_toledo",
+      "name": "征服者传说",
+      "duration": 0,
+      "spCost": 0,
+      "atkMult": null,
+      "intervalMult": null,
+      "modeled": false,
+      "reason": "一次性入场/触发伤害，非普攻倍率",
+      "keys": [
+       "atk_scale=0",
+       "not_combat=7"
+      ]
      }
     ],
     "burst": null,

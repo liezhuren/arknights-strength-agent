@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) range_table.json",
  "notes": [
   "射程形状来自 range_table（**一直存在于游戏数据仓库**，此前项目未接这一层）",
@@ -8,7 +8,7 @@
   "干员面板射程在 dataset 的 panel.rangeId；技能改射程在 skills[].levels[].rangeId"
  ],
  "stats": {
-  "total": 73,
+  "total": 74,
   "maxTiles": 25,
   "maxReach": 6
  },
@@ -4333,6 +4333,39 @@
    "nearest": 0,
    "containsSelf": true,
    "shape": "横向 3 格直线"
+  },
+  "b-3": {
+   "id": "b-3",
+   "direction": 1,
+   "grids": [
+    [
+     0,
+     -2
+    ],
+    [
+     0,
+     -1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ]
+   ],
+   "tiles": 5,
+   "width": 5,
+   "height": 1,
+   "reach": 2,
+   "nearest": 0,
+   "containsSelf": true,
+   "shape": "横向 5 格直线"
   }
  }
 }

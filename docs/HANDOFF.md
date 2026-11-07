@@ -1,8 +1,51 @@
 # HANDOFF —— 项目交接与上下文恢复文档
 
 > **用途**：上下文被压缩（`/compact`）或换新会话后，读本文 + `PROJECT-DESIGN.md` 即可无缝接续工作。
-> **最后更新**：④ 生存栏（承伤/自回/闪避）+ 模组层（505 个模组数值 + 启用开关）落地时。
-> **如果只读一段**：读 §1 定位、§3 当前状态、§7 恢复步骤、§8 未完成项。
+> **最后更新**：2026-11-07 游戏数据更新（客户端 → 2026-11-01 版，干员 454 → **467**，新增 13 名）。
+> **如果只读一段**：读 §1 定位、§0 数据版本、§3 当前状态、§7 恢复步骤、§8 未完成项。
+
+---
+
+## 0. 数据版本与当前计数（每次更新游戏数据后核对这一节）
+
+**数据源**：`E:\github\ArknightsGameData`（sparse + shallow clone）
+**当前提交**：`63c7cec` · 2026-11-01（上一次是 `6844859` · 2026-08-18 / 客户端 2.7.61）
+
+| 资产 | 当前值 | 2026-08 那次 |
+|---|---|---|
+| 干员（可作干员口径：非 TOKEN/TRAP） | **467** | 454 |
+| 天赋条目 | **670** | 649 |
+| 去重技能 / 技能等级 | **1023 / 10155** | 994 / 9865 |
+| 有模组的干员 / 含战斗数值的模组 | **403 / 521** | 393 / 505 |
+| 射程 | **74** | 73 |
+| 敌人（enemy-scenarios 统计） | **2029** | 2130 |
+| `app/db/arknights.db` | **6.4 MB** | 6.1 MB |
+| 引擎自测 / DB 自检 / 冒烟 | **99 / 16 / 1401 次异常 0** | 99 / 16 / 1362 |
+
+**2026-11 新增 13 名干员**：虎狼丸(1★剑豪·无技能) 行铃 奥尔佳 埃癸斯 镜匠 德·托莱多 岳羽由加莉 冻河 国度 结城理 塔露拉 克莱门莎
+（其中埃癸斯 / 岳羽由加莉 / 结城理 / 虎狼丸 为联动干员；虎狼丸无技能，评测走 `tools/survival-eval.mjs`）
+
+### 更新流程（照这个顺序）
+
+```bash
+git -C E:/github/ArknightsGameData fetch --depth 1 origin master
+git -C E:/github/ArknightsGameData reset --hard origin/master
+node tools/build-dataset.mjs && node tools/build-modules.mjs && node tools/build-summons.mjs
+node tools/build-ranges.mjs && node tools/build-element.mjs
+node tools/build-threat-scenarios.mjs && node tools/build-scenario-baseline.mjs
+node tools/build-scenarios.mjs && node tools/build-enemy-scenarios.mjs
+node app/db/build-db.mjs
+node engine/test.mjs && node app/db/verify.mjs && node tools/smoke.mjs
+```
+
+### ⚠ 更新时必查的两个坑
+
+1. **`talents[].candidates` 可能是 `null`**（2026-11 的 `char_4217_makoto` 结城理就是 `{candidates: null}` 的空占位）。
+   `build-dataset.mjs` 的 `extractTalents` 原先直接取 `t.candidates[t.candidates.length-1]` → **整条管线崩在这里**。
+   已改为容错，但**必须保留槽位**（不能 filter 掉）：天赋顺序被模组 `talentIndex` 引用。
+2. **`git status` 显示的 diff 规模会虚高**：新客户端给每个干员加了 `blockVolume` 属性，插在 `panel`/`favor` 前部，
+   导致每块后续行整体位移 → 行级 diff 显示 18 万行变化，但**数值零漂移**。判据要用「逐干员字段深比」，不是看行数。
+
 
 ---
 
@@ -42,19 +85,19 @@ tools/module-eval.mjs          模组三配置对照（无/默认/特限，含�
 tools/survival.mjs             ④ 生存栏提取与呈现（承伤/自回/闪避/减伤/屏障/抵抗/免疫/团队）★新
 tools/survival-eval.mjs        ④ 生存栏独立入口（**不依赖技能**，1★ 无技能干员也能评）★新
 tools/build-threat-scenarios.mjs 来袭画像构建（enemy_database → data/threat-scenarios.json）★新
-tools/smoke.mjs                全量冒烟（454 干员 × 3 配置，意外异常须为 0）
+tools/smoke.mjs                全量冒烟（467 干员 × 3 配置，意外异常须为 0）
 tools/anchors.mjs              锚点回归表生成（输出 + 生存 + 模组三配置）★改数值后跑它
 tools/verify-module-index.mjs  模组 talentIndex 与数据集天赋顺序一致性校验
-tools/build-dataset.mjs        数据管线（454 干员 / 994 技能 / 模组元数据）
+tools/build-dataset.mjs        数据管线（467 干员 / 1023 技能 / 模组元数据）
 tools/build-scenarios.mjs      6 标准场景
-tools/build-enemy-scenarios.mjs 2130 敌人分层
+tools/build-enemy-scenarios.mjs 2029 敌人分层
 docs/dps-calculation.md        计算链路、公式、全部假设与已知不严谨项 ★改模型前必读（§13 模组 / §14 生存）
 docs/LESSONS.md                **踩坑与经验交接（跨项目通用）** —— 新项目起步先读这份 ★新
 docs/eval-standards.md         四栏评测标准（输出/团队增益/控制/生存）
 docs/module-prts-crosscheck.md PRTS 模组数值交叉校验报告（子代理产出）
 docs/data-inventory.md         数据资产清单与字段结构
 data/operators.json            干员数据集（含 modules 元数据）
-data/modules.json              模组数值表（505 个模组含战斗数据）
+data/modules.json              模组数值表（521 个模组含战斗数据，403 干员）
 data/threat-scenarios.json     来袭画像（5 档，锚点取自真实敌人）★新
 data/scenarios.json            6 标准场景（DEF/RES 画像）
 data/enemy-scenarios.json      敌人 DEF/RES 分层与代表
@@ -62,7 +105,7 @@ engine/survival.mjs            生存数学（离散受击/闪避/等效生命�
 app/db/build-db.mjs            数据入库：data/*.json → app/db/arknights.db（Node 内置 node:sqlite）★新
 app/db/index.mjs               数据库访问层（软件层唯一数据入口：检索/模组/场景/自制干员/评测历史）★新
 app/db/verify.mjs              数据库层自检 16 条（含"DB 还原对象直接进评测管线且数值=锚点"）★新
-app/db/arknights.db            SQLite 运行时库（6.1 MB：454 干员/649 天赋/994 技能/9865 技能等级/898 模组/1515 模组等级）
+app/db/arknights.db            SQLite 运行时库（6.4 MB：467 干员/670 天赋/1023 技能/10155 技能等级/924 模组/1563 模组等级）
 app/server/index.mjs           ★ API 服务（Node 内置 http，零依赖）：评测/对比/检索/自制干员/BYOK 配置/历史
 app/server/verify.mjs          ★ API 冒烟 16 条（含"经 API 评测的数值 = 锚点"）
 app/config.json                BYOK 模型配置（Key 只落本地、接口永不回显；provider 为空 = 纯规则层）
@@ -105,7 +148,7 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 
 | 模块 | 状态 | 验证方式 |
 |---|---|---|
-| 数据层 | ✅ 454 干员（含 38 异格）/ 994 技能 / 2130 敌人 / 6 场景 / 391 有模组（21 特限） | 数据集 JSON 校验 |
+| 数据层 | ✅ 467 干员（含异格）/ 1023 技能 / 2029 敌人 / 6 场景 / 403 有模组 | 数据集 JSON 校验 + 冒烟 1401 次 |
 | 数值引擎 | ✅ 76/76 断言（63 输出/生存 + 13 召唤物） | `node engine/test.mjs` |
 | 输出栏 | ✅ 分场景 DPS / 覆盖率 / 费效 / 主力技能形态 | `node tools/anchors.mjs` 对照 |
 | 穿透 | ✅ 无视固定防御/无视%防御/无视固定法抗 | 艾拉 S2 无视800防 |
@@ -136,7 +179,7 @@ node tools/build-dataset.mjs              # 重建数据集（改数据管线后
 | **通用描述模式库（第一层）** | ✅ 额外目标/停止攻击/连击/同时攻击/充能/蓄力/对空/减速/闪避/自回/减伤 | 未打补丁的水月自动解析 3 目标 |
 | LLM 解析补丁（第二层） | ✅ 棘刺/望 + 水月特限模组 | 与实测对照差 <0.1% |
 | **模组启用开关** | ✅ `--module none\|default\|isw\|X\|Y\|D\|名称` + `--mlvl 1\|2\|3` | `node tools/module-eval.mjs 水月` |
-| **模组数值** | ✅ **505 个 ADVANCED 模组全部数值**（`battle_equip_table.json`；PRTS 亦可交叉校验） | 水月 X/Y/特限 902.6→1032.0→1623.9 |
+| **模组数值** | ✅ **521 个 ADVANCED 模组全部数值**（`battle_equip_table.json`；PRTS 亦可交叉校验） | 水月 X/Y/特限 902.6→1032.0→1623.9 |
 | 模组元数据 | ✅ 名称/类型/特限标记/**按 charEquipOrder 排序**（证章在数据层无数值） | 水月 4 模组 |
 | **基础分支特性** | ✅ 454/454 干员有特性文本、151 个带数值黑匣子（**数据在 `character_table` 的干员级 `description`**） | 水月本体 50% 物法闪避、铃兰停顿 0.8s |
 | **回转时间（关键点）** | ✅ 首轮可用/完整周期/空窗/60·90s 内可开次数 + 回转侧操作负担★新 | 能天使首轮 10s、水月 30s、史尔特尔永续 |

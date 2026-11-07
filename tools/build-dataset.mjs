@@ -36,12 +36,17 @@ function maxPanel(phases) {
   }
 }
 
-/** 提取天赋（取最后 candidate = 满潜满级效果） */
+/** 提取天赋（取最后 candidate = 满潜满级效果）
+ *  ⚠ 新数据里可能出现 `{ candidates: null }` 这种**只有空字段的天赋占位**
+ *  （2026-11 更新后的新干员 `char_4217_makoto` 结城理就是如此）。
+ *  这里**保留槽位**、把字段填 null —— 不能 filter 掉：天赋顺序会被模组的
+ *  `talentIndex` 引用（见 tools/verify-module-index.mjs），删条目会让索引错位。 */
 function extractTalents(talents) {
   return (talents ?? []).map((t) => {
-    const c = t.candidates[t.candidates.length - 1]
+    const cands = Array.isArray(t?.candidates) ? t.candidates : []
+    const c = cands.length ? cands[cands.length - 1] : null
     return {
-      name: t.name ?? null,
+      name: t?.name ?? null,
       description: c?.description ?? null,
       blackboard: c?.blackboard ?? [],
       unlock: c?.unlockCondition ?? null,

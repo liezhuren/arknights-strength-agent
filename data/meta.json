@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-13T15:50:39.528Z",
-  "operatorCount": 454,
-  "skippedCount": 914,
+  "generatedAt": "2026-11-07T16:00:43.836Z",
+  "operatorCount": 467,
+  "skippedCount": 936,
   "rarityDist": {
-    "TIER_1": 11,
+    "TIER_1": 12,
     "TIER_2": 5,
     "TIER_3": 22,
-    "TIER_4": 70,
-    "TIER_5": 201,
-    "TIER_6": 145
+    "TIER_4": 71,
+    "TIER_5": 207,
+    "TIER_6": 150
   },
-  "skillTotal": 994,
-  "withMastery3": 416,
+  "skillTotal": 1023,
+  "withMastery3": 428,
   "damageTypeNote": "damageType 语义未推断（blackboard 的 atk/atk_scale 区分留评测层），数据集原样保留数值"
 }

@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-09-02T03:14:48.342Z",
- "totalEnemies": 2130,
+ "generatedAt": "2026-11-07T16:01:11.350Z",
+ "totalEnemies": 2216,
  "defTiers": [
   {
    "id": "低甲",
@@ -70,30 +70,30 @@
   }
  ],
  "defDist": {
-  "低甲": 785,
-  "中甲": 601,
-  "重甲": 300,
-  "高甲": 444
+  "低甲": 806,
+  "中甲": 621,
+  "重甲": 321,
+  "高甲": 468
  },
  "resDist": {
-  "低抗": 860,
-  "极高抗": 59,
-  "中抗": 718,
-  "高抗": 493
+  "低抗": 892,
+  "极高抗": 62,
+  "中抗": 747,
+  "高抗": 515
  },
  "comboRepresentatives": {
   "低甲/低抗": {
-   "count": 532,
+   "count": 544,
    "representative": {
-    "name": "无人机",
-    "maxHp": 3000,
-    "atk": 400,
-    "def": 100,
+    "name": "特战士兵",
+    "maxHp": 3200,
+    "atk": 350,
+    "def": 50,
     "res": 0
    }
   },
   "低甲/中抗": {
-   "count": 174,
+   "count": 178,
    "representative": {
     "name": "空值体",
     "maxHp": 5000,
@@ -103,13 +103,13 @@
    }
   },
   "低甲/高抗": {
-   "count": 74,
+   "count": 79,
    "representative": {
-    "name": "高塔术师",
-    "maxHp": 7000,
-    "atk": 600,
-    "def": 160,
-    "res": 65
+    "name": "热气球",
+    "maxHp": 8000,
+    "atk": 0,
+    "def": 0,
+    "res": 60
    }
   },
   "低甲/极高抗": {
@@ -123,7 +123,7 @@
    }
   },
   "中甲/低抗": {
-   "count": 165,
+   "count": 172,
    "representative": {
     "name": "深池飞行大队队长",
     "maxHp": 8000,
@@ -133,27 +133,27 @@
    }
   },
   "中甲/中抗": {
-   "count": 251,
+   "count": 253,
    "representative": {
-    "name": "勤奋劳工",
-    "maxHp": 11500,
-    "atk": 1,
-    "def": 400,
-    "res": 20
+    "name": "风遁宗师",
+    "maxHp": 12000,
+    "atk": 550,
+    "def": 300,
+    "res": 25
    }
   },
   "中甲/高抗": {
-   "count": 181,
+   "count": 189,
    "representative": {
-    "name": "赏金猎人“大骑士”",
+    "name": "棱镜魂灵残迹",
     "maxHp": 10000,
-    "atk": 500,
-    "def": 240,
-    "res": 60
+    "atk": 400,
+    "def": 400,
+    "res": 50
    }
   },
   "中甲/极高抗": {
-   "count": 4,
+   "count": 7,
    "representative": {
     "name": "披甲源石虫",
     "maxHp": 20000,
@@ -163,7 +163,7 @@
    }
   },
   "高甲/低抗": {
-   "count": 87,
+   "count": 93,
    "representative": {
     "name": "愤怒的守墓石像",
     "maxHp": 12000,
@@ -173,23 +173,23 @@
    }
   },
   "高甲/中抗": {
-   "count": 217,
+   "count": 230,
    "representative": {
-    "name": "鄙瘴",
-    "maxHp": 18000,
-    "atk": 900,
-    "def": 500,
-    "res": 30
+    "name": "反壳龟·缚",
+    "maxHp": 18500,
+    "atk": 500,
+    "def": 750,
+    "res": 40
    }
   },
   "高甲/高抗": {
-   "count": 138,
+   "count": 143,
    "representative": {
-    "name": "“殉道者”，安多恩",
-    "maxHp": 27000,
-    "atk": 750,
-    "def": 550,
-    "res": 60
+    "name": "香草翼兽（友方闪光）",
+    "maxHp": 25000,
+    "atk": 1600,
+    "def": 600,
+    "res": 70
    }
   },
   "高甲/极高抗": {
@@ -203,17 +203,17 @@
    }
   },
   "重甲/低抗": {
-   "count": 76,
+   "count": 83,
    "representative": {
-    "name": "行天救护车",
+    "name": "高准度伦蒂尼姆城防自行炮",
     "maxHp": 18000,
-    "atk": 900,
-    "def": 1200,
-    "res": 0
+    "atk": 750,
+    "def": 1500,
+    "res": 10
    }
   },
   "重甲/中抗": {
-   "count": 76,
+   "count": 86,
    "representative": {
     "name": "似兽",
     "maxHp": 35000,
@@ -223,13 +223,13 @@
    }
   },
   "重甲/高抗": {
-   "count": 100,
+   "count": 104,
    "representative": {
-    "name": "PRTS，“源代码”",
+    "name": "不死的黑蛇",
     "maxHp": 50000,
     "atk": 1000,
-    "def": 3000,
-    "res": 75
+    "def": 1000,
+    "res": 70
    }
   },
   "重甲/极高抗": {

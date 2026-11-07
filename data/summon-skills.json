@@ -1,5 +1,5 @@
 {
- "builtAt": "2026-09-13",
+ "builtAt": "2026-11-07",
  "source": "ArknightsGameData(zh_CN) skill_table.json（只含 TOKEN 职业引用的技能）",
  "notes": [
   "召唤物自身技能表（§18 伤害改量 / §19 触发伤害 / §23 范围与目标数都从这里取）",
@@ -21788,7 +21788,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21817,7 +21817,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21846,7 +21846,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21875,7 +21875,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21904,7 +21904,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21933,7 +21933,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21962,7 +21962,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -21991,7 +21991,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -22020,7 +22020,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -22049,7 +22049,7 @@
     {
      "name": "取势",
      "rangeId": null,
-     "description": "触发时使目标敌人停顿且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
+     "description": "触发时使目标敌人<$ba.sluggish>停顿</>且每秒受到相当于望攻击力的<@ba.vup>{atk_scale:0%}</>的法术伤害，持续<@ba.vup>{sluggish}</>秒",
      "skillType": "AUTO",
      "durationType": "NONE",
      "spData": {
@@ -23404,6 +23404,303 @@
      "prefabId": "sktok_closur_ourbase3",
      "duration": 0,
      "blackboard": []
+    }
+   ]
+  },
+  "sktok_toledo": {
+   "skillId": "sktok_toledo",
+   "iconId": "sktok_toledo_tldptm",
+   "hidden": false,
+   "levels": [
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 2,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 2,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 2,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 3,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 3,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 3,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 4,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 5,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 6,
+       "valueStr": null
+      }
+     ]
+    },
+    {
+     "name": "征服者传说",
+     "rangeId": "x-4",
+     "description": "出现时会使附近的敌人<$ba.tremble>战栗</><@ba.vup>{not_combat}</>秒",
+     "skillType": "PASSIVE",
+     "durationType": "NONE",
+     "spData": {
+      "spType": 8,
+      "levelUpCost": null,
+      "maxChargeTime": 0,
+      "spCost": 0,
+      "initSp": 0,
+      "increment": 0
+     },
+     "prefabId": "sktok_toledo",
+     "duration": 0,
+     "blackboard": [
+      {
+       "key": "atk_scale",
+       "value": 0,
+       "valueStr": null
+      },
+      {
+       "key": "not_combat",
+       "value": 7,
+       "valueStr": null
+      }
+     ]
     }
    ]
   },
