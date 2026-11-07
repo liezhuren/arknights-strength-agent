@@ -237,7 +237,14 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
                 {!gated && <Card title="平均 DPS" value={bench[`avgDps${key}`]?.toFixed(1) ?? '—'} />}
                 <Card title="覆盖率" value={`${((r.coverage ?? 0) * 100).toFixed(1)}%`} />
                 {!gated && <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />}
+                {/* 基础面板：事实数据，始终展示 */}
                 <Card title="面板 ATK" value={r.panel.atk.toFixed(1)} />
+                <Card title="生命" value={String(Math.round(r.panel.maxHp))} />
+                <Card title="防御" value={String(Math.round(r.panel.def))} />
+                <Card title="法抗" value={String(Math.round(r.panel.res))} />
+                <Card title="阻挡" value={String(r.panel.block)} />
+                <Card title="费用" value={String(r.panel.cost)} />
+                <Card title="攻击间隔" value={`${r.panel.baseInterval.toFixed(2)}s`} />
               </div>
             )
           })()}

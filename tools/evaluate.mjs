@@ -496,7 +496,16 @@ export function evaluateEngine(eng, meta = {}) {
     penetrate: eng.penetrate,
     talentPenetrate: eng._talentPen ?? null,
     enemyDebuff: eng.enemyDebuff,
-    panel: { atk: eng.atk, baseInterval: eng.baseInterval, cost: eng.cost },
+    // 基础面板项（含已折入的通用数值天赋）：事实数据，不受 DPS 门禁影响
+    panel: {
+      atk: eng.atk,
+      baseInterval: eng.baseInterval,
+      cost: eng.cost,
+      maxHp: eng.maxHp,
+      def: eng.def,
+      res: eng.res,
+      block: eng.blockCount,
+    },
     skillData: {
       spType: eng.skill?.spType,
       spCost: eng.skill?.spCost,
@@ -594,7 +603,7 @@ export function formatReport(r) {
   const dpsOff = !r.dpsGate?.verified
   const lines = [
     `【${r.operator}】${r.rarity} · ${r.profession} · 技能「${r.skill}」(${r.damageType})`,
-    `面板：ATK ${r.panel.atk.toFixed(1)} · 间隔 ${r.panel.baseInterval.toFixed(2)}s · 费用 ${r.panel.cost}${r.talentBonuses && (r.talentBonuses.atkPct || r.talentBonuses.aspd) ? `（含天赋：${[r.talentBonuses.atkPct ? `攻击${r.talentBonuses.atkPct >= 0 ? '+' : ''}${Math.round(r.talentBonuses.atkPct * 100)}%` : '', r.talentBonuses.aspd ? `攻速${r.talentBonuses.aspd >= 0 ? '+' : ''}${r.talentBonuses.aspd}` : ''].filter(Boolean).join('，')}）` : ''}`,
+    `面板：ATK ${r.panel.atk.toFixed(1)} · 生命 ${Math.round(r.panel.maxHp)} · 防御 ${Math.round(r.panel.def)} · 法抗 ${Math.round(r.panel.res)} · 阻挡 ${r.panel.block} · 间隔 ${r.panel.baseInterval.toFixed(2)}s · 费用 ${r.panel.cost}${r.talentBonuses && (r.talentBonuses.atkPct || r.talentBonuses.aspd) ? `（含天赋：${[r.talentBonuses.atkPct ? `攻击${r.talentBonuses.atkPct >= 0 ? '+' : ''}${Math.round(r.talentBonuses.atkPct * 100)}%` : '', r.talentBonuses.aspd ? `攻速${r.talentBonuses.aspd >= 0 ? '+' : ''}${r.talentBonuses.aspd}` : ''].filter(Boolean).join('，')}）` : ''}`,
     `技能：${formatSpText(r)}${r.skillData.baseAttackTimeDelta ? ` · 间隔${r.skillData.baseAttackTimeDelta > 0 ? '+' : ''}${r.skillData.baseAttackTimeDelta}s` : ''}`,
   ]
   if (r.skillIndexAdjusted) lines.push(`⚠ ${r.skillIndexAdjusted}`)

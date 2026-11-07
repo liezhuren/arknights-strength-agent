@@ -54,7 +54,7 @@ export interface EvaluationResult {
     survivalSection: string | null
     teamBuffSection: string | null
     controlSection: string | null
-    panel: { atk: number; baseInterval: number; cost: number }
+    panel: { atk: number; baseInterval: number; cost: number; maxHp: number; def: number; res: number; block: number }
     talentList: string[]
     trait: string | null
     burst?: {
