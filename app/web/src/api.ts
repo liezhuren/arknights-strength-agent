@@ -63,6 +63,17 @@ export interface EvaluationResult {
     trap?: { mult: number; cdSec: number; cnt?: number } | null
     element?: { type: string; perHitRatio: number } | null
     nextAttack?: boolean
+    /**
+     * 建模覆盖度判定（服务端 tools/model-coverage.mjs 产出）。
+     * level==='blocked' 表示技能期 DPS 不可用（伤害走未建模通道）——
+     * 此时界面**不得**把 benchmark 里的 0 当成结果展示。
+     */
+    modeling?: {
+      level: 'blocked' | 'partial' | 'full'
+      basis: string
+      skillDpsUsable: boolean
+      gaps: { code: string; severity: 'blocking' | 'material' | 'note'; label: string; detail?: string }[]
+    } | null
     moduleApplied: { entry: { name: string; type: string } | null; level: { level: number } | null; attr: Record<string, number>; warnings: string[] } | null
   }
 }

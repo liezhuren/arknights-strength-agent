@@ -22,6 +22,7 @@ import {
   summonDps,
 } from '../engine/dps-engine.mjs'
 import { SKILL_OVERRIDES, MODULE_OVERRIDES } from './overrides.mjs'
+import { assessModeling, describeModeling } from './model-coverage.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
 import { analyzeDescription } from './patterns.mjs'
 import { resolveModule, applyModule, extractTalentPenetrate, formatAttr, modulesOf } from './modules.mjs'
@@ -529,7 +530,7 @@ export function evaluate(op, opts = {}) {
   const adjustNotes = []
   if (eng._skillAdjusted) adjustNotes.push(`该干员无该技能，已回退至最高可用技能 S${skillIndex + 1}`)
   if (eng._masteryAdjusted !== null) adjustNotes.push(`该技能无专三数据，已按最高可用等级（下标 ${eng._masteryAdjusted}）计算`)
-  return evaluateEngine(eng, {
+  const result = evaluateEngine(eng, {
     operator: op.name,
     rarity: op.rarity,
     profession: `${op.profession}/${op.subProfessionId}`,
@@ -561,6 +562,11 @@ export function evaluate(op, opts = {}) {
     // 射程几何（range_table）：面板射程 + 技能改射程 + 形状示意图
     rangeSection: formatRangeSection(op, eng._skillIndex ?? skillIndex, eng._masteryAdjusted ?? opts.masteryLevel ?? 9),
   })
+  // 建模覆盖度判定：**只判定、不产数** → 接入它不会让锚点漂移。
+  // 作用：把"规则层算不到"的缺口从"数字偏小"变成报告里显式可见的一行，
+  // 避免用户把 0.0 或 59.3 当成测量结果。
+  result.modeling = assessModeling({ op: eop, eng, lv })
+  return result
 }
 
 /** SP 回复方式的中文技能描述片段。 */
@@ -654,13 +660,19 @@ export function formatReport(r) {
     }
   }
   const b = r.benchmark
+  // 建模覆盖度：紧贴 DPS 数字之前打印，防止把估算当成测量结果
+  for (const l of describeModeling(r.modeling)) lines.push(l)
+  const blocked = r.modeling?.level === 'blocked'
   if (r.nextAttack) {
     const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
     lines.push(`基准${key}：强化周期平均 DPS ${b[`cycleAvgDps${key}`].toFixed(1)} · 总平均 ${b[`avgDps${key}`].toFixed(1)} · 费效 ${b[`costEff${key}`].toFixed(1)}`)
   } else {
     const key = r.damageType === 'physical' ? 'Vs400Def' : 'Vs50Res'
+    // 通道未建模时，技能期数字不成立 → 不给数字，平均注明"仅普攻"
+    const skillText = blocked ? '—（未建模）' : b[`skillDps${key}`].toFixed(1)
+    const avgText = blocked ? `${b[`avgDps${key}`].toFixed(1)}（仅普攻）` : b[`avgDps${key}`].toFixed(1)
     lines.push(
-      `基准${key}：技能期 DPS ${b[`skillDps${key}`].toFixed(1)} · 平A ${b[`sustainDps${key}`].toFixed(1)} · 平均 ${b[`avgDps${key}`].toFixed(1)} · 费效 ${b[`costEff${key}`].toFixed(1)}`,
+      `基准${key}：技能期 DPS ${skillText} · 平A ${b[`sustainDps${key}`].toFixed(1)} · 平均 ${avgText} · 费效 ${b[`costEff${key}`].toFixed(1)}`,
     )
   }
   // ② 团队增益栏 / ③ 控制栏（独立成栏，不并入 DPS 数字）

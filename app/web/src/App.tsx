@@ -228,13 +228,38 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
 
       {r && (
         <>
-          <div className="cards">
-            <Card title="技能期 DPS" value={bench[`skillDps${key}`]?.toFixed(1) ?? '—'} />
-            <Card title="平均 DPS" value={bench[`avgDps${key}`]?.toFixed(1) ?? '—'} />
-            <Card title="覆盖率" value={`${((r.coverage ?? 0) * 100).toFixed(1)}%`} />
-            <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />
-            <Card title="面板 ATK" value={r.panel.atk.toFixed(1)} />
-          </div>
+          {(() => {
+            // 建模覆盖度：数值不可用时**不显示数字**，避免把 0.0 当成测量结果
+            const modeling = r.modeling
+            const blocked = modeling?.level === 'blocked'
+            const skillDps = bench[`skillDps${key}`]?.toFixed(1)
+            return (
+              <div className="cards">
+                <Card
+                  title={blocked ? '技能期 DPS（未建模）' : '技能期 DPS'}
+                  value={blocked ? '不适用' : (skillDps ?? '—')}
+                />
+                <Card title="平均 DPS" value={blocked ? `${bench[`avgDps${key}`]?.toFixed(1) ?? '—'}*` : (bench[`avgDps${key}`]?.toFixed(1) ?? '—')} />
+                <Card title="覆盖率" value={`${((r.coverage ?? 0) * 100).toFixed(1)}%`} />
+                <Card title="费效" value={bench[`costEff${key}`]?.toFixed(1) ?? '—'} />
+                <Card title="面板 ATK" value={r.panel.atk.toFixed(1)} />
+              </div>
+            )
+          })()}
+          {r.modeling?.gaps
+            ?.filter((g) => g.severity !== 'note')
+            .map((g) => (
+              <p key={g.code} className="warn">
+                {g.severity === 'blocking' ? '⛔' : '⚠'} {g.label}
+                {g.detail ? ` —— ${g.detail}` : ''}
+              </p>
+            ))}
+          {r.modeling?.level === 'blocked' && (
+            <p className="muted">
+              * 技能期伤害走未建模通道（如引导/召唤），上表只反映普攻部分；
+              「不适用」不等于该技能没有伤害。
+            </p>
+          )}
           {r.trait && <p className="trait-line">分支特性：{r.trait}</p>}
           {r.moduleApplied?.entry && (
             <p className="trait-line">模组：{r.moduleApplied.entry.name}（{r.moduleApplied.entry.type} L{r.moduleApplied.level?.level}）
