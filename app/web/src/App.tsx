@@ -444,8 +444,11 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   const [rows, setRows] = useState<CompareRow[]>([])
   const [busy, setBusy] = useState(false)
   // AI 直接评测（按干员名索引）：不走 DPS 门禁，让模型自己给判断
-  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number; userJudge?: { dps: number | null; note?: string | null } | null; thinking?: string | null; trace?: { panelAtk?: number | null; baseInterval?: number | null; skillInterval?: number | null; attackMult?: number | null; hits?: number | null; targets?: number | null; duration?: number | null; coverage?: number | null; unresolvedPlaceholders?: string[]; element?: { type: string; accrualPerSec: number; burstDps: number } | null } | null }>>({})
+  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number; userJudge?: { dps: number | null; note?: string | null } | null; thinking?: string | null; rounds?: Array<{ round: number; dps: number | null; basis: string | null; confidence: string | null; at: string }>; trace?: { panelAtk?: number | null; baseInterval?: number | null; skillInterval?: number | null; attackMult?: number | null; hits?: number | null; targets?: number | null; duration?: number | null; coverage?: number | null; unresolvedPlaceholders?: string[]; element?: { type: string; accrualPerSec: number; burstDps: number } | null } | null }>>({})
   const [aiBusy, setAiBusy] = useState(false)
+  // 用户反馈（驱动模型重算）：数值 + 理由
+  const [noteFix, setNoteFix] = useState<Record<string, string>>({})
+  const [refining, setRefining] = useState<Record<string, boolean>>({})
   // 展开"思考过程"的干员名集合
   const [openTrace, setOpenTrace] = useState<Record<string, boolean>>({})
   // 用户修正：每行一个输入框
@@ -486,6 +489,35 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
       setAi(next)
       if (!Object.values(next).some((v) => !v.error)) onError('模型全部评测失败，可重试')
     } catch (e) { onError((e as Error).message) } finally { setAiBusy(false) }
+  }
+  /** 把修正当反馈，让模型再算一轮（不是直接改数字） */
+  async function refineByFix(name: string, skillIndex: number) {
+    const raw = (fix[name] ?? '').trim()
+    const dps = raw === '' ? null : Number(raw)
+    if (dps !== null && !Number.isFinite(dps)) { onError('修正值必须是数字'); return }
+    if (dps === null && !(noteFix[name] ?? '').trim()) { onError('请填一个数值或写一句理由'); return }
+    setRefining((prev) => ({ ...prev, [name]: true }))
+    try {
+      const r = await api.judgeRefine({ query: name, skillIndex, dps, note: (noteFix[name] ?? '').trim() || null })
+      if (!r.ok) { onError(`重算失败：${r.error ?? '未知'}`); return }
+      setAi((prev) => ({
+        ...prev,
+        [name]: {
+          ...prev[name],
+          dps: r.judge?.dps ?? prev[name]?.dps,
+          verdict: r.judge?.verdict ?? prev[name]?.verdict,
+          basis: r.judge?.basis ?? prev[name]?.basis,
+          confidence: r.judge?.confidence ?? prev[name]?.confidence,
+          thinking: r.thinking ?? null,
+          rounds: r.rounds ?? prev[name]?.rounds,
+          userJudge: dps != null ? { dps, note: (noteFix[name] ?? '').trim() || null } : prev[name]?.userJudge ?? null,
+        },
+      }))
+      setNoteFix((prev) => ({ ...prev, [name]: '' }))
+      setFix((prev) => ({ ...prev, [name]: '' }))
+    } catch (e) { onError((e as Error).message) } finally {
+      setRefining((prev) => ({ ...prev, [name]: false }))
+    }
   }
   /** 保存用户修正（覆盖模型值）；留空 = 清除修正 */
   async function saveFix(name: string, skillIndex: number) {
@@ -590,6 +622,12 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                               </div>
                               <div className="muted" style={{ marginTop: 4 }}><b>模型依据</b></div>
                               <div className="muted">{a.basis ?? '（无）'}</div>
+                              {a.rounds && a.rounds.length > 0 && (
+                                <div className="muted" style={{ marginTop: 4 }}>
+                                  <b>轮次</b>：{a.rounds.map((x) => `第${x.round}轮 ${x.dps ?? '未给数'}${x.at ? '' : ''}`).join(' → ')}
+                                  {a.userJudge?.dps != null && `（你的判断 ${a.userJudge.dps}）`}
+                                </div>
+                              )}
                               {a.thinking && (
                                 <>
                                   <div className="muted" style={{ marginTop: 4 }}><b>模型推理过程</b>{!a.thinking && '（该模型未返回）'}</div>
@@ -600,21 +638,33 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                             </div>
                           )}
                           <div style={{ marginTop: 4 }}>
+                            <div className="muted" style={{ fontSize: 11 }}>给你的判断 → 让模型带着反馈再算一轮</div>
                             <input
                               style={{ width: 92 }}
                               value={fix[r.name ?? r.query] ?? ''}
                               onChange={(e) => setFix((prev) => ({ ...prev, [r.name ?? r.query]: e.target.value }))}
-                              placeholder="修正 DPS"
+                              placeholder="你估的 DPS"
                             />
-                            <button onClick={() => saveFix(r.name ?? r.query, skillIndexOf(r.name ?? r.query))}>保存</button>
+                            <input
+                              style={{ width: 190, marginLeft: 4 }}
+                              value={noteFix[r.name ?? r.query] ?? ''}
+                              onChange={(e) => setNoteFix((prev) => ({ ...prev, [r.name ?? r.query]: e.target.value }))}
+                              placeholder="理由（可选，如：多目标不该算）"
+                            />
+                            <button
+                              disabled={refining[r.name ?? r.query]}
+                              onClick={() => refineByFix(r.name ?? r.query, skillIndexOf(r.name ?? r.query))}
+                            >
+                              {refining[r.name ?? r.query] ? '重算中…' : '带反馈重算'}
+                            </button>
                             {uj && (
                               <button
                                 style={{ marginLeft: 4 }}
                                 onClick={() => { setFix((prev) => ({ ...prev, [r.name ?? r.query]: '' })); saveFix(r.name ?? r.query, skillIndexOf(r.name ?? r.query)) }}
-                                title="清除修正，回到只显示模型值"
+                                title="清除记录的用户判断"
                               >清除</button>
                             )}
-                          </div>
+                        </div>
                         </td>
                       )
                     })()}

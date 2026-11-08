@@ -318,6 +318,63 @@ const routes = {
     return { ok: true, rows: out }
   },
   /**
+   * 用户修正 → **让模型带着反馈再走一轮**（不是直接改数字）。
+   * 动机：单纯覆盖数值只是把人的判断贴上去；用户要的是"模型知道自己的结论有问题，
+   * 重新审视并给出新的一轮推理"。所以这里保存 feedback，并立刻重跑一次 judge。
+   */
+  'POST /api/llm/judge-refine': async ({ body }) => {
+    const op = getOperator(body.query)
+    if (!op) throw new Error(`未找到干员：${body.query}`)
+    const si = Math.max(0, Math.min(2, Number(body.skillIndex ?? 2)))
+    const lv = op.skills?.[si]?.levels?.[9]
+    if (!lv) throw new Error('该干员无此技能')
+    const dps = body.dps === null || body.dps === undefined || body.dps === '' ? null : Number(body.dps)
+    if (dps !== null && !Number.isFinite(dps)) throw new Error('dps 必须是数字或留空')
+    const note = typeof body.note === 'string' ? body.note.trim() : ''
+
+    const sbb = Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value]))
+    const { text: resolvedDesc, unresolved } = resolveWithAudit(lv.description ?? '', sbb)
+    const r = evaluate(op, { damageType: 'auto', skillIndex: si, talentParses: getParse(op.id, si)?.patches?.talents ?? null })
+    const engineResult = {
+      panel: r.panel,
+      coverage: Math.round((r.coverage ?? 0) * 1000) / 1000,
+      dpsGated: !r.dpsGate?.verified,
+      unresolvedPlaceholders: unresolved,
+    }
+
+    const j = await judgeEvaluation({
+      operator: op.name,
+      skillName: lv.name ?? '—',
+      description: lv.description ?? '',
+      resolvedDescription: resolvedDesc,
+      blackboard: sbb,
+      trait: op.trait?.description ?? undefined,
+      talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
+      engineResult,
+      feedback: { dps, note: note || null },
+    })
+    if (!j.ok) return { ...j, ok: false }
+
+    // 记录轮次：保留历史，便于对比"第 1 轮 vs 用户反馈后第 2 轮"
+    const cur = getParse(op.id, si)
+    const rounds = [...(cur?.patches?.judgeRounds ?? []), {
+      round: (cur?.patches?.judgeRounds?.length ?? 0) + 1,
+      dps: j.judge.dps, basis: j.judge.basis, confidence: j.judge.confidence,
+      feedback: { dps, note: note || null },
+      at: new Date().toISOString(), model: j.model,
+    }]
+    saveParse({
+      opId: op.id, skillIdx: si,
+      form: cur?.form ?? null,
+      patches: { ...(cur?.patches ?? {}), judgeRounds: rounds, lastJudge: j.judge },
+      reasoning: cur?.reasoning ?? null,
+      confidence: j.judge.confidence ?? cur?.confidence ?? null,
+      provider: j.provider, model: j.model,
+      source: cur?.source ?? 'llm',
+    })
+    return { ok: true, judge: j.judge, thinking: j.thinking ?? null, rounds, model: j.model, ms: j.ms }
+  },
+  /**
    * 用户修正模型估值（人在环里）。
    * 动机：模型给的 DPS 波动大且会错（同一干员实测 1200/2600 都出现过），
    * 用户必须能覆盖它；模型值仍然保留，便于对照谁更准。

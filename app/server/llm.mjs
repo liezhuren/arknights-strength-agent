@@ -441,6 +441,18 @@ export async function judgeEvaluation(ctx) {
     '',
     '引擎当前结果（可能是门禁状态，仅供参考）：',
     JSON.stringify(ctx.engineResult ?? {}, null, 2),
+    // 用户反馈 → **驱动再算一轮**（不是让模型照抄）
+    ctx.feedback
+      ? '\n【用户反馈】用户认为这套技能的 DPS 约为 ' +
+        `${ctx.feedback.dps ?? '（未给数）'}` +
+        (ctx.feedback.note ? `，理由：「${ctx.feedback.note}」` : '') +
+        '。\n请把这条反馈当作**线索**重新评估：' +
+        '\n① 复核你的算式，找出可能与用户判断不一致的地方（多目标要不要算、覆盖率怎么取、' +
+        '元素/通道伤害是否漏算、天赋期望是否正确）；' +
+        '\n② 给出你**重新计算后**的 dps —— 可以同意用户，也可以不同意，但必须是**你自己算出来的**，' +
+        '不要直接把用户给的值抄进去；' +
+        '\n③ 在 basis 里写清这次改了什么、为什么改；如果最终仍与用户差距较大，明确说明分歧点。'
+      : '',
   ].filter(Boolean).join('\n')
 
   let r = null

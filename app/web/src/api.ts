@@ -183,6 +183,16 @@ export const api = {
   /** 自然语言也可以：\"评测赤刃明霄陈三技能和克莱门莎二技能\" */
   compare: (text: string, skillIndex = 2) =>
     post<{ rows: CompareRow[]; entries?: Array<{ name: string; skillIndex: number }> }>('/api/compare', { text, skillIndex }),
+  /** 把用户修正当作反馈，让模型**再走一轮**（不是直接改数字） */
+  judgeRefine: (p: { query: string; skillIndex?: number; dps?: number | null; note?: string | null }) =>
+    post<{
+      ok: boolean
+      error?: string
+      judge?: { dps: number | null; survival: string | null; teamBuff: string | null; control: string | null; verdict: string | null; basis: string | null; confidence: string | null }
+      thinking?: string | null
+      rounds?: Array<{ round: number; dps: number | null; basis: string | null; confidence: string | null; at: string }>
+      ms?: number
+    }>('/api/llm/judge-refine', p),
   /** 保存/清除用户对模型估值的修正 */
   judgeOverride: (p: { query: string; skillIndex?: number; dps?: number | null; note?: string | null; clear?: boolean }) =>
     post<{ ok: boolean; userJudge: { dps: number | null; note?: string | null; at?: string } | null }>('/api/llm/judge-override', p),
