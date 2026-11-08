@@ -82,16 +82,32 @@ export const CHANNEL_OVERRIDES = {
       { windowSec: 9.033, intervalSec: 1.3333, firstDelaySec: 0.033 },
       { windowSec: 8.983, intervalSec: 1.0, firstDelaySec: 0 },
     ],
-    // 3.371 是 2.5(heatwave) × 1.18(天赋满潜) × (1000/875)。1000 = 875 面板 + 90 满信赖 + 35 潜能
-    // （后两项来自 ArknightsGameData 的 favorKeyFrames / potentialRanks，已存在但尚未并入面板）
-    perBallAtkScale: 2.95,      // = 2.5(heatwave) × 1.18(天赋满潜)；信赖+潜能已并入面板
-    fieldAtkScalePerSec: 0.59,  // = 0.15/0.3(零散说法:每0.3s造成攻击力15%) × 1.18(天赋)
+    // 天赋倍率 ×1.18 已由 TALENT_OVERRIDES 并入面板 → 这里回归纯 blackboard 值
+    perBallAtkScale: 2.5,       // heatwave_atk_scale 原值，无拟合
+    fieldAtkScalePerSec: 0.5,   // 0.15 / 0.3（每 0.3s 造成攻击力 15%）
     // 灼燃爆发期间伤害改为元素伤害：视频元素总伤 91800 ÷ 单颗 7080 ≈ 13 颗
     elementBalls: 13,
     elementShare: 0.544,        // 91800 / 168759.6
     leaderFactor: 0.9002,       // 151918.4 / 168759.6
     note: '帧表实测：非过载 80 帧/颗 ×7 + 过载 60 帧/颗 ×9 = 16 颗，36s 结算；元素占 54%',
     source: 'B 站「血狼破军」塔露拉三技能帧分析（2026-11）',
+  },
+}
+
+// ----. 天赋倍率表（乘算型天赋，与"通用数值天赋"的加算口径分开）.
+//
+// 为什么单独一张表：`extractTalentBonuses` 只处理**加算**型天赋（攻击/防御/生命/攻速
+// 的百分比或点数）。有些天赋是**乘算**的，而且带触发条件 —— 例如塔露拉
+// 「停止攻击 3 秒后，法术与元素伤害逐渐提升，最高 +18%」。这类倍率从规则层推不出来，
+// 需要由解析层产出、或由实测反推后沉淀于此（每条都必须能追溯到来源）。
+//
+// 口径：`atk` 是**满层满潜**的乘数，直接乘在面板 ATK 上（面板此时已含信赖/潜能）。
+export const TALENT_OVERRIDES = {
+  塔露拉: {
+    atk: 1.18,
+    condition: '停止攻击 3 秒后，法术与元素伤害逐渐提升，最高 +18%（满潜）',
+    note: '满潜满层口径；"每次攻击时衰减"的动态过程未建模',
+    source: 'PRTS 天赋描述 + 帧级实测反推（7080 = 1000 × 2.4 × 1.18 × 2.5）',
   },
 }
 

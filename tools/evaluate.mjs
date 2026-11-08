@@ -21,7 +21,7 @@ import {
   burstDps,
   summonDps,
 } from '../engine/dps-engine.mjs'
-import { SKILL_OVERRIDES, MODULE_OVERRIDES, CHANNEL_OVERRIDES } from './overrides.mjs'
+import { SKILL_OVERRIDES, MODULE_OVERRIDES, CHANNEL_OVERRIDES, TALENT_OVERRIDES } from './overrides.mjs'
 import { assessModeling, describeModeling, dpsGate } from './model-coverage.mjs'
 import { computeChannel } from './channels.mjs'
 import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs'
@@ -273,9 +273,11 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
   const favor = eop.favor ?? {}
   const potSum = (key) => (eop.potentials ?? []).reduce((a, p) => a + (p?.attrs?.[key] ?? 0), 0)
   const add = (...vals) => vals.reduce((a, v) => a + (Number(v) || 0), 0)
+  // 乘算型天赋（由解析层/实测沉淀在 TALENT_OVERRIDES）—— 直接放大面板 ATK
+  const talentMult = TALENT_OVERRIDES[eop.name]?.atk ?? 1
   const panel = {
     ...eop.panel,
-    atk: add(eop.panel?.atk, favor.atk, potSum('ATK')),
+    atk: add(eop.panel?.atk, favor.atk, potSum('ATK')) * talentMult,
     maxHp: add(eop.panel?.maxHp, favor.maxHp, potSum('MAX_HP')),
     def: add(eop.panel?.def, favor.def, potSum('DEF')),
     magicResistance: add(eop.panel?.magicResistance, favor.magicResistance, potSum('MAGIC_RESISTANCE')),
