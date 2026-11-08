@@ -16,6 +16,7 @@ import {
   skillInterval,
   elementAccrualPerSec,
   elementBurstAvgDps,
+  ELEMENT_BREAK_ON_ENEMY,
   trapDps,
   burstDeployDamage,
   burstTotalDamage,
@@ -412,7 +413,17 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
         resFlat: (skillDeb?.resFlat ?? 0) + (talentDeb?.resFlat ?? 0) + (traitDeb?.resFlat ?? 0),
       }
     })(),
-    element: extractElement(bb, desc, panel.baseAttackTime ?? 1.5, SP_TYPE_MAP[sp.spType] ?? 'auto'),
+    // 元素损伤来源有两处：技能 blackboard / 描述，以及**天赋**（如塔露拉的"造成法术伤害时
+    // 附带 13% 灼燃损伤"）。早期只查技能层 → 天赋驱动的元素干员整条通道缺失。
+    element: extractElement(bb, desc, panel.baseAttackTime ?? 1.5, SP_TYPE_MAP[sp.spType] ?? 'auto')
+      ?? (() => {
+        for (const t of (eop.talents ?? [])) {
+          const tbb = Object.fromEntries((t.blackboard ?? []).map((b) => [b.key, b.value]))
+          const got = extractElement(tbb, (t.description ?? '').replace(/<[^>]+>/g, ''), panel.baseAttackTime ?? 1.5, SP_TYPE_MAP[sp.spType] ?? 'auto')
+          if (got) return { ...got, fromTalent: true }
+        }
+        return null
+      })(),
     skill: {
       name: lv.name ?? skillRef.id,
       spType: SP_TYPE_MAP[sp.spType] ?? 'auto',
@@ -527,6 +538,30 @@ export function evaluateEngine(eng, meta = {}) {
     elementAccrualPerSec: eng.element ? elementAccrualPerSec(eng) : 0,
     elementBurstAvgDps: eng.element ? elementBurstAvgDps(eng) : 0,
     elementBurstAvgDpsLeader: eng.element ? elementBurstAvgDps(eng, { maxEp: 2000 }) : 0,
+    // 元素通道的完整画像：累积速率 → 每次爆发需要的充条时间 → 爆发频率 → 平均爆发 DPS。
+    // 这是**独立可算**的一路（有自己的明确假设），不并入上方规则层 DPS，也不受那道门禁影响。
+    elementProfile: (() => {
+      if (!eng.element) return null
+      const accrual = elementAccrualPerSec(eng)
+      const entry = ELEMENT_BREAK_ON_ENEMY[eng.element.type]
+      if (!entry || accrual <= 0) return { accrualPerSec: accrual, type: eng.element.type }
+      const fillSec = 1000 / accrual            // 普通敌人 1000 点充条
+      const cycleSec = fillSec + (entry.durationSec ?? 0)  // 充条 + 爆发冷却
+      const burstTotal = (entry.burstDamage ?? 0) + (entry.dotPerSec ?? 0) * (entry.durationSec ?? 0)
+      return {
+        type: eng.element.type,
+        accrualPerSec: accrual,
+        fillSec,
+        cycleSec,
+        burstsPerSec: 1 / cycleSec,
+        burstTotal,
+        burstDamage: entry.burstDamage ?? 0,
+        dotPerSec: entry.dotPerSec ?? 0,
+        durationSec: entry.durationSec ?? 0,
+        effects: entry.effects ?? null,
+        burstDps: burstTotal / cycleSec,
+      }
+    })(),
     trap: eng.trap,
     trapDps: eng.trap ? trapDps(eng) : 0,
     burst: eng.burst,
@@ -739,9 +774,24 @@ export function formatReport(r) {
       lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
     }
   }
-  if (r.element && !dpsOff && !r.channel) {
-    lines.push(`元素损伤：${r.element.type}累积 ${r.elementAccrualPerSec.toFixed(1)}/秒（技能期） · 爆发收益约 ${r.elementBurstAvgDps.toFixed(1)}/秒（普通敌人）/ ${r.elementBurstAvgDpsLeader.toFixed(1)}/秒（领袖，条2000）`)
-    lines.push(`          损伤条1000，爆条后冷却≈爆发持续；数值源 PRTS(2.7.61)，假设标注见 docs/dps-calculation.md`)
+  // 元素通道：**独立于规则层 DPS** 的一路（有自己的充条/爆发/冷却模型），
+  // 所以不受 DPS 门禁影响；但必须标明"未并入上方 DPS"，避免被当成总输出。
+  if (r.elementProfile?.burstDps !== undefined) {
+    const e = r.elementProfile
+    lines.push(`元素通道（${e.type}，独立计算 · 未并入 DPS）：`)
+    lines.push(`  累积 ${e.accrualPerSec.toFixed(1)}/秒 → 充条（1000点）${e.fillSec.toFixed(2)}s → 爆发周期 ${e.cycleSec.toFixed(2)}s`)
+    lines.push(`  每次爆发 ${e.burstTotal}（直伤 ${e.burstDamage}${e.dotPerSec ? ` + 持续 ${e.dotPerSec}/s×${e.durationSec}s` : ''}）→ 平均 **${e.burstDps.toFixed(1)} DPS** · 爆发频率 ${e.burstsPerSec.toFixed(3)}/秒`)
+    if (e.effects && (e.effects.resDown || e.effects.defDown || e.effects.palsyStacks)) {
+      const ef = []
+      if (e.effects.resDown) ef.push(`法抗-${e.effects.resDown}`)
+      if (e.effects.defDown) ef.push(`防御-${e.effects.defDown}（永久可叠加）`)
+      if (e.effects.palsyStacks) ef.push(`麻痹 ${e.effects.palsyStacks} 层`)
+      lines.push(`  爆发附带：${ef.join(' · ')}`)
+    }
+    lines.push('  假设：损伤条上限 1000（领袖 2000）；冷却≈爆发持续；累积无视 DEF/RES')
+    if (r.channel) {
+      lines.push('  ⚠ 该干员的伤害走通道（非普攻循环）：累积速率仍按面板普攻估算，实际可能明显更高')
+    }
   }
   if (r.burst && !dpsOff) {
     lines.push(`单次窗口爆发：每次部署 ${r.burst.perDeployHits}枚 × ${r.burst.hitMult} = ${r.burstDeployDamage.toFixed(0)}`)
