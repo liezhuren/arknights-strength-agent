@@ -174,6 +174,38 @@ export function extractTalentBonuses(op) {
         note.push(`生命${bb.max_hp >= 0 ? '+' : ''}${bb.max_hp}点`)
       }
     }
+    // ── 概率型倍率天赋：折算成**期望攻击倍率**（2026-11 新增）──────────────
+    // 典型表述「攻击时 X% 概率攻击力提升至 Y 倍」。因为是"某次攻击的 ATK 变成 Y 倍"，
+    // 而伤害对 ATK 是线性的（(Y·ATK − DEF) 的期望 = ATK·(1+X(Y−1)) − DEF），
+    // 所以期望值可以直接折成 atkPct，不损失精度。
+    // 只处理"单一概率 + 单一攻击/伤害倍率"这种简单形；prob1..N 多分支（如泰拉大陆调查团）
+    // 各分支效果不同（含控制/无事发生），不硬算，只标注。
+    {
+      // 排除 prob1/prob2… 这类**多分支**键（各分支效果不同，不能合并期望）
+      const multiProb = Object.keys(bb).some((k) => /prob\d+[^_]*$/i.test(k))
+      const probKeys = Object.keys(bb).filter((k) => /(^|[_.@])prob(_\w+)?$/i.test(k) && !/prob\d+[^_]*$/i.test(k))
+      const scaleKeys = Object.keys(bb).filter((k) => /(^|[_.@])atk_scale$/i.test(k) && typeof bb[k] === 'number')
+      const dmgScaleKeys = Object.keys(bb).filter((k) => /(^|[_.@])damage_scale$/i.test(k) && typeof bb[k] === 'number')
+      const probs = probKeys.map((k) => ({ k, v: bb[k] })).filter((x) => typeof x.v === 'number' && x.v > 0 && x.v <= 1)
+      const scaleKey = scaleKeys[0] ?? dmgScaleKeys[0]
+      const scale = scaleKey ? bb[scaleKey] : null
+      if (!multiProb && probs.length >= 1 && typeof scale === 'number' && scale > 1) {
+        // 两种写法，数学不同（实测踩过：按"替换"算会低估追加型）：
+        //   ① 替换型：「攻击力**提升至** X 倍」→ 期望 = 1 + p(X−1)
+        //   ② 追加型：「**造成**相当于攻击力 X 的伤害」→ 期望 = 1 + p·X（额外一段）
+        const isAdditional = /造成[^。]{0,20}相当于攻击力|额外造成/.test(desc) && !/提升至|变为/.test(desc)
+        const base = probs[0]
+        const gain = isAdditional ? base.v * scale : base.v * (scale - 1)
+        out.atkPct += gain
+        note.push(`${isAdditional ? '概率追加段' : '概率倍率'} ${Math.round(base.v * 100)}%×${scale.toFixed(2)} → 期望攻击 +${(gain * 100).toFixed(1)}%`)
+        for (const alt of probs.slice(1)) {
+          const altGain = isAdditional ? alt.v * scale : alt.v * (scale - 1)
+          note.push(`条件变体 ${alt.k}=${Math.round(alt.v * 100)}% → 期望 +${(altGain * 100).toFixed(1)}%`)
+        }
+      } else if (multiProb) {
+        note.push('概率多分支（期望未折算，需按分支效果分别建模）')
+      }
+    }
     // 模组来源的天赋单独标注（替换基础天赋 / 新增效果），避免与干员本体天赋混淆
     const src = t._fromModule
       ? t._fromModule.index >= 0 ? `模组更新·天赋${t._fromModule.index + 1}` : '模组新增'
