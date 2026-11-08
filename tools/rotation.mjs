@@ -84,7 +84,7 @@ export function formatRotationSection(op, skillIndex = 2, eng = null) {
   const lines = ['【回转】（关键点之一：多快能用上、节奏如何）']
   const rateTxt = r.rate === null ? '—' : `${r.rate.toFixed(2)} SP/s`
   lines.push(`  ${r.spLabel}${r.spType === 'deploy' ? '' : ` ${rateTxt}`} · 消耗 ${r.spCost} · 初始 ${r.initSp}`)
-  if (r.ammoEvent) {
+  if (r.ammoEvent?.unmodeled) {
     lines.push(`  ${r.ammoEvent.reason}（共 ${r.ammoEvent.total} 发）：时长取决于元素爆发频率，**未建模**`)
     lines.push('  需接入元素累积/爆发模型后才能给出周期与覆盖率；不要按"永续"或"0%"理解')
   } else if (r.permanent) {

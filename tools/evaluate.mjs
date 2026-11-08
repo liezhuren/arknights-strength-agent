@@ -467,7 +467,33 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
       // 不能用"攻击次数 × 间隔"硬造一个数，必须标为未建模。
       const eventDriven = /爆发/.test(desc) && /弹药/.test(desc) && !/每次攻击消耗/.test(desc)
       if (eventDriven) {
-        eng.skill.ammoEvent = { total: ammoTotal, reason: '弹药由元素损伤爆发触发消耗' }
+        // 事件驱动弹药：弹药由"元素损伤爆发"消耗。
+        // 每个目标独立累积、独立爆发 → 全场爆发频率 = 目标数 / 单目标周期。
+        // 有了爆发频率才能反推时长：弹药数 / 爆发频率。
+        // ⚠ 这依赖元素累积模型（充条 1000、冷却≈爆发持续），属推导值而非实测。
+        const el = eng.element
+        const entry = el ? ELEMENT_BREAK_ON_ENEMY[el.type] : null
+        const accrualTotal = el ? elementAccrualPerSec(eng) : 0
+        const targets = Math.max(1, el?.targets ?? eng.skill.targetCount ?? 1)
+        if (entry && accrualTotal > 0) {
+          const perTarget = accrualTotal / targets
+          const perTargetCycle = 1000 / perTarget + (entry.durationSec ?? 0)
+          const burstsPerSec = targets / perTargetCycle
+          const durSec = ammoTotal / burstsPerSec
+          eng.skill.duration = durSec
+          eng.skill.ammoEvent = {
+            total: ammoTotal,
+            reason: `弹药由${el.type}爆发消耗`,
+            targets,
+            perTargetAccrual: perTarget,
+            perTargetCycle,
+            burstsPerSec,
+            durationSec: durSec,
+            derived: true,
+          }
+        } else {
+          eng.skill.ammoEvent = { total: ammoTotal, reason: '弹药由元素损伤爆发触发消耗', unmodeled: true }
+        }
       } else {
         // ① 偷取攻速归自身（描述含「偷取」时才认，避免把"降低敌人攻速"误算成自身加速）
         const steal = Number(bb.steal)
@@ -766,12 +792,17 @@ export function formatReport(r) {
         : `每 ${n} 次攻击`
     lines.push(`强化攻击型：${trigger}触发 1 次×${r.skillData.attackMult} 强化`)
   } else {
-    // 事件驱动的弹药技能：时长取决于元素爆发频率，我们没有该模型 → 不给数字
-    if (r.skillData?.ammoEvent) {
+    // 事件驱动的弹药技能：未建模时才说"未给出"；能由爆发频率推导出来就正常给覆盖率
+    if (r.skillData?.ammoEvent?.unmodeled) {
       lines.push(`覆盖率：未给出 —— ${r.skillData.ammoEvent.reason}（共 ${r.skillData.ammoEvent.total} 发），`)
       lines.push(`         需元素累积/爆发模型才能定时长（当前既不是"永续"也不是 0%）`)
     } else {
       lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
+      const ae = r.skillData?.ammoEvent
+      if (ae?.derived) {
+        lines.push(`         弹药型（${ae.total} 发）· 由${ae.targets} 个目标各自爆发推定：单目标累积 ${ae.perTargetAccrual.toFixed(1)}/s、周期 ${ae.perTargetCycle.toFixed(1)}s → 全场 ${ae.burstsPerSec.toFixed(3)} 次/秒 → 时长 ${ae.durationSec.toFixed(1)}s`)
+        lines.push('         （该时长由元素累积模型推导，非实测；假设见下方元素通道）')
+      }
     }
   }
   // 元素通道：**独立于规则层 DPS** 的一路（有自己的充条/爆发/冷却模型），
