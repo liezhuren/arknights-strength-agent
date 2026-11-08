@@ -43,10 +43,23 @@ const norm = (v) => (Math.abs(v) <= 1 ? { pct: v, flat: 0 } : { pct: 0, flat: v 
 function drCondition(desc) {
   const d = String(desc ?? '')
   const pats = [
+    // ── 状态触发（生命阈值 / 蓄力 / 受击后；2026-11 补，森蚺「生命值不高于一半时获得22%庇护」）──
+    [/生命[值]?(不)?[高低]于[^，。]{0,10}时/, () => '仅**生命值满足阈值**时'],
+    [/生命[值]?不足|残血|濒死/, () => '仅**低生命**时'],
+    [/蓄力|充能|叠满|满层/, () => '仅**叠层/蓄力**满足时'],
+    [/受击后|受到攻击后|被攻击后/, () => '仅**受击触发后**'],
+    [/技能期间|开启技能/, () => '仅**技能期间**'],
+    // ── 方向性（站桩方向决定是否成立；克莱门莎「来自自身前方单位」就是这类）──
+    [/来自(自身)?前方/, () => '仅**来自正面**的伤害'],
+    [/来自(自身)?侧(面|方)?/, () => '仅**来自侧面**的伤害'],
+    [/来自(自身)?背后/, () => '仅**来自背后**的伤害'],
+    [/来自[^，。]{0,6}(空中|远程)/, (m) => `仅来自${m[1]}攻击`],
     [/来自【([^】]+)】/, (m) => `仅来自【${m[1]}】的敌人`],
     [/来自(非自身阻挡|非阻挡)/, () => '仅来自**未被自身阻挡**的敌人'],
     [/阻挡时[，,]?\s*受到/, () => '仅**阻挡敌人时**'],
     [/对(空中|远程|近战)/, (m) => `仅对${m[1]}敌人`],
+    // 条件变体：按来源分档（如「若为【海怪】则降低 55%」）
+    [/若[^，。]{0,12}(伤害来源|来源)/, () => '按**伤害来源**分档（额外档位未计入）'],
   ]
   for (const [re, fmt] of pats) {
     const m = d.match(re)
@@ -83,15 +96,39 @@ function survivalFromBb(bb, desc) {
   //   泥岩「受到来自【萨卡兹】敌人的伤害降低30%」、止颂「阻挡时，受到来自非自身阻挡敌人的
   //   伤害降低35%」。此前一律无条件计入 → 承伤偏低、生存偏高（真实建模错误）。
   //   与"条件型穿透只标注"同一原则：不再默认计入，改为单独列出。
-  if (typeof bb.damage_resistance === 'number') {
-    const v = Math.abs(bb.damage_resistance)
-    const cond = drCondition(d)
-    const label = v <= 1 ? `减伤 ${Math.round(v * 100)}%` : `减伤 ${v} 点/击`
-    if (cond) {
-      out.drConditional.push({ pct: v <= 1 ? v : 0, flat: v <= 1 ? 0 : v, label, condition: cond })
-      out.notes.push(`${label}（**条件型**：${cond}，未计入硬扛）`)
-    } else if (v <= 1) { out.drPct += v; out.notes.push(`${label}`) }
-    else { out.drFlat += v; out.notes.push(`${label}`) }
+  //
+  // ⚠ 键名有变体（2026-11 补）：除裸 `damage_resistance`，还有
+  //   `damage_resistance_normal` / `damage_resistance_seamonster`（克莱门莎按来源分档）、
+  //   `s2_damage_resistance`（技能期）、`damage_resistance_addtion`（翻倍追加）。
+  //   早期只认裸键 → 这类干员的减伤完全没进模型。
+  //   `ep_damage_resistance` 是**元素损伤**专属减伤，不进物理/法术承伤，单独标注。
+  {
+    // 取"主要档位"：优先裸键，其次 *_normal（常态档），再退到任意 damage_resistance*
+    const drKeys = Object.keys(bb).filter((k) => /^damage_resistance(_\w+)?$/.test(k) && typeof bb[k] === 'number')
+    const mainKey = drKeys.includes('damage_resistance')
+      ? 'damage_resistance'
+      : drKeys.includes('damage_resistance_normal') ? 'damage_resistance_normal' : drKeys[0]
+    if (mainKey) {
+      const v = Math.abs(bb[mainKey])
+      const cond = drCondition(d)
+      const label = v <= 1 ? `减伤 ${Math.round(v * 100)}%` : `减伤 ${v} 点/击`
+      if (cond) {
+        out.drConditional.push({ pct: v <= 1 ? v : 0, flat: v <= 1 ? 0 : v, label, condition: cond })
+        out.notes.push(`${label}（**条件型**：${cond}，未计入硬扛）`)
+      } else if (v <= 1) { out.drPct += v; out.notes.push(`${label}`) }
+      else { out.drFlat += v; out.notes.push(`${label}`) }
+      // 其他档位（如海怪 55%）作为条件变体列出
+      for (const k of drKeys) {
+        if (k === mainKey) continue
+        const alt = Math.abs(bb[k])
+        out.notes.push(`条件变体 ${k.slice('damage_resistance'.length + 1)}=${alt <= 1 ? `${Math.round(alt * 100)}%` : `${alt} 点`}（未计入）`)
+      }
+    }
+    const epDr = Object.keys(bb).filter((k) => /^(ep_)?ep_damage_resistance/.test(k) || /^ep_damage_resistance/.test(k))
+    if (epDr.length) {
+      const v = Math.abs(bb[epDr[0]])
+      out.notes.push(`元素损伤减伤 ${Math.round(v * 100)}%（仅对元素损伤，不进物理/法术承伤）`)
+    }
   }
   // 自回
   if (typeof bb.hp_recovery_per_sec_by_max_hp_ratio === 'number') {

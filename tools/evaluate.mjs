@@ -30,7 +30,7 @@ import { formatTeamBuffSection, formatControlSection } from './extra-metrics.mjs
 import { analyzeDescription } from './patterns.mjs'
 import { resolveModule, applyModule, extractTalentPenetrate, formatAttr, modulesOf } from './modules.mjs'
 import { branchState, chargeAtkMult } from './branch-traits.mjs'
-import { formatSurvivalSection } from './survival.mjs'
+import { formatSurvivalSection, extractSurvival } from './survival.mjs'
 import { formatRotationSection } from './rotation.mjs'
 import { formatVersatilitySection } from './versatility.mjs'
 import { formatDifficultySection } from './difficulty.mjs'
@@ -762,10 +762,34 @@ export function evaluate(op, opts = {}) {
   result.dpsGate = gate
   result.channel = channel
   // 生存单独门禁：防御/生命/减伤/闪避类天赋仍未进模型，即使 DPS 已由通道解锁
-  result.survivalGate = {
-    verified: false,
-    reason: '防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。',
-  }
+  // 生存门禁：由**实际提取到的数据**判定，而不是写死 false。
+  // 数据完整（无未建模的条件型减伤/技能生存增益）→ 放行；否则列出具体缺口。
+  result.survivalGate = (() => {
+    const gaps = []
+    let sv = null
+    try { sv = extractSurvival(eop, skillIndex, talent) } catch { /* 提取失败 → 下方按缺口处理 */ }
+    if (!sv) {
+      gaps.push('生存数据提取失败')
+    } else {
+      const eff = sv.normal?.eff ?? {}
+      const cond = eff.drConditional ?? []
+      if (cond.length) {
+        gaps.push(`条件型减伤未计入硬扛：${cond.map((c) => `${c.label}（${c.condition}）`).join('、')}`)
+      }
+      // 技能层面的生存增益（屏障/闪避/无敌/减伤）—— 目前未并入承伤
+      const lvDesc = op.skills?.[Number(skillIndex ?? 2)]?.levels?.[9]?.description ?? ''
+      const skillSurv = /屏障|护盾|闪避|无敌|不会倒下|减免伤害|受到.*伤害降低/.test(lvDesc)
+      if (skillSurv) gaps.push('技能自带的生存增益（屏障/闪避/无敌等）未并入承伤')
+      // 天赋里提到闪避/无敌但没提到具体数值 → 无法建模
+      const tDescAll = (eop.talents ?? []).map((t) => t.description ?? '').join(' ')
+      if (/闪避|无敌|不会倒下/.test(tDescAll) && !(eff.dodgeP > 0)) gaps.push('天赋含闪避/免死类效果未建模')
+    }
+    return {
+      verified: gaps.length === 0,
+      reason: gaps.length ? gaps.join('；') : null,
+      gaps,
+    }
+  })()
   return result
 }
 
@@ -962,8 +986,14 @@ export function formatReport(r) {
   if (r.controlSection) lines.push('', r.controlSection)
   if (r.survivalSection && !survOff) lines.push('', r.survivalSection)
   if (survOff) {
-    lines.push('', '④ 生存栏未给出：防御/生命/减伤/闪避类天赋未参与建模，承伤推算不成立。',
-      '   接入文本解析后，本栏会自动显示。')
+    // 门禁理由来自"实际提取数据"（条件型减伤/未建模的技能生存增益等），不再写死
+    lines.push('', `④ 生存栏未给出：${r.survivalGate?.reason ?? '承伤数据不完整'}`)
+    const g = r.survivalGate?.gaps ?? []
+    if (g.length) {
+      lines.push('   缺口清单：')
+      for (const x of g) lines.push(`     · ${x}`)
+      lines.push('   （硬扛数值本身可算，但这些条件会让真实承伤偏离；宁可标缺也不给错数）')
+    }
   }
   return lines.join('\n')
 }
