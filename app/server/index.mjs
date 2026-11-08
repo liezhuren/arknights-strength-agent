@@ -195,8 +195,20 @@ function currentFrontendHash() {
   }
 }
 
+/** 最近的 API 请求（环形缓冲）—— 用于判断"前端到底有没有发出请求" */
+const REQ_LOG = []
+function logRequest(rec) {
+  REQ_LOG.unshift(rec)
+  if (REQ_LOG.length > 50) REQ_LOG.length = 50
+}
+function recentRequests() {
+  return REQ_LOG
+}
+
 const routes = {
   'GET /api/health': () => ({ ok: true, node: process.version, db: 'sqlite', modelEnabled: !!readConfig().provider, frontend: currentFrontendHash() }),
+  // 调试：最近 50 条 API 请求（判断"页面点了没反应"到底是没发请求还是没渲染）
+  'GET /api/debug/requests': () => ({ count: recentRequests().length, rows: recentRequests() }),
 
   'GET /api/operators': ({ url }) => searchOperators({
     q: url.searchParams.get('q') ?? '',
@@ -539,6 +551,11 @@ const routes = {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`)
   const key = `${req.method} ${url.pathname}`
+  const t0 = Date.now()
+  // 记录请求：API 全记；静态只记入口与 JS（用于判断浏览器实际加载了哪个 bundle）
+  if (url.pathname.startsWith('/api/') || url.pathname === '/' || /^\/assets\/.*\.js$/.test(url.pathname)) {
+    res.on('finish', () => logRequest({ at: new Date().toISOString(), method: req.method, path: url.pathname, status: res.statusCode, ms: Date.now() - t0 }))
+  }
   try {
     const handler = routes[key]
     if (handler) {
