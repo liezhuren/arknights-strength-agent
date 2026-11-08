@@ -180,8 +180,23 @@ function resolveCompareEntries(body) {
   return queries.slice(0, 6).map((q) => ({ name: q, skillIndex: fallbackSkill }))
 }
 
+/**
+ * 当前前端构建产物的 hash（如 index-BGly-TdY.js）。
+ * 用途：页面可以拿它和自己实际加载的 bundle 比对 ——
+ * 不一致就提示"有新版本，请刷新"，避免"改了没生效"的反复排查。
+ */
+function currentFrontendHash() {
+  try {
+    const dir = path.join(WEB_DIST, 'assets')
+    const f = fs.readdirSync(dir).filter((x) => /^index-.*\.js$/.test(x)).sort().pop()
+    return f ?? null
+  } catch {
+    return null
+  }
+}
+
 const routes = {
-  'GET /api/health': () => ({ ok: true, node: process.version, db: 'sqlite', modelEnabled: !!readConfig().provider }),
+  'GET /api/health': () => ({ ok: true, node: process.version, db: 'sqlite', modelEnabled: !!readConfig().provider, frontend: currentFrontendHash() }),
 
   'GET /api/operators': ({ url }) => searchOperators({
     q: url.searchParams.get('q') ?? '',
@@ -539,7 +554,16 @@ const server = http.createServer(async (req, res) => {
       const rel = url.pathname === '/' ? 'index.html' : url.pathname.slice(1)
       const file = path.join(WEB_DIST, rel)
       if (file.startsWith(WEB_DIST) && fs.existsSync(file) && fs.statSync(file).isFile()) {
-        res.writeHead(200, { 'content-type': MIME[path.extname(file)] ?? 'application/octet-stream' })
+        // ⚠ 缓存策略（2026-11 修）：早期不带任何 Cache-Control，浏览器会缓存 index.html，
+        // 导致重建前端后页面仍加载**旧 bundle**（已两次造成"改了没生效"的误判）。
+        //   · index.html → no-store：每次都拿最新的入口，入口里引用的 hash 文件名才会更新
+        //   · /assets/<hash>.js → 长缓存 immutable：文件名带 hash，内容变了文件名必然变
+        const isHtml = rel === 'index.html' || rel.endsWith('.html')
+        const isHashedAsset = /^assets\/.+-[A-Za-z0-9_-]{8,}\.(js|css)$/.test(rel)
+        res.writeHead(200, {
+          'content-type': MIME[path.extname(file)] ?? 'application/octet-stream',
+          'cache-control': isHtml ? 'no-store' : isHashedAsset ? 'public, max-age=31536000, immutable' : 'no-cache',
+        })
         return res.end(fs.readFileSync(file))
       }
       if (!fs.existsSync(WEB_DIST)) {

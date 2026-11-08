@@ -16,9 +16,19 @@ const PROF_LABEL: Record<string, string> = {
 
 type Tab = 'ops' | 'eval' | 'compare' | 'custom' | 'settings'
 
+/** 当前页面实际加载的 bundle 文件名（如 index-BGly-TdY.js），用于和最新产物比对 */
+function ownBuild(): string {
+  try {
+    const s = document.querySelector('script[type="module"]')?.getAttribute('src') ?? ''
+    return s.split('/').pop() ?? ''
+  } catch {
+    return ''
+  }
+}
+
 export default function App() {
   const [tab, setTab] = useState<Tab>('ops')
-  const [health, setHealth] = useState<{ node: string; modelEnabled: boolean } | null>(null)
+  const [health, setHealth] = useState<{ node: string; modelEnabled: boolean; frontend?: string | null } | null>(null)
   const [facets, setFacets] = useState<{ professions: { profession: string; c: number }[]; rarities: { rarity: string; c: number }[]; subProfessions: { id: string; name: string; profession: string; c: number }[] }>({ professions: [], rarities: [], subProfessions: [] })
   const [q, setQ] = useState('')
   const [prof, setProf] = useState('')
@@ -55,6 +65,12 @@ export default function App() {
         <h1>明日方舟 · 强度评测</h1>
         <div className="status">
           {health ? <>API 就绪（{health.node}） · 模型：{health.modelEnabled ? '已启用' : '未启用（纯规则层）'}</> : '连接 API 中…'}
+          {/* 自检：页面实际加载的 bundle 与服务端最新产物不一致 → 明确提示刷新（避免"改了没生效"的反复排查） */}
+          {health?.frontend && ownBuild() && health.frontend !== ownBuild() && (
+            <span className="chip bad" style={{ marginLeft: 8 }} title={`页面：${ownBuild()} / 服务端：${health.frontend}`}>
+              有新版本，Ctrl+Shift+R 刷新
+            </span>
+          )}
         </div>
       </header>
       {err && <div className="err">⚠ {err} <button onClick={() => setErr('')}>×</button></div>}
