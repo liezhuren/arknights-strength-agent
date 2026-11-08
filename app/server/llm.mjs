@@ -6,7 +6,7 @@
 // 协议适配：OpenAI 兼容（DeepSeek / OpenAI / 本地 Ollama / vLLM 等）+ Anthropic Messages。
 import fs from 'node:fs'
 import path from 'node:path'
-import { renderKbBlock } from '../../tools/mechanism-kb.mjs'
+import { renderKbBlock, lookupTerms, renderKbIndex } from '../../tools/mechanism-kb.mjs'
 
 const CONFIG = path.resolve(import.meta.dirname, '../config.json')
 export const readConfig = () => {
@@ -113,6 +113,12 @@ const SYSTEM = `你是《明日方舟》机制解析器。任务：把**技能�
 }
 
 硬性规则：
+0. **先问再填（必守）**：输入末尾的【可查询术语】只覆盖常见术语，**并不完整**。
+   只要描述或天赋里出现该列表**没有**的游戏术语（例如"沉睡""脆弱""缴械""缴械"这类），
+   **必须**先只输出 {"needLookup": ["术语1", "术语2"]}（**不要带 patches**）来问，
+   我会把知识库解释发给你；拿到解释后再正式填表。最多问两轮。
+   问了仍没有解释的，按原文语义判断并把 confidence 标 low。
+   —— 不要因为"觉得大概懂"就跳过这一步；跳过会把不确定的语义固化成错误参数。
 1. **skill.attackMult 专指「攻击力加成后的普攻倍率」，只从这两类键取**：
    · atk 键（加算）→ 填 **1 + 值**（atk=1.4 表示 +140% → 填 **2.4**）
    · atk_scale / attack@atk_scale 键（乘算）→ 填**键值本身**（2.35 → 填 2.35）
@@ -154,35 +160,61 @@ export function buildParseInput(ctx) {
     kb ? '' : '',
     kb ? '【字段语义参考】（本次出现的键；单位与语义以此为准，不要自行推测）' : '',
     kb,
+    // 术语词典：模型遇到不懂的词可以主动来查（见 SYSTEM 的"先问再填"规则）
+    ctx.kbIndex ? '【可查询术语】（遇到不确定的词，按 needLookup 协议来问）' : '',
+    ctx.kbIndex ? ctx.kbIndex : '',
+    ctx.lookupText ? '【你查询到的术语解释】' : '',
+    ctx.lookupText ?? '',
   ].filter(Boolean).join('\n')
 }
 
 export async function parseMechanism(ctx) {
-  const user = buildParseInput(ctx)
-  const ask = (sys) => chat({ system: sys, user, json: true, maxTokens: 4096 })
-  // 模型偶发输出非法 JSON（截断/围栏/尾随逗号）→ 最多试 3 次，逐次收紧要求。
-  // 实测同一干员两次调用结果不同，所以单次失败不能直接判死。
-  const attempts = [
-    SYSTEM,
-    `${SYSTEM}\n\n上一次输出不是合法 JSON（可能被截断）。这次只输出唯一的 JSON 对象，不要解释、不要 markdown 围栏，evidence 尽量短。`,
-    `${SYSTEM}\n\n严格只输出 JSON。若字段太多会导致截断，请把 evidence 压到 6-10 个字。`,
-  ]
+  const kbIndex = renderKbIndex()
+  // ── "先问再填"协议 ──────────────────────────────────────────────────────
+  // 用户要的形态：模型读完描述后，遇到不确定的**术语/键**可以先来查词典，
+  // 查完再填表；而不是由我们预先猜它会用到哪些字段。
+  // 约定：只输出 {"needLookup": [...]} 表示请求查询（不带 patches）；否则按正常 schema 填表。
+  let lookupText = ''
+  const lookedUp = []
   let r = null
   let parsed = null
   let lastText = ''
-  for (const sys of attempts) {
-    r = await ask(sys)
-    if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
-    lastText = r.text ?? ''
-    parsed = extractJson(lastText)
-    if (!parsed) {
-      // 轻量修复：尾随逗号是这类长 JSON 最常见的语法错误
-      const repaired = lastText.replace(/,\s*([}\]])/g, '$1')
-      parsed = repaired !== lastText ? extractJson(repaired) : null
+
+  for (let round = 0; round < 3; round++) {
+    const user = buildParseInput({ ...ctx, kbIndex, lookupText })
+    const ask = (sys) => chat({ system: sys, user, json: true, maxTokens: 4096 })
+    // 模型偶发输出非法 JSON（截断/围栏/尾随逗号）→ 最多试 3 次，逐次收紧要求。
+    // 实测同一干员两次调用结果不同，所以单次失败不能直接判死。
+    const attempts = [
+      SYSTEM,
+      `${SYSTEM}\n\n上一次输出不是合法 JSON（可能被截断）。这次只输出唯一的 JSON 对象，不要解释、不要 markdown 围栏，evidence 尽量短。`,
+      `${SYSTEM}\n\n严格只输出 JSON。若字段太多会导致截断，请把 evidence 压到 6-10 个字。`,
+    ]
+    parsed = null
+    for (const sys of attempts) {
+      r = await ask(sys)
+      if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
+      lastText = r.text ?? ''
+      parsed = extractJson(lastText)
+      if (!parsed) {
+        // 轻量修复：尾随逗号是这类长 JSON 最常见的语法错误
+        const repaired = lastText.replace(/,\s*([}\]])/g, '$1')
+        parsed = repaired !== lastText ? extractJson(repaired) : null
+      }
+      if (parsed) break
     }
-    if (parsed) break
+    if (!parsed) return { ok: false, error: '模型输出无法解析为 JSON（已重试 3 次）', raw: lastText.slice(0, 800), provider: r.provider, model: r.model }
+
+    // 查询请求：只带 needLookup、不带 patches → 查词典后重问
+    if (Array.isArray(parsed.needLookup) && parsed.needLookup.length && !parsed.patches) {
+      const defs = lookupTerms(parsed.needLookup)
+      lookedUp.push(...parsed.needLookup.map(String))
+      const block = defs.length ? defs.join('\n') : `（知识库中没有这些词条：${parsed.needLookup.join('、')}；请按原文语义自行判断并标注 confidence=low）`
+      lookupText += `${lookupText ? '\n' : ''}${block}`
+      if (round < 2) continue
+    }
+    break
   }
-  if (!parsed) return { ok: false, error: '模型输出无法解析为 JSON（已重试 3 次）', raw: lastText.slice(0, 800), provider: r.provider, model: r.model }
 
   // 证据校验：talents[].evidence / element.evidence 必须逐字出自输入文本。
   // 编造的证据直接标低置信并剔除，避免"看起来有依据"的假解析。
@@ -206,6 +238,8 @@ export async function parseMechanism(ctx) {
   return {
     ok: true, ...parsed, patches,
     provider: r.provider, model: r.model, ms: r.ms,
+    // 模型主动查过哪些术语（"先问再填"协议的审计记录；空数组表示它没问就填了）
+    lookedUp,
     ...(dropped.length ? { droppedEvidence: dropped } : {}),
   }
 }

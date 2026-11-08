@@ -113,6 +113,156 @@ export const KEY_ENTRIES = {
 }
 
 /**
+ * ③ 术语层（**给模型查的词典**，不只是 blackboard 键）
+ *
+ * 用户要的形态：模型读完天赋/技能描述后，遇到不确定的**中文术语**可以来查，
+ * 而不是由我们预先猜它会用哪些键。所以这里按"术语"组织，带别名。
+ */
+export const TERM_ENTRIES = [
+  {
+    term: '庇护',
+    aliases: ['庇护', '庇护效果'],
+    meaning: '**减伤**的一种（受到伤害按百分比降低），与「屏障」（数值护盾）不同。数值通常是 0~1 的小数或百分比。',
+  },
+  {
+    term: '屏障',
+    aliases: ['屏障', '护盾', 'shield'],
+    meaning: '**数值护盾**：吸收固定或按最大生命比例的伤害，与减伤不同（先扣护盾再扣血，护盾可衰减）。',
+  },
+  {
+    term: '元素损伤',
+    aliases: ['元素损伤', '损伤爆发', '爆发'],
+    meaning: '累积型机制：伤害的一部分转为「损伤累积」，充满损伤条后**爆发**并造成固定元素伤害 + 附带异常。四种：灼燃（7000 + 法抗−20）/ 神经（6000 + 麻痹3层）/ 侵蚀（5000 + 防御−120 永久叠加）/ 凋亡（每秒800 · 50%虚弱）。元素伤害**无视 DEF/RES**。',
+  },
+  {
+    term: '灼燃损伤',
+    aliases: ['灼燃'],
+    meaning: '累计满爆发：立即 7000 元素伤害 + 法抗 −20 持续 10s；冷却 10s；伤害条 1000（领袖 2000）。',
+  },
+  {
+    term: '侵蚀损伤',
+    aliases: ['侵蚀'],
+    meaning: '累计满爆发：立即 5000 元素伤害 + **永久降低 120 防御（可叠加）**；冷却 8s。',
+  },
+  {
+    term: '神经损伤',
+    aliases: ['神经'],
+    meaning: '累计满爆发：立即 6000 元素伤害 + 3 层麻痹（打断普攻）；冷却 10s。',
+  },
+  {
+    term: '凋亡损伤',
+    aliases: ['凋亡'],
+    meaning: '累计满爆发：附加 50% 虚弱（期间逐渐恢复）+ 每秒 800 元素伤害持续 15s；冷却 15s。',
+  },
+  {
+    term: '虚弱',
+    aliases: ['虚弱'],
+    meaning: '目标造成的伤害降低（通常 50%），期间逐渐恢复。',
+  },
+  {
+    term: '弹药',
+    aliases: ['弹药', '装有弹药', '打完后结束'],
+    meaning: '弹药型技能：**持续时长由弹药数决定**，不是固定秒数。每次攻击消耗 N 发、或用某事件消耗 1 发；打光即结束（可随时手动停止）。',
+  },
+  {
+    term: '技力',
+    aliases: ['技力', 'SP'],
+    meaning: '技能点数。**技能持续期间不回复 SP**，结束后归零；初始 SP 只让首轮更快。消耗 30 意思是每轮需 30 SP。',
+  },
+  {
+    term: '攻击力提升至',
+    aliases: ['提升至', '提高至'],
+    meaning: '**替换型**：当次攻击的攻击力变成 X 倍。期望 = 1 + p(X−1)。',
+  },
+  {
+    term: '造成相当于攻击力X的伤害',
+    aliases: ['造成相当于攻击力', '额外造成'],
+    meaning: '**追加型**：在原有伤害之外**额外**结算一段 X 倍伤害。期望 = 1 + p·X。与「提升至」的数学不同，别混。',
+  },
+  {
+    term: '连击',
+    aliases: ['连击', '多段'],
+    meaning: '一次攻击结算 N 段（每段独立减防/减抗），总伤害约等于 N × 单段。',
+  },
+  {
+    term: '溅射',
+    aliases: ['溅射', '范围伤害', '周围'],
+    meaning: '对目标周围若干格内的敌人同时结算；多目标时总伤害按目标数放大（受目标数上限约束）。',
+  },
+  {
+    term: '停顿',
+    aliases: ['停顿'],
+    meaning: '延长目标的攻击/移动间隔（不是眩晕），值越大越慢。',
+  },
+  {
+    term: '眩晕',
+    aliases: ['眩晕', '晕眩'],
+    meaning: '硬控：目标无法行动，时长按秒。',
+  },
+  {
+    term: '束缚',
+    aliases: ['束缚', '缠绕'],
+    meaning: '目标无法移动（仍可攻击）。',
+  },
+  {
+    term: '沉默',
+    aliases: ['沉默'],
+    meaning: '目标无法施放技能。',
+  },
+  {
+    term: '偷取攻速',
+    aliases: ['偷取', '偷取攻击速度'],
+    meaning: '把目标的攻速**转移**给自己（目标减少、自己增加），不是单纯加成。',
+  },
+  {
+    term: '再部署',
+    aliases: ['再部署', '重新部署'],
+    meaning: '干员离场后再次可上场所需的秒数（面板值）。',
+  },
+  {
+    term: '阻挡',
+    aliases: ['阻挡', '阻挡数'],
+    meaning: '同时能拦住的敌人数量；通常也决定承伤面。',
+  },
+  {
+    term: '叠层',
+    aliases: ['叠层', '层数', '最多叠加'],
+    meaning: '效果可累积，需注明是"满层口径"还是"首层口径"；数值类叠层要乘以层数。',
+  },
+  {
+    term: '蓄力',
+    aliases: ['蓄力', '充能'],
+    meaning: '需要满足条件（时间/受击/击杀）才达到的最强状态；评估时应说明按哪一档计算。',
+  },
+]
+
+/** 按术语查词典（支持别名、模糊包含） */
+export function lookupTerms(terms) {
+  const out = []
+  const seen = new Set()
+  for (const raw of terms ?? []) {
+    const q = String(raw ?? '').trim()
+    if (!q) continue
+    // 先按别名精确/包含匹配
+    let hit = TERM_ENTRIES.find((e) => e.term === q || e.aliases.some((a) => q.includes(a) || a.includes(q)))
+    if (!hit) {
+      const info = lookupKey(q)
+      if (info) { if (!seen.has(info.name)) { seen.add(info.name); out.push(`- ${info.name}：${info.unit}｜${info.sem}`) } }
+      continue
+    }
+    if (seen.has(hit.term)) continue
+    seen.add(hit.term)
+    out.push(`- ${hit.term}：${hit.meaning}`)
+  }
+  return out
+}
+
+/** 可供查询的术语索引（给模型看"有哪些词可以查"） */
+export function renderKbIndex() {
+  return TERM_ENTRIES.map((e) => e.term).join('、')
+}
+
+/**
  * 查一个键的语义：先精确条目，再模式规则。
  * @returns {{name:string, unit:string, sem:string, examples?:string[], exact?:boolean}|null}
  */
