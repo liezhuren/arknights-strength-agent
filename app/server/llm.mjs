@@ -312,3 +312,89 @@ export async function reviewEvaluation(ctx) {
     ...(dropped.length ? { droppedEvidence: dropped } : {}),
   }
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// 采纳后的再估（re-estimate）
+//
+// 用户采纳某些建议后，让模型**照着自己被采纳的建议**重算一版数值。
+// 关键约束：这仍然是**模型自估**，不是引擎结果 —— 引擎不会消费建议。
+// 用途：让用户看到"若按模型的思路改，数值大概会变成多少"，
+// 从而判断值不值得让 agent 把这些参数落进 overrides.mjs。
+// ════════════════════════════════════════════════════════════════════════════
+
+const RESTIMATE_SYSTEM = `你是《明日方舟》数值模型的审阅者。用户**已经采纳**了一批参数建议，
+现在要你**按照被采纳后的参数**重新给出四栏估值。
+
+严格 JSON，不要解释、不要 markdown：
+
+{
+  "dps": 数字或 null,
+  "survival": "一句话结论或 null",
+  "teamBuff": "一句话结论或 null",
+  "control": "一句话结论或 null",
+  "delta": "与引擎当前值的差异（一句话，例如「比引擎当前 3559.7 高约 18%」）",
+  "reasoning": "你是怎么按采纳后的参数算出来的（引用被采纳的字段）",
+  "confidence": "high|medium|low"
+}
+
+规则：
+1. 只依据给定的「已采纳参数」与原文、引擎当前结果来估；不要引入未采纳的改动。
+2. 数值口径要跟引擎一致（基准：物理 vs 400 防 / 法术 vs 50 抗；木桩 RES0 另注）。
+3. 必须返回非空 JSON 对象。`
+
+/**
+ * 按"已采纳的建议"重新估值（模型自估，非引擎）。
+ */
+export async function reestimateWithAccepted(ctx) {
+  const user = [
+    `干员：${ctx.operator}`,
+    `技能：${ctx.skillName}`,
+    `技能原文：${ctx.description}`,
+    ctx.trait ? `分支特性：${ctx.trait}` : '',
+    ...(ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`),
+    '',
+    '已采纳的参数建议（按这些来重算）：',
+    JSON.stringify(ctx.accepted ?? [], null, 2),
+    '',
+    '引擎当前结果（作为对照基线）：',
+    JSON.stringify(ctx.engineResult ?? {}, null, 2),
+  ].filter(Boolean).join('\n')
+
+  const attempts = [
+    { json: true, sys: RESTIMATE_SYSTEM },
+    { json: false, sys: RESTIMATE_SYSTEM + '\n\n再次强调：只输出一个 JSON 对象。' },
+    { json: true, sys: RESTIMATE_SYSTEM + '\n\n上一轮输出为空，这次必须返回完整 JSON。' },
+  ]
+  let r = null
+  let parsed = null
+  let lastText = ''
+  for (const at of attempts) {
+    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 2048 })
+    if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
+    lastText = r.text ?? ''
+    if (!lastText.trim()) continue
+    parsed = extractJson(lastText)
+    if (!parsed) {
+      const repaired = lastText.replace(/,\s*([}\]])/g, '$1')
+      parsed = repaired !== lastText ? extractJson(repaired) : null
+    }
+    if (parsed) break
+  }
+  if (!parsed) return { ok: false, error: '再估输出无法解析为 JSON（已重试 3 次）', raw: lastText.slice(0, 800), provider: r.provider, model: r.model }
+
+  const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null)
+  return {
+    ok: true,
+    estimate: {
+      dps: num(parsed.dps),
+      survival: parsed.survival ?? null,
+      teamBuff: parsed.teamBuff ?? null,
+      control: parsed.control ?? null,
+      delta: parsed.delta ?? null,
+      reasoning: parsed.reasoning ?? null,
+    },
+    confidence: parsed.confidence ?? null,
+    provider: r.provider, model: r.model, ms: r.ms,
+    acceptedCount: (ctx.accepted ?? []).length,
+  }
+}

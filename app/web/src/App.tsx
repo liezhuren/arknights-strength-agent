@@ -313,7 +313,9 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
   const [items, setItems] = useState<SuggestionView[]>(review?.suggestions ?? [])
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState<string | null>(null)
-  useEffect(() => { setItems(review?.suggestions ?? []); setNote(null) }, [review])
+  // 采纳后模型重给的数值（仍属"模型自估"，不是引擎结果）
+  const [rest, setRest] = useState<NonNullable<NonNullable<EvaluationResult['review']>['reestimate']> | null>(review?.reestimate ?? null)
+  useEffect(() => { setItems(review?.suggestions ?? []); setRest(review?.reestimate ?? null); setNote(null) }, [review])
 
   const COL: Record<SuggestionView['column'], string> = { dps: '输出', survival: '生存', teamBuff: '团队增益', control: '控制' }
   const pending = items.filter((s) => (s.status ?? 'proposed') === 'proposed').length
@@ -334,7 +336,16 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
     try {
       const r = await api.setSuggestionStatus({ query, skillIndex, column: s.column, field: s.field, status })
       setItems(r.suggestions)
-      setNote(status === 'accepted' ? '已标记为接受（引擎不会自动生效）' : '已标记为拒绝')
+      if (status === 'rejected') { setNote('已标记为拒绝'); return }
+      // 采纳 → 让模型照着自己的建议再给一版数值（仍是模型自估）
+      setNote('已接受，正在按采纳后的参数重估…')
+      const re = await api.reestimate({ query, skillIndex })
+      if (re.ok && re.estimate) {
+        setRest({ ...re.estimate, acceptedCount: re.acceptedCount, at: new Date().toISOString() })
+        setNote(`已接受 ${re.acceptedCount ?? 0} 条，模型给出采纳后估值`)
+      } else {
+        setNote(`已接受，但再估失败：${re.error ?? '未知错误'}（可再点「让模型审阅」重试）`)
+      }
     } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
   }
 
@@ -350,6 +361,22 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
         <button onClick={askReview} disabled={busy || !query}>{busy ? '审阅中…' : '让模型审阅'}</button>
       </div>
       {note && <p className="muted">{note}</p>}
+      {rest && (
+        <div style={{ border: '1px solid #2a2f3a', padding: '6px 8px', margin: '6px 0' }}>
+          <b>采纳后模型估值：{rest.dps != null ? `${rest.dps} DPS` : '—'}</b>
+          <span className="chip">模型自估 · 非引擎值</span>
+          {rest.acceptedCount != null && <span className="muted"> 基于 {rest.acceptedCount} 条已采纳建议</span>}
+          {rest.delta && <div className="muted">与引擎差异：{rest.delta}</div>}
+          {rest.reasoning && <div className="muted">依据：{rest.reasoning}</div>}
+          {(rest.survival || rest.teamBuff || rest.control) && (
+            <div className="muted">
+              {rest.survival && <>生存：{rest.survival}　</>}
+              {rest.teamBuff && <>团队增益：{rest.teamBuff}　</>}
+              {rest.control && <>控制：{rest.control}</>}
+            </div>
+          )}
+        </div>
+      )}
       {open && has && (
         <>
           {review?.verdict && <p className="muted">总评：{review.verdict}</p>}

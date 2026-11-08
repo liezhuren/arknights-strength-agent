@@ -109,6 +109,18 @@ export interface EvaluationResult {
       reasoning?: string
     } | null
     verdict: string | null
+    /** 采纳后模型按已采纳建议重给的一版数值（仍是模型自估，非引擎） */
+    reestimate?: {
+      dps: number | null
+      survival?: string | null
+      teamBuff?: string | null
+      control?: string | null
+      delta?: string | null
+      reasoning?: string | null
+      at?: string
+      model?: string | null
+      acceptedCount?: number
+    } | null
     model: string | null
     updatedAt: string | null
   } | null
@@ -175,6 +187,14 @@ export const api = {
     post<{ ok: boolean; suggestions: SuggestionView[]; modelEstimate?: unknown; verdict?: string | null; error?: string; mergedCount?: number }>('/api/llm/review', p),
   setSuggestionStatus: (p: { query: string; skillIndex?: number; column: string; field: string; status: 'proposed' | 'accepted' | 'rejected' }) =>
     post<{ ok: boolean; updated: number; suggestions: SuggestionView[] }>('/api/llm/suggestion-status', p),
+  /** 采纳后让模型按已采纳建议重给一版数值（仍是模型自估） */
+  reestimate: (p: { query: string; skillIndex?: number }) =>
+    post<{
+      ok: boolean
+      estimate?: { dps: number | null; survival: string | null; teamBuff: string | null; control: string | null; delta: string | null; reasoning: string | null }
+      acceptedCount?: number
+      error?: string
+    }>('/api/llm/reestimate', p),
   config: () => req<ConfigView>('/api/config'),
   saveConfig: (body: unknown) => post<ConfigView>('/api/config', body),
   // BYOK 模型：长尾机制解析（未启用模型时返回 disabled，规则层不受影响）

@@ -18,7 +18,7 @@ import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
 import { modulesOf } from '../../tools/modules.mjs'
-import { parseMechanism, reviewEvaluation, chat, activeProvider } from './llm.mjs'
+import { parseMechanism, reviewEvaluation, reestimateWithAccepted, chat, activeProvider } from './llm.mjs'
 import { extractVersatility, scenarioValue } from '../../tools/versatility.mjs'
 import { extractRotation } from '../../tools/rotation.mjs'
 import { extractSurvival, runProfiles } from '../../tools/survival.mjs'
@@ -149,6 +149,8 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
       return {
         suggestions: sugs,
         modelEstimate: patches.modelEstimate ?? null,
+        // 采纳后的再估结果（模型按已采纳建议重给的版本）
+        reestimate: patches.reestimate ?? null,
         verdict: patches.verdict ?? null,
         model: p?.model ?? null,
         updatedAt: p?.updated_at ?? null,
@@ -381,6 +383,52 @@ const routes = {
       patches: { ...patches, suggestions: next },
     })
     return { ok: true, updated: hit, suggestions: next }
+  },
+  // ── 采纳后的再估：模型按"已采纳的建议"重给一版四栏数值（仍是模型自估）──────────
+  // ⚠ 引擎不消费建议；这里的数字只回答"若按模型思路改，大概会变成多少"。
+  'POST /api/llm/reestimate': async ({ body }) => {
+    const op = getOperator(body.query)
+    if (!op) throw new Error(`未找到干员：${body.query}`)
+    const si = Number(body.skillIndex ?? 2)
+    const lv = op.skills?.[si]?.levels?.[9]
+    if (!lv) throw new Error('该干员无此技能')
+    const p = getParse(op.id, si)
+    if (!p) throw new Error('该干员/技能还没有解析记录，无法再估')
+    const sugs = Array.isArray(p.patches?.suggestions) ? p.patches.suggestions : []
+    const accepted = sugs.filter((s) => s.status === 'accepted')
+    if (!accepted.length) throw new Error('还没有已采纳的建议')
+
+    const r = evaluate(op, { damageType: body.damageType ?? 'auto', skillIndex: si })
+    const engineResult = {
+      panel: r.panel,
+      coverage: Math.round((r.coverage ?? 0) * 100) / 100,
+      dps: r.channel
+        ? { kind: 'channel', dps: Math.round(r.channel.dps), rawDps: Math.round(r.channel.rawDps) }
+        : { kind: 'rule-layer', gated: !r.dpsGate?.verified },
+      survival: r.survivalGate?.verified ? '已展示' : '未建模（门禁中）',
+    }
+    const est = await reestimateWithAccepted({
+      operator: op.name,
+      skillName: lv.name ?? '—',
+      description: lv.description ?? '',
+      trait: op.trait?.description ?? undefined,
+      talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
+      accepted,
+      engineResult,
+    })
+    if (!est.ok) return est
+
+    // 沉淀再估结果（覆盖旧的，带时间与来源）
+    saveParse({
+      opId: op.id, skillIdx: si,
+      form: p.form, confidence: est.confidence ?? p.confidence, provider: est.provider, model: est.model,
+      reasoning: p.reasoning,
+      patches: {
+        ...(p.patches ?? {}),
+        reestimate: { ...est.estimate, at: new Date().toISOString(), model: est.model, acceptedCount: est.acceptedCount },
+      },
+    })
+    return { ...est, engineResult }
   },
   'GET /api/llm/parses': ({ url }) => listParses(Math.min(Number(url.searchParams.get('limit')) || 100, 500)),
   'DELETE /api/llm/parses': async ({ url }) => {
