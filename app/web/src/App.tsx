@@ -444,8 +444,12 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   const [rows, setRows] = useState<CompareRow[]>([])
   const [busy, setBusy] = useState(false)
   // AI 直接评测（按干员名索引）：不走 DPS 门禁，让模型自己给判断
-  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number }>>({})
+  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number; userJudge?: { dps: number | null; note?: string | null } | null }>>({})
   const [aiBusy, setAiBusy] = useState(false)
+  // 用户修正：每行一个输入框
+  const [fix, setFix] = useState<Record<string, string>>({})
+  /** 从上次解析结果里取该干员的技能下标（修正时要用） */
+  const skillIndexOf = (name: string) => entries.find((e) => e.name === name)?.skillIndex ?? 2
   // 明确的中间态：跑过没有、识别到了什么、报了什么错（不再"点了没反应"）
   const [ran, setRan] = useState(false)
   const [entries, setEntries] = useState<Array<{ name: string; skillIndex: number }>>([])
@@ -474,12 +478,24 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
       const next: typeof ai = {}
       for (const x of r.rows) {
         next[x.name ?? x.query] = x.ok && x.judge
-          ? { dps: x.judge.dps, verdict: x.judge.verdict, confidence: x.judge.confidence, basis: x.judge.basis, ms: x.ms }
-          : { error: x.error ?? '失败' }
+          ? { dps: x.judge.dps, verdict: x.judge.verdict, confidence: x.judge.confidence, basis: x.judge.basis, ms: x.ms, userJudge: x.userJudge ?? null }
+          : { error: x.error ?? '失败', userJudge: x.userJudge ?? null }
       }
       setAi(next)
       if (!Object.values(next).some((v) => !v.error)) onError('模型全部评测失败，可重试')
     } catch (e) { onError((e as Error).message) } finally { setAiBusy(false) }
+  }
+  /** 保存用户修正（覆盖模型值）；留空 = 清除修正 */
+  async function saveFix(name: string, skillIndex: number) {
+    const raw = (fix[name] ?? '').trim()
+    const clear = raw === ''
+    const dps = clear ? null : Number(raw)
+    if (!clear && !Number.isFinite(dps)) { onError('修正值必须是数字'); return }
+    try {
+      const r = await api.judgeOverride({ query: name, skillIndex, dps, clear })
+      setAi((prev) => ({ ...prev, [name]: { ...prev[name], userJudge: r.userJudge } }))
+      setFix((prev) => ({ ...prev, [name]: '' }))
+    } catch (e) { onError((e as Error).message) }
   }
   return (
     <section>
@@ -537,11 +553,36 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                       if (aiBusy && !a) return <td className="muted">评测中…</td>
                       if (!a) return <td className="muted">—</td>
                       if (a.error) return <td className="muted">失败：{a.error}</td>
+                      const uj = a.userJudge
                       return (
                         <td title={a.basis ?? undefined}>
-                          <b>{a.dps != null ? `${a.dps} DPS` : '未给数'}</b>
-                          {a.confidence && <span className="chip">{a.confidence}</span>}
+                          {/* 有用户修正时，人的判断是**权威值**，放最前面 */}
+                          {uj && uj.dps != null && (
+                            <div>
+                              <b>{uj.dps} DPS</b> <span className="chip good">你的修正</span>
+                            </div>
+                          )}
+                          <div className={uj && uj.dps != null ? 'muted' : undefined}>
+                            模型：<b>{a.dps != null ? `${a.dps} DPS` : '未给数'}</b>
+                            {a.confidence && <span className="chip">{a.confidence}</span>}
+                          </div>
                           <div className="muted" style={{ maxWidth: 320 }}>{a.verdict}</div>
+                          <div style={{ marginTop: 4 }}>
+                            <input
+                              style={{ width: 92 }}
+                              value={fix[r.name ?? r.query] ?? ''}
+                              onChange={(e) => setFix((prev) => ({ ...prev, [r.name ?? r.query]: e.target.value }))}
+                              placeholder="修正 DPS"
+                            />
+                            <button onClick={() => saveFix(r.name ?? r.query, skillIndexOf(r.name ?? r.query))}>保存</button>
+                            {uj && (
+                              <button
+                                style={{ marginLeft: 4 }}
+                                onClick={() => { setFix((prev) => ({ ...prev, [r.name ?? r.query]: '' })); saveFix(r.name ?? r.query, skillIndexOf(r.name ?? r.query)) }}
+                                title="清除修正，回到只显示模型值"
+                              >清除</button>
+                            )}
+                          </div>
                         </td>
                       )
                     })()}

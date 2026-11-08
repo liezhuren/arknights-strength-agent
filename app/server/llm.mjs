@@ -427,6 +427,11 @@ export async function judgeEvaluation(ctx) {
     '',
     '引擎当前结果（可能是门禁状态，仅供参考）：',
     JSON.stringify(ctx.engineResult ?? {}, null, 2),
+    // 用户修正：把人的判断喂回去，但要求模型独立复核（不是照抄）
+    ctx.userCorrection?.dps != null
+      ? `\n【用户修正】用户认为这套技能的 DPS 应约为 ${ctx.userCorrection.dps}（他玩过这个干员）。` +
+        '请独立复核：若你的估算与之差距很大，在 basis 里说明你的理由；确认用户更靠谱时以用户为准。'
+      : '',
   ].filter(Boolean).join('\n')
 
   let r = null

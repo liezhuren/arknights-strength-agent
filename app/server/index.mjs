@@ -13,6 +13,7 @@ import {
   getOperator, searchOperators, facets, getScenarios, getThreats, getBaseline, getRanges,
   saveCustom, listCustom, deleteCustom, recordEvaluation, recentEvaluations, getEvaluation,
   saveParse, getParse, listParses, deleteParse, exportOverrides, allOperatorNames,
+  saveUserJudge, getUserJudge,
 } from '../db/index.mjs'
 import { parseCompareQuery } from '../../tools/parse-query.mjs'
 import { evaluate, formatReport } from '../../tools/evaluate.mjs'
@@ -285,10 +286,35 @@ const routes = {
         trait: op.trait?.description ?? undefined,
         talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
         engineResult,
+        // ⚠ 刻意**不**把用户修正喂给模型：实测一旦喂进去，模型会直接照抄（1800→1800、900→900），
+        // 那样就失去了"模型独立估值"的对照价值。两者并列才有意义：谁更准，一眼可见。
       })
-      out.push({ query: q, name: op.name, skill: lv.name ?? null, ok: j.ok, ...(j.ok ? { judge: j.judge, model: j.model, ms: j.ms } : { error: j.error }) })
+      out.push({ query: q, name: op.name, skill: lv.name ?? null, skillIndex: si, ok: j.ok, ...(j.ok ? { judge: j.judge, model: j.model, ms: j.ms } : { error: j.error }), userJudge: getUserJudge(op.id, si) })
     }
     return { ok: true, rows: out }
+  },
+  /**
+   * 用户修正模型估值（人在环里）。
+   * 动机：模型给的 DPS 波动大且会错（同一干员实测 1200/2600 都出现过），
+   * 用户必须能覆盖它；模型值仍然保留，便于对照谁更准。
+   */
+  'POST /api/llm/judge-override': async ({ body }) => {
+    const op = getOperator(body.query)
+    if (!op) throw new Error(`未找到干员：${body.query}`)
+    const si = Math.max(0, Math.min(2, Number(body.skillIndex ?? 2)))
+    if (body.clear) {
+      const cur = getParse(op.id, si)
+      if (cur?.patches?.userJudge) {
+        const patches = { ...cur.patches }
+        delete patches.userJudge
+        saveParse({ opId: op.id, skillIdx: si, form: cur.form, patches, reasoning: cur.reasoning, confidence: cur.confidence, provider: cur.provider, model: cur.model, source: cur.source })
+      }
+      return { ok: true, userJudge: null }
+    }
+    const dps = body.dps === null || body.dps === undefined || body.dps === '' ? null : Number(body.dps)
+    if (dps !== null && !Number.isFinite(dps)) throw new Error('dps 必须是数字或留空')
+    const saved = saveUserJudge({ opId: op.id, skillIdx: si, judge: { dps }, note: typeof body.note === 'string' ? body.note : null })
+    return { ok: true, userJudge: saved.patches.userJudge }
   },
 
   // ---- 自制干员 ----

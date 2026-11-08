@@ -211,6 +211,31 @@ export const listParses = (limit = 100) => db.prepare(
 ).all(limit).map((r) => ({ ...r, patches: parse(r.patches, {}) }))
 export const deleteParse = (opId, skillIdx) => db.prepare(`DELETE FROM mechanism_parses WHERE op_id=? AND skill_idx=?`).run(opId, skillIdx)
 
+/**
+ * 保存用户对"模型估值"的修正（人在环里的一环）。
+ * 存进同一条 mechanism_parses 的 patches.userJudge —— 不新建表，
+ * 且**与模型估值并列保存**：模型给的、用户改的，两者都留着，便于回看谁的准。
+ */
+export function saveUserJudge({ opId, skillIdx, judge, note = null }) {
+  const cur = getParse(opId, skillIdx)
+  const patches = { ...(cur?.patches ?? {}), userJudge: { ...judge, note, at: new Date().toISOString() } }
+  return saveParse({
+    opId, skillIdx,
+    form: cur?.form ?? null,
+    patches,
+    reasoning: cur?.reasoning ?? null,
+    confidence: cur?.confidence ?? null,
+    provider: cur?.provider ?? null,
+    model: cur?.model ?? null,
+    source: cur?.source ?? 'user',
+  })
+}
+
+/** 读取用户修正（没有则 null） */
+export function getUserJudge(opId, skillIdx) {
+  return getParse(opId, skillIdx)?.patches?.userJudge ?? null
+}
+
 /** 导出为 tools/overrides.mjs 的 SKILL_OVERRIDES 片段（供人工审核后手工并入）。 */
 export function exportOverrides(limit = 100) {
   const rows = listParses(limit).filter((r) => r.patches && Object.keys(r.patches).length)
