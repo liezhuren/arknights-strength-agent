@@ -95,10 +95,21 @@ export function makeOperator(o) {
   }
 }
 
-/** 技能期攻击间隔：基础间隔 + 秒差，再按百分比攻速折算。 */
+/** 技能期攻击间隔：基础间隔 + 秒差，再按**全部来源加算后**的攻速统一折算。
+ *
+ *  ⚠ 攻速叠加口径（2026-11 修正）：明日方舟里攻速加成是**加算**的 ——
+ *  天赋/模组/技能互相叠加后，最终统一 `interval = (base + Δ) / (1 + Σaspd/100)`。
+ *  早期实现是「天赋+模组先折进 baseInterval，技能攻速再乘一层」，
+ *  等价于乘法叠乘 → 两类来源同时存在时间隔偏短、DPS 偏高（全库 21 个技能）。
+ *  引擎输入若提供 `baseAttackTimeRaw` / `totalAspd` 则用加算口径，否则回退旧行为。 */
 export function skillInterval(op) {
-  const base = op.baseInterval + (op.skill?.baseAttackTimeDelta ?? 0)
-  return attackInterval(base, op.skill?.aspdBonus ?? 0)
+  const delta = op.skill?.baseAttackTimeDelta ?? 0
+  const skillAspd = op.skill?.aspdBonus ?? 0
+  if (typeof op.baseAttackTimeRaw === 'number' && typeof op.totalAspd === 'number') {
+    return (op.baseAttackTimeRaw + delta) / (1 + (op.totalAspd + skillAspd) / 100)
+  }
+  const base = op.baseInterval + delta
+  return attackInterval(base, skillAspd)
 }
 
 // ---------- 输出计算 ----------

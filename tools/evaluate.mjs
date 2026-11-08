@@ -372,6 +372,12 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
     def: ((panel.def ?? 0) + (talent.defFlat ?? 0)) * (1 + talent.defPct),
     res: panel.magicResistance ?? 0,
     baseInterval: (panel.baseAttackTime ?? 1.5) / (1 + (talent.aspd + modAspd) / 100),
+    // 攻速叠加口径（2026-11 修正）：游戏内**所有来源的攻速是加算**的，最后统一除一次。
+    // 早期实现是「天赋/模组先折进 baseInterval，技能攻速再乘一层」→ 乘法叠乘，
+    // 使同时有两类来源的技能攻击间隔偏短 1.7%~5.6%、DPS 偏高（全库 21 个技能受影响）。
+    // 这里把原始间隔与已累计攻速单独暴露，供 skillInterval() 用加算口径重算。
+    baseAttackTimeRaw: panel.baseAttackTime ?? 1.5,
+    totalAspd: talent.aspd + modAspd,
     blockCount: panel.blockCnt ?? 1,
     cost: panel.cost ?? 0,
     redeployTime: panel.respawnTime ?? 70,
