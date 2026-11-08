@@ -185,8 +185,8 @@ export const api = {
   saveCustom: (data: unknown) => post<{ ok: boolean; errors?: string[]; name?: string }>('/api/custom', { data }),
   deleteCustom: (name: string) => req<{ ok: boolean }>(`/api/custom?name=${encodeURIComponent(name)}`, { method: 'DELETE' }),
   evaluateCustom: (data: unknown) => post<{ result: unknown; report: string | null }>('/api/custom/evaluate', { data }),
-  reviewOp: (p: { query: string; skillIndex?: number }) =>
-    post<{ ok: boolean; suggestions: SuggestionView[]; modelEstimate?: unknown; verdict?: string | null; error?: string; mergedCount?: number }>('/api/llm/review', p),
+  reviewOp: (p: { query: string; skillIndex?: number; regenerate?: boolean }) =>
+    post<{ ok: boolean; suggestions: SuggestionView[]; modelEstimate?: unknown; verdict?: string | null; error?: string; mergedCount?: number; lookedUp?: string[] }>('/api/llm/review', p),
   setSuggestionStatus: (p: { query: string; skillIndex?: number; column: string; field: string; status: 'proposed' | 'accepted' | 'rejected' }) =>
     post<{ ok: boolean; updated: number; suggestions: SuggestionView[] }>('/api/llm/suggestion-status', p),
   /** 采纳后让模型按已采纳建议重给一版数值（仍是模型自估） */

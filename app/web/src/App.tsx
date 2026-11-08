@@ -321,12 +321,13 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
   const pending = items.filter((s) => (s.status ?? 'proposed') === 'proposed').length
   const has = !!review && (items.length > 0 || !!review.modelEstimate || !!review.verdict)
 
-  async function askReview() {
+  async function askReview(regenerate = false) {
     setBusy(true); setNote(null)
     try {
-      const r = await api.reviewOp({ query, skillIndex })
+      const r = await api.reviewOp({ query, skillIndex, regenerate })
       if (!r.ok) { onError(`审阅失败：${r.error ?? '未知错误'}（可重试）`); return }
-      setNote(`本次 ${r.suggestions.length} 条建议${r.mergedCount != null ? `，累计 ${r.mergedCount} 条` : ''}`)
+      const looked = r.lookedUp?.length ? `，查证了 ${r.lookedUp.join('、')}` : ''
+      setNote(`${regenerate ? '重新生成' : ''}本次 ${r.suggestions.length} 条建议${r.mergedCount != null ? `，累计 ${r.mergedCount} 条` : ''}${looked}`)
       onReload()
     } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
   }
@@ -358,7 +359,14 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
         {review?.modelEstimate?.dps != null && (
           <span className="chip">模型自估 {review.modelEstimate.dps} DPS（非引擎值）</span>
         )}
-        <button onClick={askReview} disabled={busy || !query}>{busy ? '审阅中…' : '让模型审阅'}</button>
+        <button onClick={() => askReview(false)} disabled={busy || !query}>{busy ? '审阅中…' : '让模型审阅'}</button>
+        <button
+          onClick={() => askReview(true)}
+          disabled={busy || !query}
+          title="告诉模型上一版有问题，让它重新查证（优先查机制知识库、找原文依据）"
+        >
+          重新生成
+        </button>
       </div>
       {note && <p className="muted">{note}</p>}
       {rest && (

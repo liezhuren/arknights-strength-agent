@@ -277,6 +277,8 @@ const routes = {
         ...(op.talents ?? []).flatMap((t) => (t.blackboard ?? []).map((b) => b.key)),
         ...(op.trait?.blackboard ?? []).map((b) => b.key),
       ],
+      // 用户点"重新生成"：告知模型上一版不可靠，促使其查词典 / 找更权威依据
+      regenerate: !!body.regenerate,
     })
     // 成功则**沉淀入库**（AI 提议；是否并入 overrides.mjs 由人工审核决定）
     if (r.ok) {
@@ -334,6 +336,9 @@ const routes = {
       talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
       params,
       results,
+      // 用户点"重新生成"：带上上一版建议作为"别重复同一错误"的参考
+      regenerate: !!body.regenerate,
+      previous: body.regenerate ? (getParse(op.id, si)?.patches?.suggestions ?? null) : null,
     })
     if (!rev.ok) return rev
 
