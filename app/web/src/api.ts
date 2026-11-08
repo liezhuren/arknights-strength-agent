@@ -180,9 +180,10 @@ export const api = {
   scenarios: () => req<{ scenarios: unknown[]; threats: unknown[]; baseline: unknown[] }>('/api/scenarios'),
   evaluate: (p: { query: string; skillIndex?: number; moduleSpec?: string; moduleLevel?: number; damageType?: string; axis?: { deploys?: number; windowSec?: number } }) =>
     post<EvaluationResult>('/api/evaluate', p),
-  compare: (queries: string[], skillIndex = 2) => post<{ rows: CompareRow[] }>('/api/compare', { queries, skillIndex }),
-  /** 对比页"让模型直接评测"：四栏判断 + 模型自估数值 */
-  compareAi: (queries: string[], skillIndex = 2) =>
+  /** 自然语言也可以：\"评测赤刃明霄陈三技能和克莱门莎二技能\" */
+  compare: (text: string, skillIndex = 2) => post<{ rows: CompareRow[] }>('/api/compare', { text, skillIndex }),
+  /** 对比页"让模型直接评测"：四栏判断 + 模型自估数值（同样吃自然语言） */
+  compareAi: (text: string, skillIndex = 2) =>
     post<{
       ok: boolean
       disabled?: boolean
@@ -205,7 +206,7 @@ export const api = {
           confidence: string | null
         }
       }>
-    }>('/api/compare/ai', { queries, skillIndex }),
+    }>('/api/compare/ai', { text, skillIndex }),
   listCustom: () => req<{ id: number; name: string; data: Record<string, unknown>; updated_at: string }[]>('/api/custom'),
   saveCustom: (data: unknown) => post<{ ok: boolean; errors?: string[]; name?: string }>('/api/custom', { data }),
   deleteCustom: (name: string) => req<{ ok: boolean }>(`/api/custom?name=${encodeURIComponent(name)}`, { method: 'DELETE' }),

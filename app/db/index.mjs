@@ -82,6 +82,18 @@ function withSp(skillIdx, row, skillRows) {
   return s ? { spType: s.sp_type, spCost: s.sp_cost, initSp: s.init_sp, increment: s.increment, durationType: s.duration_type } : null
 }
 
+/** 全库干员名（供自然语言解析做最长匹配用）。带缓存，避免每次请求都查库。 */
+let _nameCache = null
+export function allOperatorNames() {
+  if (_nameCache) return _nameCache
+  try {
+    _nameCache = db.prepare(`SELECT name FROM operators WHERE name IS NOT NULL`).all().map((r) => r.name)
+  } catch {
+    _nameCache = []
+  }
+  return _nameCache
+}
+
 /** 单个干员（含技能/天赋/模组全量）。 */
 export function getOperator(query) {
   const row = db.prepare(`SELECT * FROM operators WHERE id=? OR name=? LIMIT 1`).get(query, query)

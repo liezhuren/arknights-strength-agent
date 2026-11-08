@@ -433,17 +433,15 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   async function run() {
     setBusy(true)
     try {
-      const list = text.split(/[,，\s]+/).filter(Boolean)
-      setRows((await api.compare(list)).rows)
+      setRows((await api.compare(text)).rows)
     } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
   }
   /** 让模型逐个别做四栏评测（慢，单独触发） */
   async function runAi() {
-    const list = text.split(/[,，\s]+/).filter(Boolean)
-    if (!list.length) return
+    if (!text.trim()) return
     setAiBusy(true)
     try {
-      const r = await api.compareAi(list)
+      const r = await api.compareAi(text)
       if (r.disabled) { onError(r.error ?? '未启用模型'); return }
       if (!r.ok) { onError(r.error ?? '模型评测失败'); return }
       const next: typeof ai = {}
@@ -459,7 +457,7 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   return (
     <section>
       <div className="bar">
-        <input style={{ minWidth: 360 }} value={text} onChange={(e) => setText(e.target.value)} placeholder="用逗号分隔，最多 6 名" />
+        <input style={{ minWidth: 360 }} value={text} onChange={(e) => setText(e.target.value)} placeholder="可直接写：评测赤刃明霄陈三技能和克莱门莎二技能" />
         <button onClick={run} disabled={busy}>{busy ? '对比中…' : '对比'}</button>
         <button onClick={runAi} disabled={aiBusy} title="让模型逐个干员直接给四栏评测（较慢，每人约 10 秒）">
           {aiBusy ? '模型评测中…' : '让模型评测'}

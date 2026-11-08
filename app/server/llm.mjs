@@ -189,7 +189,7 @@ export async function parseMechanism(ctx) {
 
   for (let round = 0; round < 3; round++) {
     const user = buildParseInput({ ...ctx, kbIndex, lookupText })
-    const ask = (sys) => chat({ system: sys, user, json: true, maxTokens: 4096 })
+    const ask = (sys) => chat({ system: sys, user, json: true, maxTokens: 6144 })
     // 模型偶发输出非法 JSON（截断/围栏/尾随逗号）→ 最多试 3 次，逐次收紧要求。
     // 实测同一干员两次调用结果不同，所以单次失败不能直接判死。
     const attempts = [
@@ -350,7 +350,7 @@ export async function reviewEvaluation(ctx) {
   let parsed = null
   let lastText = ''
   for (const at of attempts) {
-    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 3072 })
+    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 4096 })
     if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
     lastText = r.text ?? ''
     if (!lastText.trim()) continue // 模型偶发返回空内容 → 直接重试
@@ -433,7 +433,7 @@ export async function judgeEvaluation(ctx) {
   let parsed = null
   let lastText = ''
   for (const attempt of [true, false, true]) {
-    r = await chat({ system: JUDGE_SYSTEM, user, json: attempt, maxTokens: 3072 })
+    r = await chat({ system: JUDGE_SYSTEM, user, json: attempt, maxTokens: 4096 })
     if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
     lastText = r.text ?? ''
     if (!lastText.trim()) continue
@@ -517,7 +517,7 @@ export async function reestimateWithAccepted(ctx) {
   let parsed = null
   let lastText = ''
   for (const at of attempts) {
-    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 2048 })
+    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 4096 })
     if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
     lastText = r.text ?? ''
     if (!lastText.trim()) continue

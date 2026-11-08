@@ -12,8 +12,9 @@ import { URL } from 'node:url'
 import {
   getOperator, searchOperators, facets, getScenarios, getThreats, getBaseline, getRanges,
   saveCustom, listCustom, deleteCustom, recordEvaluation, recentEvaluations, getEvaluation,
-  saveParse, getParse, listParses, deleteParse, exportOverrides,
+  saveParse, getParse, listParses, deleteParse, exportOverrides, allOperatorNames,
 } from '../db/index.mjs'
+import { parseCompareQuery } from '../../tools/parse-query.mjs'
 import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
@@ -164,6 +165,21 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
   }
 }
 
+/**
+ * 把请求体解析成 [{name, skillIndex}]。
+ * 优先用自然语言 `text`（"评测赤刃明霄陈三技能和克莱门莎二技能"），
+ * 否则退回结构化的 `queries`（此时所有人共用一个 skillIndex）。
+ */
+function resolveCompareEntries(body) {
+  const fallbackSkill = Math.max(0, Math.min(2, Number(body?.skillIndex ?? 2)))
+  if (typeof body?.text === 'string' && body.text.trim()) {
+    const { entries } = parseCompareQuery(body.text, allOperatorNames(), { defaultSkillIndex: fallbackSkill })
+    return entries.slice(0, 6)
+  }
+  const queries = Array.isArray(body?.queries) ? body.queries : []
+  return queries.slice(0, 6).map((q) => ({ name: q, skillIndex: fallbackSkill }))
+}
+
 const routes = {
   'GET /api/health': () => ({ ok: true, node: process.version, db: 'sqlite', modelEnabled: !!readConfig().provider }),
 
@@ -186,15 +202,20 @@ const routes = {
     return out
   },
   'POST /api/compare': async ({ body }) => {
-    const queries = Array.isArray(body.queries) ? body.queries.slice(0, 6) : []
-    if (!queries.length) throw new Error('queries 不能为空（最多 6 名）')
-    const rows = queries.map((q) => {
+    // 支持两种输入：结构化 queries，或**自然语言 text**（"评测赤刃明霄陈三技能和克莱门莎二技能"）
+    const entries = resolveCompareEntries(body)
+    if (!entries.length) throw new Error('没识别出干员（最多 6 名）；可写"赤刃明霄陈三技能和克莱门莎二技能"')
+    const rows = entries.map(({ name: q, skillIndex }) => {
       const op = getOperator(q)
       if (!op) return { query: q, error: '未找到' }
-      const r = evaluate(op, { damageType: body.damageType ?? 'auto', skillIndex: Number(body.skillIndex ?? 2), moduleSpec: body.moduleSpec, moduleLevel: body.moduleLevel })
-      const v = r.versatilitySection ? null : null
+      const si = Math.max(0, Math.min(2, Number(skillIndex ?? 2)))
+      const r = evaluate(op, {
+        damageType: body.damageType ?? 'auto', skillIndex: si,
+        moduleSpec: body.moduleSpec, moduleLevel: body.moduleLevel,
+        talentParses: getParse(op.id, si)?.patches?.talents ?? null,
+      })
       return {
-        query: q, name: op.name, skill: r.skill, damageType: r.damageType,
+        query: q, name: op.name, skill: r.skill, damageType: r.damageType, skillIndex: si,
         // DPS 门禁：未接入文本解析时不返回 benchmark 数值，避免对比页展示规则层 DPS
         benchmark: r.dpsGate?.verified ? r.benchmark : null,
         dpsGated: !r.dpsGate?.verified, coverage: r.coverage, tier: /分级：\*\*(.+?)\*\*/.exec(r.versatilitySection ?? '')?.[1] ?? null,
@@ -207,15 +228,15 @@ const routes = {
   // 对比页的"让模型直接评测"：逐个别调 judgeEvaluation，返回四栏 + 模型自估数值。
   // 故意做成**独立接口**：对比本身要快，AI 评测慢且可能失败，不能拖累主流程。
   'POST /api/compare/ai': async ({ body }) => {
-    const queries = Array.isArray(body.queries) ? body.queries.slice(0, 6) : []
-    if (!queries.length) throw new Error('queries 不能为空（最多 6 名）')
+    const entries = resolveCompareEntries(body)
+    if (!entries.length) throw new Error('没识别出干员（最多 6 名）')
     if (!activeProvider()) return { ok: false, disabled: true, error: '未启用模型（设置 → 选择 provider 并填 API Key）', rows: [] }
 
     const out = []
-    for (const q of queries) {
+    for (const { name: q, skillIndex } of entries) {
       const op = getOperator(q)
       if (!op) { out.push({ query: q, ok: false, error: '未找到' }); continue }
-      const si = Number(body.skillIndex ?? 2)
+      const si = Math.max(0, Math.min(2, Number(skillIndex ?? 2)))
       const lv = op.skills?.[si]?.levels?.[9]
       if (!lv) { out.push({ query: q, name: op.name, ok: false, error: '无此技能' }); continue }
       const r = evaluate(op, {
