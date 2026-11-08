@@ -16,6 +16,7 @@ import {
   saveUserJudge, getUserJudge,
 } from '../db/index.mjs'
 import { parseCompareQuery } from '../../tools/parse-query.mjs'
+import { resolveWithAudit } from '../../tools/resolve-desc.mjs'
 import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
@@ -279,13 +280,18 @@ const routes = {
         elementChannel: r.elementProfile?.burstDps ?? null,
         survivalGated: !r.survivalGate?.verified,
       }
+      // 数值已代入的描述 + blackboard：模型否则只会看到 {attack@atk_scale:0%} 之类的模板
+      const sbb = Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value]))
+      const { text: resolvedDesc, unresolved } = resolveWithAudit(lv.description ?? '', sbb)
       const j = await judgeEvaluation({
         operator: op.name,
         skillName: lv.name ?? '—',
         description: lv.description ?? '',
+        resolvedDescription: resolvedDesc,
+        blackboard: sbb,
         trait: op.trait?.description ?? undefined,
         talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
-        engineResult,
+        engineResult: { ...engineResult, unresolvedPlaceholders: unresolved },
         // ⚠ 刻意**不**把用户修正喂给模型：实测一旦喂进去，模型会直接照抄（1800→1800、900→900），
         // 那样就失去了"模型独立估值"的对照价值。两者并列才有意义：谁更准，一眼可见。
       })
@@ -378,6 +384,7 @@ const routes = {
       operator: op.name,
       skillName: lv.name ?? '—',
       description: lv.description ?? '',
+      resolvedDescription: resolveWithAudit(lv.description ?? '', Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value]))).text,
       blackboard: Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value])),
       trait: op.trait?.description ?? undefined,
       // 全部天赋都喂进去（原先只传第一条 → 多天赋干员漏解析）
@@ -444,6 +451,7 @@ const routes = {
       operator: op.name,
       skillName: lv.name ?? '—',
       description: lv.description ?? '',
+      resolvedDescription: resolveWithAudit(lv.description ?? '', Object.fromEntries((lv.blackboard ?? []).map((b) => [b.key, b.value]))).text,
       trait: op.trait?.description ?? undefined,
       talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
       params,

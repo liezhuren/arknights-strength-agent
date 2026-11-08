@@ -155,6 +155,10 @@ export function buildParseInput(ctx) {
     `干员：${ctx.operator}`,
     `技能：${ctx.skillName}`,
     `技能原文：${ctx.description}`,
+    // 数值代入版：解决"模型只看到 {attack@atk_scale:0%} 模板、以为倍率未给出"的问题
+    ctx.resolvedDescription && ctx.resolvedDescription !== ctx.description
+      ? `技能原文（数值已代入 blackboard）：${ctx.resolvedDescription}`
+      : '',
     `blackboard：${JSON.stringify(ctx.blackboard)}`,
     ctx.trait ? `分支特性：${ctx.trait}` : '',
     ...talentLines,
@@ -316,10 +320,11 @@ const REVIEW_SYSTEM = `你是《明日方舟》数值模型的审阅者。用户
  * @param {object} ctx.results     引擎算出的四栏结果摘要
  */
 export async function reviewEvaluation(ctx) {
+  const desc = ctx.resolvedDescription ?? ctx.description
   const user = [
     `干员：${ctx.operator}`,
     `技能：${ctx.skillName}`,
-    `技能原文：${ctx.description}`,
+    `技能原文（数值已代入）：${desc}`,
     ctx.trait ? `分支特性：${ctx.trait}` : '',
     ...(ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`),
     '',
@@ -418,20 +423,19 @@ const JUDGE_SYSTEM = `你是《明日方舟》数值评测者。根据技能原�
 
 /** 对单个干员做"直接评测"（对比页用，轻量）。 */
 export async function judgeEvaluation(ctx) {
+  // ⚠ 关键：必须给**数值已代入**的描述。游戏描述是模板（{attack@atk_scale:0%}），
+  // 真实倍率在 blackboard 里；早期只传模板 → 模型一律报"关键倍率均为占位符"、给不出数。
+  const desc = ctx.resolvedDescription ?? ctx.description
   const user = [
     `干员：${ctx.operator}`,
     `技能：${ctx.skillName}`,
-    `技能原文：${ctx.description}`,
+    `技能原文（数值已代入）：${desc}`,
+    ctx.blackboard && Object.keys(ctx.blackboard).length ? `blackboard：${JSON.stringify(ctx.blackboard)}` : '',
     ctx.trait ? `分支特性：${ctx.trait}` : '',
     ...(ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`),
     '',
     '引擎当前结果（可能是门禁状态，仅供参考）：',
     JSON.stringify(ctx.engineResult ?? {}, null, 2),
-    // 用户修正：把人的判断喂回去，但要求模型独立复核（不是照抄）
-    ctx.userCorrection?.dps != null
-      ? `\n【用户修正】用户认为这套技能的 DPS 应约为 ${ctx.userCorrection.dps}（他玩过这个干员）。` +
-        '请独立复核：若你的估算与之差距很大，在 basis 里说明你的理由；确认用户更靠谱时以用户为准。'
-      : '',
   ].filter(Boolean).join('\n')
 
   let r = null
