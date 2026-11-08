@@ -184,3 +184,121 @@ export async function parseMechanism(ctx) {
     ...(dropped.length ? { droppedEvidence: dropped } : {}),
   }
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// 建议层（advisor）—— 模型不产出最终数字，只产出**可审计的参数建议**
+//
+// 定位：规则引擎算的是"结构化参数 → 确定性结果"，它不可能面面俱到；
+// 模型的价值在于读懂机制、指出引擎没覆盖的部分。所以它的产出必须是：
+//   · 落在**参数**上（不是"我觉得 DPS 应该是 5000"）
+//   · 带 evidence（逐字原文）和 reason
+//   · 能给出"应用后大概会变成多少"的预期，供人对账
+// 四栏都可提建议：dps / survival（生存）/ teamBuff（团队增益）/ control（控制）。
+// ════════════════════════════════════════════════════════════════════════════
+
+const REVIEW_SYSTEM = `你是《明日方舟》数值模型的审阅者。用户给你：一名干员的技能/天赋原文、
+当前引擎解析出的结构化参数、以及引擎算出的四栏结果。
+
+你的任务：找出**引擎没覆盖或算错的地方**，输出参数级建议。严格 JSON，不要解释、不要 markdown：
+
+{
+  "suggestions": [
+    {
+      "column": "dps|survival|teamBuff|control",
+      "field": "参数名（如 elementBalls / perBallAtkScale / talentAtkMult / damageReduce / teamBuffAtkPct / controlDurationSec）",
+      "current": 当前值或 null,
+      "suggested": 建议值,
+      "reason": "为什么（一句话，指向机制）",
+      "evidence": "原文片段（必须逐字来自输入，≥4 字）",
+      "confidence": "high|medium|low",
+      "expectedEffect": "应用后的预期影响（如「木桩口径 DPS 约 4683」）"
+    }
+  ],
+  "verdict": "对当前结果的一句话总评（哪里可信、哪里不可信）",
+  "confidence": "high|medium|low"
+}
+
+硬性规则：
+1. **只提参数建议，不要直接给最终 DPS 数字**——数字由引擎算。
+2. 每个建议必须有 evidence，逐字摘自输入的技能/天赋/特性原文；编造会被剔除。
+3. 引擎已经算对的部分不要提建议（宁缺勿滥）。
+4. 四栏都可以提：输出（通道/倍率/元素）、生存（减伤/闪避/自回/屏障）、
+   团队增益（增益幅度与覆盖率）、控制（类型/时长/覆盖率）。
+5. 不确定就标 confidence: "low"，不要猜。
+6. **必须返回非空 JSON 对象**。若确实没有可提的，返回 {"suggestions":[],"verdict":"..."}。
+
+输出示例（照抄结构，值换成对当前干员的判断）：
+{"suggestions":[{"column":"dps","field":"elementBalls","current":null,"suggested":13,"reason":"灼燃爆发期间伤害改判元素","evidence":"若目标处于灼燃损伤爆发期间则改为造成元素伤害","confidence":"high","expectedEffect":"木桩口径 DPS 约 4683"}],"verdict":"通道参数基本正确，生存栏未建模","confidence":"medium"}`
+
+/**
+ * 审阅一次评测，产出参数级建议。
+ * @param {object} ctx
+ * @param {string} ctx.operator
+ * @param {string} ctx.skillName
+ * @param {string} ctx.description
+ * @param {string[]} [ctx.talents]
+ * @param {string} [ctx.trait]
+ * @param {object} ctx.params      当前引擎使用的结构化参数（解析产物 + 通道参数）
+ * @param {object} ctx.results     引擎算出的四栏结果摘要
+ */
+export async function reviewEvaluation(ctx) {
+  const user = [
+    `干员：${ctx.operator}`,
+    `技能：${ctx.skillName}`,
+    `技能原文：${ctx.description}`,
+    ctx.trait ? `分支特性：${ctx.trait}` : '',
+    ...(ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`),
+    '',
+    '当前引擎参数：',
+    JSON.stringify(ctx.params ?? {}, null, 2),
+    '',
+    '引擎结果（四栏）：',
+    JSON.stringify(ctx.results ?? {}, null, 2),
+  ].filter(Boolean).join('\n')
+
+  const attempts = [
+    { json: true, sys: REVIEW_SYSTEM },
+    { json: false, sys: REVIEW_SYSTEM + '\n\n再次强调：只输出一个 JSON 对象，不要任何其他文字。' },
+    { json: true, sys: REVIEW_SYSTEM + '\n\n上一轮输出为空。这次必须返回完整的 JSON，可以只给一条建议。' },
+    { json: false, sys: REVIEW_SYSTEM },
+  ]
+  let r = null
+  let parsed = null
+  let lastText = ''
+  for (const at of attempts) {
+    r = await chat({ system: at.sys, user, json: at.json, maxTokens: 3072 })
+    if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
+    lastText = r.text ?? ''
+    if (!lastText.trim()) continue // 模型偶发返回空内容 → 直接重试
+    parsed = extractJson(lastText)
+    if (!parsed) {
+      const repaired = lastText.replace(/,\s*([}\]])/g, '$1')
+      parsed = repaired !== lastText ? extractJson(repaired) : null
+    }
+    if (parsed) break
+  }
+  if (!parsed) {
+    return { ok: false, error: '审阅输出无法解析为 JSON（已重试 4 次）', raw: lastText.slice(0, 800), provider: r.provider, model: r.model }
+  }
+
+  // 证据校验：与解析层同一套规则 —— 逐字出自输入，否则剔除
+  const source = [ctx.description ?? '', ctx.trait ?? '', ...(ctx.talents ?? []), JSON.stringify(ctx.params ?? {})].join('\n')
+  const norm = (s) => String(s ?? '').replace(/\s+/g, '')
+  const srcNorm = norm(source)
+  const dropped = []
+  const suggestions = (Array.isArray(parsed.suggestions) ? parsed.suggestions : []).filter((s) => {
+    const ev = norm(s?.evidence)
+    if (!ev || ev.length < 4 || !srcNorm.includes(ev)) { dropped.push(s?.field ?? '(未知字段)'); return false }
+    if (typeof s?.suggested !== 'number') { dropped.push(`${s?.field ?? '?'}(suggested 非数字)`); return false }
+    return true
+  })
+
+  return {
+    ok: true,
+    suggestions,
+    verdict: parsed.verdict ?? null,
+    confidence: parsed.confidence ?? null,
+    provider: r.provider, model: r.model, ms: r.ms,
+    ...(dropped.length ? { droppedEvidence: dropped } : {}),
+  }
+}

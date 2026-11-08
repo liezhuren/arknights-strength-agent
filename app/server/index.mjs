@@ -18,7 +18,7 @@ import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
 import { modulesOf } from '../../tools/modules.mjs'
-import { parseMechanism, chat, activeProvider } from './llm.mjs'
+import { parseMechanism, reviewEvaluation, chat, activeProvider } from './llm.mjs'
 import { extractVersatility, scenarioValue } from '../../tools/versatility.mjs'
 import { extractRotation } from '../../tools/rotation.mjs'
 import { extractSurvival, runProfiles } from '../../tools/survival.mjs'
@@ -254,6 +254,72 @@ const routes = {
       saveParse({ opId: op.id, skillIdx: si, form: r.form, patches: r.patches, reasoning: r.reasoning, confidence: r.confidence, provider: r.provider, model: r.model })
     }
     return r
+  },
+  // ── 审阅：让模型对四栏结果提出**参数级建议**（不产出最终数字）──────────────
+  'POST /api/llm/review': async ({ body }) => {
+    const op = getOperator(body.query)
+    if (!op) throw new Error(`未找到干员：${body.query}`)
+    const si = Number(body.skillIndex ?? 2)
+    const lv = op.skills?.[si]?.levels?.[9]
+    if (!lv) throw new Error('该干员无此技能')
+
+    // 当前引擎算出来的东西（参数 + 四栏摘要）
+    const r = evaluate(op, { damageType: body.damageType ?? 'auto', skillIndex: si })
+    const parsed = getParse(op.id, si)
+    const params = {
+      skill: {
+        damageType: r.damageType,
+        attackMult: r.skillData?.attackMult ?? null,
+        hits: r.skillData?.hits ?? null,
+        targets: r.skillData?.targetCount ?? null,
+        noAttack: r.skillData?.noAttack ?? false,
+      },
+      channel: r.channel
+        ? {
+            kind: r.channel.kind,
+            balls: r.channel.balls,
+            elementBalls: r.channel.elementBalls,
+            perBallAtkScale: null, // 已折算进 damage，暴露给模型的是结果
+            totalDamage: Math.round(r.channel.totalDamage),
+            dps: Math.round(r.channel.dps * 10) / 10,
+            rawDps: Math.round(r.channel.rawDps * 10) / 10,
+          }
+        : null,
+      parse: parsed?.patches ?? null,
+    }
+    const results = {
+      panel: r.panel,
+      coverage: Math.round((r.coverage ?? 0) * 1000) / 10,
+      dps: r.channel
+        ? { kind: 'channel', dps: Math.round(r.channel.dps), rawDps: Math.round(r.channel.rawDps) }
+        : { kind: 'rule-layer', gated: !r.dpsGate?.verified, reason: r.dpsGate?.reason ?? null },
+      survival: r.survivalGate?.verified ? '已展示' : '未建模（门禁中）',
+      tips: '生存栏/团队增益/控制栏同样可以提建议，字段自拟但必须是参数。',
+    }
+
+    const rev = await reviewEvaluation({
+      operator: op.name,
+      skillName: lv.name ?? '—',
+      description: lv.description ?? '',
+      trait: op.trait?.description ?? undefined,
+      talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
+      params,
+      results,
+    })
+    if (!rev.ok) return rev
+
+    // 建议沉淀：并入该 (干员, 技能) 的解析记录，供人工审阅后启用
+    saveParse({
+      opId: op.id,
+      skillIdx: si,
+      form: parsed?.form ?? null,
+      patches: { ...(parsed?.patches ?? {}), suggestions: rev.suggestions, verdict: rev.verdict },
+      reasoning: rev.verdict ?? parsed?.reasoning ?? null,
+      confidence: rev.confidence ?? parsed?.confidence ?? null,
+      provider: rev.provider,
+      model: rev.model,
+    })
+    return { ...rev, params, results }
   },
   'GET /api/llm/parses': ({ url }) => listParses(Math.min(Number(url.searchParams.get('limit')) || 100, 500)),
   'DELETE /api/llm/parses': async ({ url }) => {
