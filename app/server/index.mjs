@@ -73,7 +73,12 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
   const op = getOperator(query)
   if (!op) throw new Error(`未找到干员：${query}`)
   const si = Number(skillIndex)
-  const r = evaluate(op, { damageType, skillIndex: si, moduleSpec, moduleLevel, axis })
+  const r = evaluate(op, {
+    damageType, skillIndex: si, moduleSpec, moduleLevel, axis,
+    // 解析层已给出的天赋语义（kind/condition）交给生存判定：
+    // 模型能读懂"来自自身前方单位""生命值不高于一半时"这类条件，正则只能粗猜。
+    talentParses: getParse(op.id, si)?.patches?.talents ?? null,
+  })
   // 结构化：泛用性六场景 / 回转身周期 / 生存分档 / 操作难度因素
   const v = extractVersatility(r.engine)
   const rot = extractRotation(op, si, r.engine)

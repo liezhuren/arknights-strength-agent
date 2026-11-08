@@ -732,7 +732,7 @@ export function evaluate(op, opts = {}) {
     teamBuffSection: formatTeamBuffSection(eop, skillIndex),
     controlSection: formatControlSection(eop, skillIndex),
     // 同上：原始数据，门禁在展示层
-    survivalSection: formatSurvivalSection(eop, skillIndex, talent),
+    survivalSection: formatSurvivalSection(eop, skillIndex, talent, { talentParses: opts.talentParses }),
     rotationSection: formatRotationSection(eop, skillIndex, eng),
     // 注意：这里返回**原始数据**，不按展示门禁裁剪 —— 回归工具（anchors.mjs 等）
     // 直接读这个字段。门禁只发生在展示层（formatReport / app/server 的 sections）。
@@ -767,7 +767,7 @@ export function evaluate(op, opts = {}) {
   result.survivalGate = (() => {
     const gaps = []
     let sv = null
-    try { sv = extractSurvival(eop, skillIndex, talent) } catch { /* 提取失败 → 下方按缺口处理 */ }
+    try { sv = extractSurvival(eop, skillIndex, talent, { talentParses: opts.talentParses }) } catch { /* 提取失败 → 下方按缺口处理 */ }
     if (!sv) {
       gaps.push('生存数据提取失败')
     } else {

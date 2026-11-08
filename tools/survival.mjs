@@ -68,7 +68,7 @@ function drCondition(desc) {
   return null
 }
 
-function survivalFromBb(bb, desc) {
+function survivalFromBb(bb, desc, parsedCondition = null) {
   const d = strip(desc)
   const out = { defPct: 0, defFlat: 0, resPct: 0, resFlat: 0, hpPct: 0, drPct: 0, drFlat: 0, drConditional: [], healPctMax: 0, healFlat: 0, shieldPctMax: 0, dodgeP: 0, dodgeM: 0, blockCnt: null, taunt: null, resist: 0, undying: null, healAlly: null, notes: [] }
   const toEnemy = /敌人|敌军|目标|使其/.test(d) && !/自身|自己/.test(d)
@@ -110,7 +110,8 @@ function survivalFromBb(bb, desc) {
       : drKeys.includes('damage_resistance_normal') ? 'damage_resistance_normal' : drKeys[0]
     if (mainKey) {
       const v = Math.abs(bb[mainKey])
-      const cond = drCondition(d)
+      // 条件来源：解析层（模型读懂的语义）优先，正则兜底
+      const cond = parsedCondition ?? drCondition(d)
       const label = v <= 1 ? `减伤 ${Math.round(v * 100)}%` : `减伤 ${v} 点/击`
       if (cond) {
         out.drConditional.push({ pct: v <= 1 ? v : 0, flat: v <= 1 ? 0 : v, label, condition: cond })
@@ -244,10 +245,21 @@ export function extractAllyHeal(op, skillIndex = 2, talentAtkPct = 0, talentAspd
  * @param {number} skillIndex
  * @param {{atkPct?:number, aspd?:number}} [talentBonus] - 由调用方传入的天赋面板加成（避免循环依赖）
  */
-export function extractSurvival(op, skillIndex = 2, talentBonus = { atkPct: 0, aspd: 0 }) {
+export function extractSurvival(op, skillIndex = 2, talentBonus = { atkPct: 0, aspd: 0 }, opts = {}) {
   const panel = op.panel ?? {}
   const lv = op.skills?.[skillIndex]?.levels?.[9]
-  const talentEff = mergeEffects((op.talents ?? []).map((t) => survivalFromBb(bbOf(t), t.description)))
+  // 天赋条件：优先用**解析层**给出的 kind/condition（模型能读懂"来自自身前方单位""生命值
+  // 不高于一半时"这类自然语言条件），正则只作无解析时的兜底。
+  const parsedTalents = Array.isArray(opts.talentParses) ? opts.talentParses : []
+  const parsedCondOf = (t, i) => {
+    const cand = parsedTalents.find((p) => p?.name && t?.name && p.name.includes(t.name))
+      ?? parsedTalents[i]
+    if (!cand) return null
+    if (cand.kind !== 'conditional') return null
+    const c = typeof cand.condition === 'string' && cand.condition.trim() ? cand.condition.trim() : null
+    return c
+  }
+  const talentEff = mergeEffects((op.talents ?? []).map((t, i) => survivalFromBb(bbOf(t), t.description, parsedCondOf(t, i))))
   const skillEff = lv ? survivalFromBb(bbOf(lv), lv.description) : null
   // 分支特性（**有效特性**：基础特性，或模组覆盖/追加后的结果）
   // 关键：基础特性里就有生存数据 —— 水月本体是 50% 物法闪避（此前漏读导致无模组配置被低估）
@@ -330,8 +342,8 @@ export function runProfiles(p) {
 }
 
 /** 渲染 ④ 生存栏。 */
-export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct: 0, aspd: 0 }) {
-  const s = extractSurvival(op, skillIndex, talentBonus)
+export function formatSurvivalSection(op, skillIndex = 2, talentBonus = { atkPct: 0, aspd: 0 }, opts = {}) {
+  const s = extractSurvival(op, skillIndex, talentBonus, { talentParses: opts.talentParses })
   const n = s.normal.panel
   const lines = ['【④ 生存栏】（承伤/自回/闪避，独立于输出栏；来袭画像取自真实敌人统计）']
   if (s.stateNote) lines.push(`  ⚑ ${s.stateNote}`)
