@@ -160,10 +160,18 @@ export function sustainDps(op, def, res) {
 
 /**
  * 技能覆盖率 = 持续时间 / 完整周期（充能时间 + 持续时间）。
- * 自动回复按 1 SP/s；攻击回复按 每次攻击回 1 SP。
- * spStart 为初始 SP，充能时间 = (spCost − spStart) / 回复速率。
+ *
+ * ⚠ 充能时间的口径（2026-11 修正）：
+ *   明日方舟里**技能持续期间 SP 不回复**，且技能结束后 SP 归零 ——
+ *   所以**稳态**每一轮的充能是完整的 `spCost`，不是 `spCost − spStart`。
+ *   初始 SP（spStart）只影响**首轮**可用时间。
+ *   早期统一用 (spCost − spStart) 算 → 充能偏短、覆盖率系统性偏高
+ *   （银灰 S3 由 66.7% 修正为 25.0%；新约能天使 S2 由 73.8% 修正为 32.0%）。
+ *
+ * @param {object} op
+ * @param {{firstCycle?: boolean}} [opts] firstCycle=true 时按首轮算（含初始 SP）
  */
-export function skillCoverage(op) {
+export function skillCoverage(op, opts = {}) {
   if (!op.skill || op.skill.duration <= 0) {
     // duration < 0 = 永续/被动型技能（开启后全程生效）
     if (op.skill && op.skill.duration < 0) return 1
@@ -182,7 +190,9 @@ export function skillCoverage(op) {
     // 自动回复：自然回 SP 速率取自面板 spRecoveryPerSec（方舟统一 1/s，个别技能/天赋可改）
     chargeRate = op.spRecoveryPerSec ?? 1
   }
-  const chargeTime = Math.max(sp - spStart, 0) / chargeRate
+  // 稳态用完整 spCost；首轮才扣初始 SP
+  const spend = opts.firstCycle ? Math.max(sp - spStart, 0) : sp
+  const chargeTime = spend / chargeRate
   const cycle = chargeTime + op.skill.duration
   return op.skill.duration / cycle
 }

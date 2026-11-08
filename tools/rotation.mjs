@@ -36,7 +36,12 @@ export function extractRotation(op, skillIndex = 2, eng = null, { hitAssumptionP
   const need = Math.max(cost - init, 0)
   const firstUse = rate ? need / rate : (cost === 0 ? 0 : null)
   const permanent = dur <= 0 || durType === 'PERMANENT'
-  const cycle = permanent ? null : (firstUse === null ? null : firstUse + dur)
+  // ⚠ 周期口径：**技能期间 SP 不回复**，技能结束 SP 归零 →
+  // 稳态每轮充能是完整 spCost（不是 spCost − initSp）。
+  // 初始 SP 只让**首轮**更快（firstUse）。早期用 firstUse 当周期 →
+  // 覆盖率与可开次数都偏高，且与引擎 skillCoverage 的稳态口径不一致。
+  const steadyCharge = rate ? cost / rate : null
+  const cycle = permanent ? null : (steadyCharge === null ? null : steadyCharge + dur)
   const coverage = permanent ? 1 : (cycle ? dur / cycle : 0)
   const downtime = cycle ? cycle - dur : null
   const castsIn = (window) => {
@@ -47,7 +52,7 @@ export function extractRotation(op, skillIndex = 2, eng = null, { hitAssumptionP
   }
   return {
     spType, spLabel: SP_LABEL[spType] ?? spType, spCost: cost, initSp: init, increment: inc,
-    rate, firstUse, duration: dur, durType, permanent, cycle, coverage, downtime,
+    rate, firstUse, steadyCharge, duration: dur, durType, permanent, cycle, coverage, downtime,
     casts60: castsIn(60), casts90: castsIn(90),
     ammo: durType === 'AMMO',
     chargeable: (sp.maxChargeTime ?? 1) > 1 ? sp.maxChargeTime : null,
@@ -77,11 +82,13 @@ export function formatRotationSection(op, skillIndex = 2, eng = null) {
   lines.push(`  ${r.spLabel}${r.spType === 'deploy' ? '' : ` ${rateTxt}`} · 消耗 ${r.spCost} · 初始 ${r.initSp}`)
   if (r.permanent) {
     lines.push('  永续技能：开启后长期生效，无回转周期（覆盖率 100%）')
-  } else if (r.firstUse === null) {
+  } else if (r.firstUse === null || !r.cycle || r.steadyCharge == null) {
+    // 缺速率参数（如部署型/费用为零且无回复速率）→ 无法推周期
     lines.push('  无法推导回转（缺少速率参数）')
   } else {
-    lines.push(`  首轮可用 ${r.firstUse.toFixed(1)}s · 完整周期 ${r.cycle.toFixed(1)}s（充能 ${r.firstUse.toFixed(1)}s + 持续 ${r.duration}s）`)
-    lines.push(`  空窗 ${r.downtime.toFixed(1)}s · 覆盖率 ${(r.coverage * 100).toFixed(1)}% · 60s 内可开 ${r.casts60} 次 / 90s 内 ${r.casts90} 次`)
+    lines.push(`  首轮可用 ${r.firstUse.toFixed(1)}s（含初始 SP）· 稳态周期 ${r.cycle.toFixed(1)}s（充能 ${r.steadyCharge.toFixed(1)}s + 持续 ${r.duration}s）`)
+    lines.push(`  空窗 ${r.downtime.toFixed(1)}s · 覆盖率 ${(r.coverage * 100).toFixed(1)}%（稳态） · 60s 内可开 ${r.casts60} 次 / 90s 内 ${r.casts90} 次`)
+    lines.push('  （技能期间 SP 不回复、结束后归零 → 稳态每轮充能取完整 spCost；初始 SP 只加快首轮）')
   }
   if (r.ammo) lines.push('  弹药型技能：以弹药耗尽为结束条件，实际持续随命中次数浮动')
   if (r.chargeable) lines.push(`  可充能 ${r.chargeable} 次：可连续释放，短窗口爆发节奏更灵活`)
