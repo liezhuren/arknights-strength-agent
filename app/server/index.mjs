@@ -223,7 +223,7 @@ const routes = {
         firstUse: /首轮可用 ([\d.]+)s/.exec(r.rotationSection ?? '')?.[1] ?? null,
       }
     })
-    return { rows }
+    return { rows, entries: entries.map((e) => ({ name: e.name, skillIndex: e.skillIndex })) }
   },
   // 对比页的"让模型直接评测"：逐个别调 judgeEvaluation，返回四栏 + 模型自估数值。
   // 故意做成**独立接口**：对比本身要快，AI 评测慢且可能失败，不能拖累主流程。

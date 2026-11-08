@@ -430,11 +430,22 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   // AI 直接评测（按干员名索引）：不走 DPS 门禁，让模型自己给判断
   const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number }>>({})
   const [aiBusy, setAiBusy] = useState(false)
+  // 明确的中间态：跑过没有、识别到了什么、报了什么错（不再"点了没反应"）
+  const [ran, setRan] = useState(false)
+  const [entries, setEntries] = useState<Array<{ name: string; skillIndex: number }>>([])
+  const [localErr, setLocalErr] = useState<string | null>(null)
   async function run() {
-    setBusy(true)
+    setBusy(true); setLocalErr(null)
     try {
-      setRows((await api.compare(text)).rows)
-    } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
+      const r = await api.compare(text)
+      setRows(r.rows)
+      setEntries(r.entries ?? [])
+      setRan(true)
+      if (!r.rows.length) setLocalErr('没识别出干员。试试：评测赤刃明霄陈三技能和克莱门莎二技能')
+    } catch (e) {
+      setLocalErr((e as Error).message)
+      onError((e as Error).message)
+    } finally { setBusy(false) }
   }
   /** 让模型逐个别做四栏评测（慢，单独触发） */
   async function runAi() {
@@ -463,6 +474,13 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
           {aiBusy ? '模型评测中…' : '让模型评测'}
         </button>
       </div>
+      {localErr && <p className="err">⚠ {localErr}</p>}
+      {!!entries.length && (
+        <p className="muted">
+          识别到：{entries.map((e) => `${e.name} S${e.skillIndex + 1}`).join(' · ')}
+        </p>
+      )}
+      {ran && !rows.length && !localErr && <p className="warn">没有可展示的结果。</p>}
       {!!rows.length && (() => {
         // DPS 门禁：未验证时整列去掉，而不是留一列「—」让人猜
         const gated = rows.every((r) => r.dpsGated)

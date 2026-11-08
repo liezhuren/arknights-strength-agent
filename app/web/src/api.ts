@@ -181,7 +181,8 @@ export const api = {
   evaluate: (p: { query: string; skillIndex?: number; moduleSpec?: string; moduleLevel?: number; damageType?: string; axis?: { deploys?: number; windowSec?: number } }) =>
     post<EvaluationResult>('/api/evaluate', p),
   /** 自然语言也可以：\"评测赤刃明霄陈三技能和克莱门莎二技能\" */
-  compare: (text: string, skillIndex = 2) => post<{ rows: CompareRow[] }>('/api/compare', { text, skillIndex }),
+  compare: (text: string, skillIndex = 2) =>
+    post<{ rows: CompareRow[]; entries?: Array<{ name: string; skillIndex: number }> }>('/api/compare', { text, skillIndex }),
   /** 对比页"让模型直接评测"：四栏判断 + 模型自估数值（同样吃自然语言） */
   compareAi: (text: string, skillIndex = 2) =>
     post<{
