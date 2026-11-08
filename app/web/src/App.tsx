@@ -395,6 +395,7 @@ function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
                 <div className="muted">{s.reason}</div>
                 <div className="muted">证据：{s.evidence}</div>
                 {s.expectedEffect && <div className="muted">预期：{s.expectedEffect}</div>}
+                {s.landedNote && <div className="muted">处置：{s.landedNote}</div>}
                 <div>
                   <button disabled={busy} onClick={() => setStatus(s, 'accepted')}>接受</button>
                   <button disabled={busy} onClick={() => setStatus(s, 'rejected')}>拒绝</button>

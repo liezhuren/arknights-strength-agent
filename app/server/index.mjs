@@ -368,10 +368,11 @@ const routes = {
     const want = String(body.status ?? '')
     if (!['proposed', 'accepted', 'rejected'].includes(want)) throw new Error('status 必须是 proposed/accepted/rejected')
     let hit = 0
+    const note = typeof body.note === 'string' && body.note ? body.note : null
     const next = sugs.map((s) => {
       if (s.column === body.column && s.field === body.field) {
         hit++
-        return { ...s, status: want, reviewedAt: new Date().toISOString() }
+        return { ...s, status: want, reviewedAt: new Date().toISOString(), ...(note ? { landedNote: note } : {}) }
       }
       return s
     })

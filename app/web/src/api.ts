@@ -136,6 +136,8 @@ export interface SuggestionView {
   confidence: 'high' | 'medium' | 'low'
   expectedEffect?: string
   status?: 'proposed' | 'accepted' | 'rejected'
+  /** 处置说明（落地到哪个配置 / 为何驳回） */
+  landedNote?: string
   at?: string
   reviewedAt?: string
   model?: string
