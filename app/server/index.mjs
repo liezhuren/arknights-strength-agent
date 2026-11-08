@@ -139,6 +139,21 @@ function runEvaluation({ query, skillIndex = 2, moduleSpec, moduleLevel, damageT
         : (r.damageType === 'physical' ? [0, 200, 400, 800, 1200] : [0, 20, 50, 80, 95])
             .map((x) => ({ x, value: scenarioValue(r.engine, r.damageType === 'physical' ? x : 0, r.damageType === 'physical' ? 0 : x) })),
     },
+    // 模型建议（只读展示用）：来自机制解析表中该 (干员, 技能) 的记录。
+    // ⚠ 引擎**不消费**这些建议；它们只是审阅意见，状态由人改。
+    review: (() => {
+      const p = getParse(op.id, si)
+      const patches = p?.patches ?? {}
+      const sugs = Array.isArray(patches.suggestions) ? patches.suggestions : []
+      if (!sugs.length && !patches.modelEstimate && !patches.verdict) return null
+      return {
+        suggestions: sugs,
+        modelEstimate: patches.modelEstimate ?? null,
+        verdict: patches.verdict ?? null,
+        model: p?.model ?? null,
+        updatedAt: p?.updated_at ?? null,
+      }
+    })(),
   }
 }
 
@@ -337,6 +352,35 @@ const routes = {
       model: rev.model,
     })
     return { ...rev, mergedCount: merged.length, params, results }
+  },
+  // ── 建议状态：接受 / 拒绝（**只改状态，不触发任何重算**）──────────────────
+  // 引擎不消费建议；这里只是登记"人已经看过并表过态"，真正生效要改 overrides.mjs。
+  'POST /api/llm/suggestion-status': async ({ body }) => {
+    const op = getOperator(body.query)
+    if (!op) throw new Error(`未找到干员：${body.query}`)
+    const si = Number(body.skillIndex ?? 2)
+    const p = getParse(op.id, si)
+    if (!p) throw new Error('该干员/技能还没有解析记录')
+    const patches = p.patches ?? {}
+    const sugs = Array.isArray(patches.suggestions) ? patches.suggestions : []
+    const want = String(body.status ?? '')
+    if (!['proposed', 'accepted', 'rejected'].includes(want)) throw new Error('status 必须是 proposed/accepted/rejected')
+    let hit = 0
+    const next = sugs.map((s) => {
+      if (s.column === body.column && s.field === body.field) {
+        hit++
+        return { ...s, status: want, reviewedAt: new Date().toISOString() }
+      }
+      return s
+    })
+    if (!hit) throw new Error('未找到该建议')
+    saveParse({
+      opId: op.id, skillIdx: si,
+      form: p.form, confidence: p.confidence, provider: p.provider, model: p.model,
+      reasoning: p.reasoning,
+      patches: { ...patches, suggestions: next },
+    })
+    return { ok: true, updated: hit, suggestions: next }
   },
   'GET /api/llm/parses': ({ url }) => listParses(Math.min(Number(url.searchParams.get('limit')) || 100, 500)),
   'DELETE /api/llm/parses': async ({ url }) => {

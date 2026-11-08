@@ -94,6 +94,39 @@ export interface EvaluationResult {
     } | null
     moduleApplied: { entry: { name: string; type: string } | null; level: { level: number } | null; attr: Record<string, number>; warnings: string[] } | null
   }
+  /**
+   * 模型建议（只读展示）。
+   * ⚠ 引擎**不消费**这些建议 —— 它们只是审阅意见；接受/拒绝只改状态，
+   * 真正生效要改 tools/overrides.mjs。
+   */
+  review?: {
+    suggestions: SuggestionView[]
+    modelEstimate: {
+      dps?: number | null
+      survival?: string | null
+      teamBuff?: string | null
+      control?: string | null
+      reasoning?: string
+    } | null
+    verdict: string | null
+    model: string | null
+    updatedAt: string | null
+  } | null
+}
+
+export interface SuggestionView {
+  column: 'dps' | 'survival' | 'teamBuff' | 'control'
+  field: string
+  current: number | null
+  suggested: number
+  reason: string
+  evidence: string
+  confidence: 'high' | 'medium' | 'low'
+  expectedEffect?: string
+  status?: 'proposed' | 'accepted' | 'rejected'
+  at?: string
+  reviewedAt?: string
+  model?: string
 }
 export interface CompareRow {
   query: string; name?: string; skill?: string; damageType?: string
@@ -138,6 +171,10 @@ export const api = {
   saveCustom: (data: unknown) => post<{ ok: boolean; errors?: string[]; name?: string }>('/api/custom', { data }),
   deleteCustom: (name: string) => req<{ ok: boolean }>(`/api/custom?name=${encodeURIComponent(name)}`, { method: 'DELETE' }),
   evaluateCustom: (data: unknown) => post<{ result: unknown; report: string | null }>('/api/custom/evaluate', { data }),
+  reviewOp: (p: { query: string; skillIndex?: number }) =>
+    post<{ ok: boolean; suggestions: SuggestionView[]; modelEstimate?: unknown; verdict?: string | null; error?: string; mergedCount?: number }>('/api/llm/review', p),
+  setSuggestionStatus: (p: { query: string; skillIndex?: number; column: string; field: string; status: 'proposed' | 'accepted' | 'rejected' }) =>
+    post<{ ok: boolean; updated: number; suggestions: SuggestionView[] }>('/api/llm/suggestion-status', p),
   config: () => req<ConfigView>('/api/config'),
   saveConfig: (body: unknown) => post<ConfigView>('/api/config', body),
   // BYOK 模型：长尾机制解析（未启用模型时返回 disabled，规则层不受影响）

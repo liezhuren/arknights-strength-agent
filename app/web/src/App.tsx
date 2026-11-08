@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api, type CompareRow, type ConfigView, type EvaluationResult, type OperatorRow } from './api'
 import ChartsView from './Charts'
+import type { SuggestionView } from './api'
 
 const RARITY_LABEL: Record<string, string> = {
   TIER_1: '1★', TIER_2: '2★', TIER_3: '3★', TIER_4: '4★', TIER_5: '5★', TIER_6: '6★',
@@ -259,6 +260,13 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
                 : ''}
             </p>
           )}
+          <ReviewPanel
+            review={data?.review ?? null}
+            query={op?.name ?? ''}
+            skillIndex={skill}
+            onError={onError}
+            onReload={run}
+          />
           {r.trait && <p className="trait-line">分支特性：{r.trait}</p>}
           {r.moduleApplied?.entry && (
             <p className="trait-line">模组：{r.moduleApplied.entry.name}（{r.moduleApplied.entry.type} L{r.moduleApplied.level?.level}）
@@ -290,6 +298,87 @@ function EvalPanel({ op, onPick, onError }: { op: OperatorRow | null; onPick: ()
         </>
       )}
     </section>
+  )
+}
+
+/** 模型建议面板：只读展示 + 接受/拒绝（只改状态，**不触发重算**） */
+function ReviewPanel({ review, query, skillIndex, onError, onReload }: {
+  review: EvaluationResult['review']
+  query: string
+  skillIndex: number
+  onError: (s: string) => void
+  onReload: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [items, setItems] = useState<SuggestionView[]>(review?.suggestions ?? [])
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<string | null>(null)
+  useEffect(() => { setItems(review?.suggestions ?? []); setNote(null) }, [review])
+
+  const COL: Record<SuggestionView['column'], string> = { dps: '输出', survival: '生存', teamBuff: '团队增益', control: '控制' }
+  const pending = items.filter((s) => (s.status ?? 'proposed') === 'proposed').length
+  const has = !!review && (items.length > 0 || !!review.modelEstimate || !!review.verdict)
+
+  async function askReview() {
+    setBusy(true); setNote(null)
+    try {
+      const r = await api.reviewOp({ query, skillIndex })
+      if (!r.ok) { onError(`审阅失败：${r.error ?? '未知错误'}（可重试）`); return }
+      setNote(`本次 ${r.suggestions.length} 条建议${r.mergedCount != null ? `，累计 ${r.mergedCount} 条` : ''}`)
+      onReload()
+    } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
+  }
+
+  async function setStatus(s: SuggestionView, status: 'accepted' | 'rejected') {
+    setBusy(true)
+    try {
+      const r = await api.setSuggestionStatus({ query, skillIndex, column: s.column, field: s.field, status })
+      setItems(r.suggestions)
+      setNote(status === 'accepted' ? '已标记为接受（引擎不会自动生效）' : '已标记为拒绝')
+    } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
+  }
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div className="bar">
+        <button onClick={() => setOpen(!open)} disabled={!has}>
+          {has ? (open ? '▾' : '▸') : '○'} 模型建议{items.length ? `：${pending} 条待看 / 共 ${items.length} 条` : ''}
+        </button>
+        {review?.modelEstimate?.dps != null && (
+          <span className="chip">模型自估 {review.modelEstimate.dps} DPS（非引擎值）</span>
+        )}
+        <button onClick={askReview} disabled={busy || !query}>{busy ? '审阅中…' : '让模型审阅'}</button>
+      </div>
+      {note && <p className="muted">{note}</p>}
+      {open && has && (
+        <>
+          {review?.verdict && <p className="muted">总评：{review.verdict}</p>}
+          {review?.modelEstimate?.reasoning && <p className="muted">模型自估依据：{review.modelEstimate.reasoning}</p>}
+          {items.map((s) => {
+            const st = s.status ?? 'proposed'
+            return (
+              <div key={s.column + ':' + s.field} style={{ borderTop: '1px solid #2a2f3a', padding: '6px 0' }}>
+                <div>
+                  <span className="chip">{COL[s.column] ?? s.column}</span>{' '}
+                  <b>{s.field}</b>{' '}
+                  <span className="muted">{s.current ?? '—'} → <b>{s.suggested}</b></span>{' '}
+                  <span className={`chip ${s.confidence === 'high' ? 'good' : s.confidence === 'low' ? 'bad' : ''}`}>{s.confidence}</span>
+                  {st !== 'proposed' && <span className="chip">{st === 'accepted' ? '已接受' : '已拒绝'}</span>}
+                </div>
+                <div className="muted">{s.reason}</div>
+                <div className="muted">证据：{s.evidence}</div>
+                {s.expectedEffect && <div className="muted">预期：{s.expectedEffect}</div>}
+                <div>
+                  <button disabled={busy} onClick={() => setStatus(s, 'accepted')}>接受</button>
+                  <button disabled={busy} onClick={() => setStatus(s, 'rejected')}>拒绝</button>
+                </div>
+              </div>
+            )
+          })}
+          <p className="muted">⚠ 建议不会自动生效 —— 接受只是登记态度；实际改动要落到 tools/overrides.mjs。</p>
+        </>
+      )}
+    </div>
   )
 }
 
