@@ -13,6 +13,7 @@ import {
   costEfficiency,
   isNextAttackSkill,
   nextAttackDps,
+  skillInterval,
   elementAccrualPerSec,
   elementBurstAvgDps,
   trapDps,
@@ -438,6 +439,23 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
   eng._skillIndex = si.index
   eng._skillAdjusted = si.adjusted
   eng._masteryAdjusted = mi.adjusted ? mi.index : null
+
+  // ── 弹药型技能的**实际持续时长**（通用算法，非个例）─────────────────────
+  // 弹药类技能在数据里 `duration = -1`（表现为"永续"），但真正结束条件是弹药打光：
+  //     攻击次数 = 弹药总量 ÷ 每次攻击消耗
+  //     实际持续 = 攻击次数 × 技能期攻击间隔
+  // 弹药总量取 `attack@trigger_time`；每次消耗从描述「每次攻击消耗 N 发」读（默认 1）。
+  // ⚠ 早期没建模 → 覆盖率被当成 100%，DPS 与回转都失真。
+  if (eng.skill && (eng.skill.duration ?? 0) <= 0) {
+    const ammoTotal = Number(bb['attack@trigger_time'])
+    if (Number.isFinite(ammoTotal) && ammoTotal > 0) {
+      const per = Number((/每次攻击消耗\s*(\d+)\s*发/.exec(desc) ?? [])[1]) || 1
+      const attacks = Math.ceil(ammoTotal / per)
+      const durSec = attacks * skillInterval(eng)
+      eng.skill.duration = durSec
+      eng.skill.ammo = { total: ammoTotal, perAttack: per, attacks, durationSec: durSec }
+    }
+  }
   return eng
 }
 
