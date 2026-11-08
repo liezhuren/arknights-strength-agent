@@ -450,10 +450,19 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
     const ammoTotal = Number(bb['attack@trigger_time'])
     if (Number.isFinite(ammoTotal) && ammoTotal > 0) {
       const per = Number((/每次攻击消耗\s*(\d+)\s*发/.exec(desc) ?? [])[1]) || 1
-      const attacks = Math.ceil(ammoTotal / per)
+      // ① 偷取攻速归自身（描述含「偷取」时才认，避免把"降低敌人攻速"误算成自身加速）
+      const steal = Number(bb.steal)
+      if (Number.isFinite(steal) && steal > 0 && /偷取/.test(desc)) {
+        eng.totalAspd = (eng.totalAspd ?? 0) + steal
+        eng.skill.stolenAspd = steal
+      }
+      // ② 额外弹药（如"成功偷取攻速则额外获得 5 发"）—— 按满配假设计入
+      const extra = Number(bb['addtional_ammo_each'])
+      const extraAmmo = Number.isFinite(extra) && extra > 0 ? extra : 0
+      const attacks = Math.ceil((ammoTotal + extraAmmo) / per)
       const durSec = attacks * skillInterval(eng)
       eng.skill.duration = durSec
-      eng.skill.ammo = { total: ammoTotal, perAttack: per, attacks, durationSec: durSec }
+      eng.skill.ammo = { total: ammoTotal + extraAmmo, perAttack: per, attacks, durationSec: durSec, extraAmmo }
     }
   }
   return eng

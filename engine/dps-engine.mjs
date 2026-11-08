@@ -58,6 +58,10 @@ export function makeOperator(o) {
     def: o.def ?? 0,
     res: o.res ?? 0,
     baseInterval: o.baseInterval ?? 1.5,
+    // 攻速加算口径的原料（见 skillInterval）：原始攻击间隔 + 已累计攻速。
+    // ⚠ makeOperator 会挑字段，早期漏了这两个 → 加算口径静默失效、退回乘法叠乘。
+    baseAttackTimeRaw: typeof o.baseAttackTimeRaw === 'number' ? o.baseAttackTimeRaw : null,
+    totalAspd: typeof o.totalAspd === 'number' ? o.totalAspd : null,
     blockCount: o.blockCount ?? 1,
     cost: o.cost ?? 0, // DP 费用
     redeployTime: o.redeployTime ?? 70, // 再部署秒
