@@ -18,7 +18,7 @@ import { evaluate, formatReport } from '../../tools/evaluate.mjs'
 import { splitSections } from '../../tools/section.mjs'
 import { evaluateCustom, validateCustomOperator } from '../../tools/evaluate-custom.mjs'
 import { modulesOf } from '../../tools/modules.mjs'
-import { parseMechanism, reviewEvaluation, reestimateWithAccepted, chat, activeProvider } from './llm.mjs'
+import { parseMechanism, reviewEvaluation, reestimateWithAccepted, judgeEvaluation, chat, activeProvider } from './llm.mjs'
 import { extractVersatility, scenarioValue } from '../../tools/versatility.mjs'
 import { extractRotation } from '../../tools/rotation.mjs'
 import { extractSurvival, runProfiles } from '../../tools/survival.mjs'
@@ -203,6 +203,44 @@ const routes = {
       }
     })
     return { rows }
+  },
+  // 对比页的"让模型直接评测"：逐个别调 judgeEvaluation，返回四栏 + 模型自估数值。
+  // 故意做成**独立接口**：对比本身要快，AI 评测慢且可能失败，不能拖累主流程。
+  'POST /api/compare/ai': async ({ body }) => {
+    const queries = Array.isArray(body.queries) ? body.queries.slice(0, 6) : []
+    if (!queries.length) throw new Error('queries 不能为空（最多 6 名）')
+    if (!activeProvider()) return { ok: false, disabled: true, error: '未启用模型（设置 → 选择 provider 并填 API Key）', rows: [] }
+
+    const out = []
+    for (const q of queries) {
+      const op = getOperator(q)
+      if (!op) { out.push({ query: q, ok: false, error: '未找到' }); continue }
+      const si = Number(body.skillIndex ?? 2)
+      const lv = op.skills?.[si]?.levels?.[9]
+      if (!lv) { out.push({ query: q, name: op.name, ok: false, error: '无此技能' }); continue }
+      const r = evaluate(op, {
+        damageType: body.damageType ?? 'auto', skillIndex: si,
+        talentParses: getParse(op.id, si)?.patches?.talents ?? null,
+      })
+      const engineResult = {
+        panel: r.panel,
+        coverage: Math.round((r.coverage ?? 0) * 1000) / 1000,
+        dpsGated: !r.dpsGate?.verified,
+        dps: r.dpsGate?.verified ? { skill: Math.round(r.benchmark?.skillDpsVs400Def ?? r.benchmark?.skillDpsVs50Res ?? 0) } : null,
+        elementChannel: r.elementProfile?.burstDps ?? null,
+        survivalGated: !r.survivalGate?.verified,
+      }
+      const j = await judgeEvaluation({
+        operator: op.name,
+        skillName: lv.name ?? '—',
+        description: lv.description ?? '',
+        trait: op.trait?.description ?? undefined,
+        talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
+        engineResult,
+      })
+      out.push({ query: q, name: op.name, skill: lv.name ?? null, ok: j.ok, ...(j.ok ? { judge: j.judge, model: j.model, ms: j.ms } : { error: j.error }) })
+    }
+    return { ok: true, rows: out }
   },
 
   // ---- 自制干员 ----

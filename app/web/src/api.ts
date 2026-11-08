@@ -181,6 +181,31 @@ export const api = {
   evaluate: (p: { query: string; skillIndex?: number; moduleSpec?: string; moduleLevel?: number; damageType?: string; axis?: { deploys?: number; windowSec?: number } }) =>
     post<EvaluationResult>('/api/evaluate', p),
   compare: (queries: string[], skillIndex = 2) => post<{ rows: CompareRow[] }>('/api/compare', { queries, skillIndex }),
+  /** 对比页"让模型直接评测"：四栏判断 + 模型自估数值 */
+  compareAi: (queries: string[], skillIndex = 2) =>
+    post<{
+      ok: boolean
+      disabled?: boolean
+      error?: string
+      rows: Array<{
+        query: string
+        name?: string
+        skill?: string | null
+        ok: boolean
+        error?: string
+        ms?: number
+        model?: string
+        judge?: {
+          dps: number | null
+          survival: string | null
+          teamBuff: string | null
+          control: string | null
+          verdict: string | null
+          basis: string | null
+          confidence: string | null
+        }
+      }>
+    }>('/api/compare/ai', { queries, skillIndex }),
   listCustom: () => req<{ id: number; name: string; data: Record<string, unknown>; updated_at: string }[]>('/api/custom'),
   saveCustom: (data: unknown) => post<{ ok: boolean; errors?: string[]; name?: string }>('/api/custom', { data }),
   deleteCustom: (name: string) => req<{ ok: boolean }>(`/api/custom?name=${encodeURIComponent(name)}`, { method: 'DELETE' }),

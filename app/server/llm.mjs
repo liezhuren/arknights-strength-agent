@@ -390,7 +390,79 @@ export async function reviewEvaluation(ctx) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// 采纳后的再估（re-estimate）
+// 直接评测（judge）：对比页用。只要四栏结论 + 模型自估数值，不要参数建议。
+// 与 reviewEvaluation 的区别：更短、更快、不产出 suggestions，适合一次评多个干员。
+// ════════════════════════════════════════════════════════════════════════════
+
+const JUDGE_SYSTEM = `你是《明日方舟》数值评测者。根据技能原文、天赋、引擎结果，给出**四栏判断**。
+
+严格 JSON，不要解释、不要 markdown：
+
+{
+  "dps": 数字或 null,
+  "survival": "一句话结论或 null",
+  "teamBuff": "一句话结论或 null",
+  "control": "一句话结论或 null",
+  "verdict": "一句话总评（这个干员这套技能强在哪、弱在哪）",
+  "basis": "你的判断依据（引用了原文哪些字段/机制）",
+  "confidence": "high|medium|low"
+}
+
+规则：
+1. 引擎结果被门禁时（DPS 未给出），**你仍必须给一个 dps 数字**（数量级即可）：
+   按原文自己算，并在 basis 里写清楚你补了哪些引擎没算的部分、用了什么假设。
+   只有确实缺少关键倍率（原文是占位符且无数值）时，才允许给 null，并在 basis 说明缺什么。
+2. 数值口径跟引擎一致：物理 vs 400 防、法术 vs 50 抗。
+3. 不要编造原文没有的机制。
+4. 必须返回非空 JSON 对象。`
+
+/** 对单个干员做"直接评测"（对比页用，轻量）。 */
+export async function judgeEvaluation(ctx) {
+  const user = [
+    `干员：${ctx.operator}`,
+    `技能：${ctx.skillName}`,
+    `技能原文：${ctx.description}`,
+    ctx.trait ? `分支特性：${ctx.trait}` : '',
+    ...(ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`),
+    '',
+    '引擎当前结果（可能是门禁状态，仅供参考）：',
+    JSON.stringify(ctx.engineResult ?? {}, null, 2),
+  ].filter(Boolean).join('\n')
+
+  let r = null
+  let parsed = null
+  let lastText = ''
+  for (const attempt of [true, false, true]) {
+    r = await chat({ system: JUDGE_SYSTEM, user, json: attempt, maxTokens: 3072 })
+    if (!r.ok) return { ok: false, error: r.error, disabled: !!r.disabled }
+    lastText = r.text ?? ''
+    if (!lastText.trim()) continue
+    parsed = extractJson(lastText)
+    if (!parsed) {
+      const repaired = lastText.replace(/,\s*([}\]])/g, '$1')
+      parsed = repaired !== lastText ? extractJson(repaired) : null
+    }
+    if (parsed) break
+  }
+  if (!parsed) return { ok: false, error: '模型输出无法解析为 JSON（已重试 3 次）', provider: r.provider, model: r.model }
+
+  const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null)
+  return {
+    ok: true,
+    judge: {
+      dps: num(parsed.dps),
+      survival: parsed.survival ?? null,
+      teamBuff: parsed.teamBuff ?? null,
+      control: parsed.control ?? null,
+      verdict: parsed.verdict ?? null,
+      basis: parsed.basis ?? null,
+      confidence: parsed.confidence ?? null,
+    },
+    provider: r.provider, model: r.model, ms: r.ms,
+  }
+}
+
+
 //
 // 用户采纳某些建议后，让模型**照着自己被采纳的建议**重算一版数值。
 // 关键约束：这仍然是**模型自估**，不是引擎结果 —— 引擎不会消费建议。

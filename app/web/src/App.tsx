@@ -427,6 +427,9 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   const [text, setText] = useState(initial ?? '银灰, 史尔特尔, 能天使')
   const [rows, setRows] = useState<CompareRow[]>([])
   const [busy, setBusy] = useState(false)
+  // AI 直接评测（按干员名索引）：不走 DPS 门禁，让模型自己给判断
+  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number }>>({})
+  const [aiBusy, setAiBusy] = useState(false)
   async function run() {
     setBusy(true)
     try {
@@ -434,11 +437,33 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
       setRows((await api.compare(list)).rows)
     } catch (e) { onError((e as Error).message) } finally { setBusy(false) }
   }
+  /** 让模型逐个别做四栏评测（慢，单独触发） */
+  async function runAi() {
+    const list = text.split(/[,，\s]+/).filter(Boolean)
+    if (!list.length) return
+    setAiBusy(true)
+    try {
+      const r = await api.compareAi(list)
+      if (r.disabled) { onError(r.error ?? '未启用模型'); return }
+      if (!r.ok) { onError(r.error ?? '模型评测失败'); return }
+      const next: typeof ai = {}
+      for (const x of r.rows) {
+        next[x.name ?? x.query] = x.ok && x.judge
+          ? { dps: x.judge.dps, verdict: x.judge.verdict, confidence: x.judge.confidence, basis: x.judge.basis, ms: x.ms }
+          : { error: x.error ?? '失败' }
+      }
+      setAi(next)
+      if (!Object.values(next).some((v) => !v.error)) onError('模型全部评测失败，可重试')
+    } catch (e) { onError((e as Error).message) } finally { setAiBusy(false) }
+  }
   return (
     <section>
       <div className="bar">
         <input style={{ minWidth: 360 }} value={text} onChange={(e) => setText(e.target.value)} placeholder="用逗号分隔，最多 6 名" />
         <button onClick={run} disabled={busy}>{busy ? '对比中…' : '对比'}</button>
+        <button onClick={runAi} disabled={aiBusy} title="让模型逐个干员直接给四栏评测（较慢，每人约 10 秒）">
+          {aiBusy ? '模型评测中…' : '让模型评测'}
+        </button>
       </div>
       {!!rows.length && (() => {
         // DPS 门禁：未验证时整列去掉，而不是留一列「—」让人猜
@@ -456,6 +481,7 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                   <th>覆盖</th>
                   {!gated && <th>泛用性</th>}
                   <th>操作难度</th><th>首轮</th>
+                  {(aiBusy || Object.keys(ai).length > 0) && <th>模型评测（非引擎值）</th>}
                 </tr>
               </thead>
               <tbody>
@@ -474,6 +500,19 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                     {!gated && <td>{r.tier ?? '—'}</td>}
                     <td>{r.difficulty ?? '—'}</td>
                     <td>{r.firstUse ? `${r.firstUse}s` : '永续/—'}</td>
+                    {(aiBusy || Object.keys(ai).length > 0) && (() => {
+                      const a = ai[r.name ?? r.query]
+                      if (aiBusy && !a) return <td className="muted">评测中…</td>
+                      if (!a) return <td className="muted">—</td>
+                      if (a.error) return <td className="muted">失败：{a.error}</td>
+                      return (
+                        <td title={a.basis ?? undefined}>
+                          <b>{a.dps != null ? `${a.dps} DPS` : '未给数'}</b>
+                          {a.confidence && <span className="chip">{a.confidence}</span>}
+                          <div className="muted" style={{ maxWidth: 320 }}>{a.verdict}</div>
+                        </td>
+                      )
+                    })()}
                   </tr>
                 ))}
               </tbody>
