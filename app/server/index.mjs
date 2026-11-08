@@ -265,6 +265,13 @@ const routes = {
       trait: op.trait?.description ?? undefined,
       // 全部天赋都喂进去（原先只传第一条 → 多天赋干员漏解析）
       talents: (op.talents ?? []).map((t) => t.description).filter(Boolean),
+      // 字段语义知识库：把本次出现的 blackboard 键（技能+天赋+特性）交给解析层查表，
+      // 让模型不必猜「atk 是加算还是乘算」「interval 单位是秒还是别的」
+      kbKeys: [
+        ...(lv.blackboard ?? []).map((b) => b.key),
+        ...(op.talents ?? []).flatMap((t) => (t.blackboard ?? []).map((b) => b.key)),
+        ...(op.trait?.blackboard ?? []).map((b) => b.key),
+      ],
     })
     // 成功则**沉淀入库**（AI 提议；是否并入 overrides.mjs 由人工审核决定）
     if (r.ok) {

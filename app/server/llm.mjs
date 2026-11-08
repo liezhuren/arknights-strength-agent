@@ -6,6 +6,7 @@
 // 协议适配：OpenAI 兼容（DeepSeek / OpenAI / 本地 Ollama / vLLM 等）+ Anthropic Messages。
 import fs from 'node:fs'
 import path from 'node:path'
+import { renderKbBlock } from '../../tools/mechanism-kb.mjs'
 
 const CONFIG = path.resolve(import.meta.dirname, '../config.json')
 export const readConfig = () => {
@@ -112,9 +113,14 @@ const SYSTEM = `你是《明日方舟》机制解析器。任务：把**技能�
 }
 
 硬性规则：
-1. **talents 一项都不能漏**：输入给几条天赋就输出几条（含数值型）。攻击力/防御/生命/攻速加成
+1. **skill.attackMult 专指「攻击力加成后的普攻倍率」，只从这两类键取**：
+   · atk 键（加算）→ 填 **1 + 值**（atk=1.4 表示 +140% → 填 **2.4**）
+   · atk_scale / attack@atk_scale 键（乘算）→ 填**键值本身**（2.35 → 填 2.35）
+   **不要把其他倍率（如 *_atk_scale、heatwave_atk_scale、s3_atk_scale 这类
+   专属命名的通道/额外伤害倍率）填进 attackMult** —— 它们应填到 skill.channel.atkScale。
+2. **talents 一项都不能漏**：输入给几条天赋就输出几条（含数值型）。攻击力/防御/生命/攻速加成
    也要填（kind=numeric，stat 与 value 必填），引擎会用它们修正面板。
-2. **skill.channel 必填**：即使规则层已能处理攻击力倍率，也必须说明伤害到底怎么落地
+3. **skill.channel 必填**：即使规则层已能处理攻击力倍率，也必须说明伤害到底怎么落地
    （普通攻击 / 引导波 / 召唤物 / 陷阱 / 持续伤害）。没有额外通道就填 {"kind":"none"}。
 3. 每个数字必须能从输入文本或 blackboard 推出；**推不出就填 null，不要猜**。
 4. evidence 必须逐字摘自输入原文，用来人工核对；编造的 evidence 会被校验拒绝。
@@ -136,6 +142,8 @@ const SYSTEM = `你是《明日方舟》机制解析器。任务：把**技能�
  */
 export function buildParseInput(ctx) {
   const talentLines = (ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`)
+  // 字段语义参考：只渲染"本次实际出现的键"（由机制知识库解析），避免模型猜单位与加/乘算
+  const kb = ctx.kbKeys?.length ? renderKbBlock(ctx.kbKeys) : ''
   return [
     `干员：${ctx.operator}`,
     `技能：${ctx.skillName}`,
@@ -143,6 +151,9 @@ export function buildParseInput(ctx) {
     `blackboard：${JSON.stringify(ctx.blackboard)}`,
     ctx.trait ? `分支特性：${ctx.trait}` : '',
     ...talentLines,
+    kb ? '' : '',
+    kb ? '【字段语义参考】（本次出现的键；单位与语义以此为准，不要自行推测）' : '',
+    kb,
   ].filter(Boolean).join('\n')
 }
 
