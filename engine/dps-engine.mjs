@@ -181,8 +181,10 @@ export function skillCoverage(op, opts = {}) {
   const spStart = op.skill.spStart ?? 0
   let chargeRate // SP / 秒
   if (op.skill.spType === 'attack') {
-    // 攻击回复：每次攻击回 increment SP
-    chargeRate = (op.skill.increment ?? 1) / skillInterval(op)
+    // 攻击回复：每次攻击回 increment SP。
+    // ⚠ 充能发生在**技能外**，所以间隔必须用技能外间隔（baseInterval 已含天赋/模组攻速）。
+    // 早期用 skillInterval（含技能自身的攻速加成与秒差）→ 把充能算快、覆盖率偏高。
+    chargeRate = (op.skill.increment ?? 1) / attackInterval(op.baseInterval)
   } else if (op.skill.spType === 'hit') {
     // 受击回复：依赖被攻击频率（hitAssumptionPerSec 为场景假设值，非面板数据）
     chargeRate = (op.hitAssumptionPerSec ?? 0.5) * (op.skill.increment ?? 1)
