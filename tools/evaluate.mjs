@@ -447,22 +447,31 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
   // 弹药总量取 `attack@trigger_time`；每次消耗从描述「每次攻击消耗 N 发」读（默认 1）。
   // ⚠ 早期没建模 → 覆盖率被当成 100%，DPS 与回转都失真。
   if (eng.skill && (eng.skill.duration ?? 0) <= 0) {
-    const ammoTotal = Number(bb['attack@trigger_time'])
+    // 弹药总量：多数用 `attack@trigger_time`，也有直接用裸 `trigger_time` 的（如克莱门莎 S3）
+    const ammoTotal = Number(bb['attack@trigger_time'] ?? bb.trigger_time)
     if (Number.isFinite(ammoTotal) && ammoTotal > 0) {
       const per = Number((/每次攻击消耗\s*(\d+)\s*发/.exec(desc) ?? [])[1]) || 1
-      // ① 偷取攻速归自身（描述含「偷取」时才认，避免把"降低敌人攻速"误算成自身加速）
-      const steal = Number(bb.steal)
-      if (Number.isFinite(steal) && steal > 0 && /偷取/.test(desc)) {
-        eng.totalAspd = (eng.totalAspd ?? 0) + steal
-        eng.skill.stolenAspd = steal
+      // ⚠ 弹药未必由**攻击**消耗：也可能是"某事件触发时消耗 1 发"（如侵蚀损伤爆发）。
+      // 这类技能的实际时长取决于事件频率，而元素累积/爆发模型尚未建 →
+      // 不能用"攻击次数 × 间隔"硬造一个数，必须标为未建模。
+      const eventDriven = /爆发/.test(desc) && /弹药/.test(desc) && !/每次攻击消耗/.test(desc)
+      if (eventDriven) {
+        eng.skill.ammoEvent = { total: ammoTotal, reason: '弹药由元素损伤爆发触发消耗' }
+      } else {
+        // ① 偷取攻速归自身（描述含「偷取」时才认，避免把"降低敌人攻速"误算成自身加速）
+        const steal = Number(bb.steal)
+        if (Number.isFinite(steal) && steal > 0 && /偷取/.test(desc)) {
+          eng.totalAspd = (eng.totalAspd ?? 0) + steal
+          eng.skill.stolenAspd = steal
+        }
+        // ② 额外弹药（如"成功偷取攻速则额外获得 5 发"）—— 按满配假设计入
+        const extra = Number(bb['addtional_ammo_each'])
+        const extraAmmo = Number.isFinite(extra) && extra > 0 ? extra : 0
+        const attacks = Math.ceil((ammoTotal + extraAmmo) / per)
+        const durSec = attacks * skillInterval(eng)
+        eng.skill.duration = durSec
+        eng.skill.ammo = { total: ammoTotal + extraAmmo, perAttack: per, attacks, durationSec: durSec, extraAmmo }
       }
-      // ② 额外弹药（如"成功偷取攻速则额外获得 5 发"）—— 按满配假设计入
-      const extra = Number(bb['addtional_ammo_each'])
-      const extraAmmo = Number.isFinite(extra) && extra > 0 ? extra : 0
-      const attacks = Math.ceil((ammoTotal + extraAmmo) / per)
-      const durSec = attacks * skillInterval(eng)
-      eng.skill.duration = durSec
-      eng.skill.ammo = { total: ammoTotal + extraAmmo, perAttack: per, attacks, durationSec: durSec, extraAmmo }
     }
   }
   return eng
@@ -576,6 +585,9 @@ export function evaluateEngine(eng, meta = {}) {
       baseAttackTimeDelta: eng.skill?.baseAttackTimeDelta,
       aspdBonus: eng.skill?.aspdBonus,
       increment: eng.skill?.increment,
+      // 弹药型：攻击驱动的给 {total,attacks,durationSec}；事件驱动的给 ammoEvent（时长未建模）
+      ammo: eng.skill?.ammo ?? null,
+      ammoEvent: eng.skill?.ammoEvent ?? null,
       rawBlackboard: meta.rawBlackboard ?? null,
     },
     coverage: eng.skill ? skillCoverage(eng) : 0,
@@ -719,7 +731,13 @@ export function formatReport(r) {
         : `每 ${n} 次攻击`
     lines.push(`强化攻击型：${trigger}触发 1 次×${r.skillData.attackMult} 强化`)
   } else {
-    lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
+    // 事件驱动的弹药技能：时长取决于元素爆发频率，我们没有该模型 → 不给数字
+    if (r.skillData?.ammoEvent) {
+      lines.push(`覆盖率：未给出 —— ${r.skillData.ammoEvent.reason}（共 ${r.skillData.ammoEvent.total} 发），`)
+      lines.push(`         需元素累积/爆发模型才能定时长（当前既不是"永续"也不是 0%）`)
+    } else {
+      lines.push(`覆盖率：${(r.coverage * 100).toFixed(1)}%`)
+    }
   }
   if (r.element && !dpsOff && !r.channel) {
     lines.push(`元素损伤：${r.element.type}累积 ${r.elementAccrualPerSec.toFixed(1)}/秒（技能期） · 爆发收益约 ${r.elementBurstAvgDps.toFixed(1)}/秒（普通敌人）/ ${r.elementBurstAvgDpsLeader.toFixed(1)}/秒（领袖，条2000）`)

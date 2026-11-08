@@ -35,7 +35,10 @@ export function extractRotation(op, skillIndex = 2, eng = null, { hitAssumptionP
         : null
   const need = Math.max(cost - init, 0)
   const firstUse = rate ? need / rate : (cost === 0 ? 0 : null)
-  const permanent = dur <= 0 || durType === 'PERMANENT'
+  // 事件驱动的弹药技能：duration 在数据里是 0，但既不是"永续"也不是"瞬间"，
+  // 而是"弹药被事件消耗完为止"——时长未建模，不能归到永续那一档。
+  const ammoEvent = eng?.skill?.ammoEvent ?? null
+  const permanent = !ammoEvent && (dur <= 0 || durType === 'PERMANENT')
   // ⚠ 周期口径：**技能期间 SP 不回复**，技能结束 SP 归零 →
   // 稳态每轮充能是完整 spCost（不是 spCost − initSp）。
   // 初始 SP 只让**首轮**更快（firstUse）。早期用 firstUse 当周期 →
@@ -55,6 +58,7 @@ export function extractRotation(op, skillIndex = 2, eng = null, { hitAssumptionP
     rate, firstUse, steadyCharge, duration: dur, durType, permanent, cycle, coverage, downtime,
     casts60: castsIn(60), casts90: castsIn(90),
     ammo: durType === 'AMMO',
+    ammoEvent,
     chargeable: (sp.maxChargeTime ?? 1) > 1 ? sp.maxChargeTime : null,
     notes: [],
   }
@@ -80,7 +84,10 @@ export function formatRotationSection(op, skillIndex = 2, eng = null) {
   const lines = ['【回转】（关键点之一：多快能用上、节奏如何）']
   const rateTxt = r.rate === null ? '—' : `${r.rate.toFixed(2)} SP/s`
   lines.push(`  ${r.spLabel}${r.spType === 'deploy' ? '' : ` ${rateTxt}`} · 消耗 ${r.spCost} · 初始 ${r.initSp}`)
-  if (r.permanent) {
+  if (r.ammoEvent) {
+    lines.push(`  ${r.ammoEvent.reason}（共 ${r.ammoEvent.total} 发）：时长取决于元素爆发频率，**未建模**`)
+    lines.push('  需接入元素累积/爆发模型后才能给出周期与覆盖率；不要按"永续"或"0%"理解')
+  } else if (r.permanent) {
     lines.push('  永续技能：开启后长期生效，无回转周期（覆盖率 100%）')
   } else if (r.firstUse === null || !r.cycle || r.steadyCharge == null) {
     // 缺速率参数（如部署型/费用为零且无回复速率）→ 无法推周期
