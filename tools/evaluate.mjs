@@ -789,7 +789,15 @@ export function formatReport(r) {
       for (const w of ws) lines.push(`  ⚠ ${w}`)
     }
   }
-  if (r.versatilitySection) lines.push('', r.versatilitySection)
+  // 泛用性 = 六场景**规则层 DPS** 派生 → 与 DPS 门禁同源：
+  // 通道技能（不受普攻循环支配）或建模被判 blocked 时，这一栏同样不成立。
+  // 早期这里无条件打印 → 报告里会出现「输出 DPS 未给出」却同时列出 6 个 DPS 数字的自相矛盾。
+  const ruleDpsOk = !dpsOff && !r.channel && r.modeling?.level !== 'blocked'
+  if (r.versatilitySection) {
+    if (ruleDpsOk) lines.push('', r.versatilitySection)
+    else lines.push('', '【泛用性】未给出：它是六场景规则层 DPS 的派生，当前 DPS 不成立时本栏不适用。',
+      '   （接入解析层后，或该干员走通道校准后，本栏会自动恢复）')
+  }
   if (r.difficultySection) lines.push('', r.difficultySection)
   if (r.rotationSection) lines.push('', r.rotationSection)
   if (r.teamBuffSection) lines.push('', r.teamBuffSection)
