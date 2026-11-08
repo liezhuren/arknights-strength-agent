@@ -124,9 +124,19 @@ const SYSTEM = `你是《明日方舟》机制解析器。任务：把**技能�
  * 长尾机制解析：把技能/天赋原文交给模型产出结构化机制补丁。
  * @param {{operator:string, skillName:string, description:string, blackboard:object, trait?:string, talents?:string[]}} ctx
  */
-export async function parseMechanism(ctx) {
+/**
+ * 构造发给模型的输入文本（**导出以便审计/测试**：想知道"模型到底看到了什么"时直接调它）。
+ *
+ * 刻意保持"原文 + 数值并列"的形态：
+ *   · 技能原文：带 `{key:format}` 占位符的原始描述（占位符本身是格式说明，会暴露字段名）
+ *   · blackboard：键值对，模型可据此把文本里的百分比与具体数值对上号
+ *   · 分支特性 + 全部天赋：天赋是仅次于技能的解读来源，必须和技能一起给
+ *
+ * 不给的东西（避免模型瞎猜）：面板数值、其他技能、其他干员、任何评分先验。
+ */
+export function buildParseInput(ctx) {
   const talentLines = (ctx.talents ?? []).map((t, i) => `天赋${i + 1}：${t}`)
-  const user = [
+  return [
     `干员：${ctx.operator}`,
     `技能：${ctx.skillName}`,
     `技能原文：${ctx.description}`,
@@ -134,6 +144,10 @@ export async function parseMechanism(ctx) {
     ctx.trait ? `分支特性：${ctx.trait}` : '',
     ...talentLines,
   ].filter(Boolean).join('\n')
+}
+
+export async function parseMechanism(ctx) {
+  const user = buildParseInput(ctx)
   const ask = (sys) => chat({ system: sys, user, json: true, maxTokens: 4096 })
   // 模型偶发输出非法 JSON（截断/围栏/尾随逗号）→ 最多试 3 次，逐次收紧要求。
   // 实测同一干员两次调用结果不同，所以单次失败不能直接判死。
