@@ -203,6 +203,21 @@ export const api = {
         model?: string
         /** 用户修正（有则优先展示） */
         userJudge?: { dps: number | null; note?: string | null; at?: string } | null
+        /** 模型的思维链（提供方返回时才有） */
+        thinking?: string | null
+        /** 引擎中间量：给人核对模型算法用 */
+        trace?: {
+          panelAtk?: number | null
+          baseInterval?: number | null
+          skillInterval?: number | null
+          attackMult?: number | null
+          hits?: number | null
+          targets?: number | null
+          duration?: number | null
+          coverage?: number | null
+          unresolvedPlaceholders?: string[]
+          element?: { type: string; accrualPerSec: number; burstDps: number } | null
+        } | null
         judge?: {
           dps: number | null
           survival: string | null

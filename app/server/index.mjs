@@ -295,7 +295,25 @@ const routes = {
         // ⚠ 刻意**不**把用户修正喂给模型：实测一旦喂进去，模型会直接照抄（1800→1800、900→900），
         // 那样就失去了"模型独立估值"的对照价值。两者并列才有意义：谁更准，一眼可见。
       })
-      out.push({ query: q, name: op.name, skill: lv.name ?? null, skillIndex: si, ok: j.ok, ...(j.ok ? { judge: j.judge, model: j.model, ms: j.ms } : { error: j.error }), userJudge: getUserJudge(op.id, si) })
+      out.push({
+        query: q, name: op.name, skill: lv.name ?? null, skillIndex: si, ok: j.ok,
+        ...(j.ok ? { judge: j.judge, model: j.model, ms: j.ms } : { error: j.error }),
+        // 思考过程：模型的思维链 + 引擎中间量，供前端展开查看
+        thinking: j.thinking ?? null,
+        trace: {
+          panelAtk: Math.round((r.panel?.atk ?? 0) * 10) / 10,
+          baseInterval: Math.round((r.engine?.baseInterval ?? 0) * 1000) / 1000,
+          skillInterval: Math.round((r.engine?.skill ? (r.engine.baseInterval / (1 + (r.engine.skill.aspdBonus ?? 0) / 100) + (r.engine.skill.baseAttackTimeDelta ?? 0)) : 0) * 1000) / 1000,
+          attackMult: r.skillData?.attackMult ?? null,
+          hits: r.skillData?.hits ?? null,
+          targets: r.skillData?.targetCount ?? null,
+          duration: r.skillData?.duration != null ? Math.round(r.skillData.duration * 10) / 10 : null,
+          coverage: Math.round((r.coverage ?? 0) * 1000) / 1000,
+          unresolvedPlaceholders: unresolved,
+          element: r.elementProfile ? { type: r.elementProfile.type, accrualPerSec: Math.round(r.elementProfile.accrualPerSec * 10) / 10, burstDps: Math.round(r.elementProfile.burstDps) } : null,
+        },
+        userJudge: getUserJudge(op.id, si),
+      })
     }
     return { ok: true, rows: out }
   },

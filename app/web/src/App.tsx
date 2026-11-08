@@ -444,8 +444,10 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
   const [rows, setRows] = useState<CompareRow[]>([])
   const [busy, setBusy] = useState(false)
   // AI 直接评测（按干员名索引）：不走 DPS 门禁，让模型自己给判断
-  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number; userJudge?: { dps: number | null; note?: string | null } | null }>>({})
+  const [ai, setAi] = useState<Record<string, { dps?: number | null; verdict?: string | null; confidence?: string | null; basis?: string | null; error?: string; ms?: number; userJudge?: { dps: number | null; note?: string | null } | null; thinking?: string | null; trace?: { panelAtk?: number | null; baseInterval?: number | null; skillInterval?: number | null; attackMult?: number | null; hits?: number | null; targets?: number | null; duration?: number | null; coverage?: number | null; unresolvedPlaceholders?: string[]; element?: { type: string; accrualPerSec: number; burstDps: number } | null } | null }>>({})
   const [aiBusy, setAiBusy] = useState(false)
+  // 展开"思考过程"的干员名集合
+  const [openTrace, setOpenTrace] = useState<Record<string, boolean>>({})
   // 用户修正：每行一个输入框
   const [fix, setFix] = useState<Record<string, string>>({})
   /** 从上次解析结果里取该干员的技能下标（修正时要用） */
@@ -478,7 +480,7 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
       const next: typeof ai = {}
       for (const x of r.rows) {
         next[x.name ?? x.query] = x.ok && x.judge
-          ? { dps: x.judge.dps, verdict: x.judge.verdict, confidence: x.judge.confidence, basis: x.judge.basis, ms: x.ms, userJudge: x.userJudge ?? null }
+          ? { dps: x.judge.dps, verdict: x.judge.verdict, confidence: x.judge.confidence, basis: x.judge.basis, ms: x.ms, userJudge: x.userJudge ?? null, thinking: x.thinking ?? null, trace: x.trace ?? null }
           : { error: x.error ?? '失败', userJudge: x.userJudge ?? null }
       }
       setAi(next)
@@ -567,6 +569,36 @@ function ComparePanel({ initial, onError }: { initial?: string; onError: (s: str
                             {a.confidence && <span className="chip">{a.confidence}</span>}
                           </div>
                           <div className="muted" style={{ maxWidth: 320 }}>{a.verdict}</div>
+                          {/* 思考过程：模型的推理链 + 依据 + 引擎中间量，可展开 */}
+                          <button
+                            style={{ marginTop: 4 }}
+                            onClick={() => setOpenTrace((prev) => ({ ...prev, [r.name ?? r.query]: !prev[r.name ?? r.query] }))}
+                          >
+                            {openTrace[r.name ?? r.query] ? '收起思考过程' : '查看思考过程'}
+                          </button>
+                          {openTrace[r.name ?? r.query] && (
+                            <div style={{ borderTop: '1px solid #2a2f3a', marginTop: 4, paddingTop: 4, maxWidth: 420 }}>
+                              <div className="muted"><b>引擎中间量</b></div>
+                              <div className="muted" style={{ fontFamily: 'monospace', fontSize: 11 }}>
+                                面板ATK {a.trace?.panelAtk ?? '?'} · 基础间隔 {a.trace?.baseInterval ?? '?'}s
+                                {a.trace?.skillInterval ? ` · 技能间隔 ${a.trace.skillInterval}s` : ''}<br />
+                                倍率 ×{a.trace?.attackMult ?? '?'} × {a.trace?.hits ?? '?'}段 × {a.trace?.targets ?? '?'}目标
+                                {a.trace?.duration ? ` · 持续 ${a.trace.duration}s` : ''}<br />
+                                覆盖率 {a.trace?.coverage != null ? `${(a.trace.coverage * 100).toFixed(1)}%` : '?'}
+                                {a.trace?.element ? ` · ${a.trace.element.type} ${a.trace.element.accrualPerSec}/s → ${a.trace.element.burstDps} DPS` : ''}
+                                {a.trace?.unresolvedPlaceholders?.length ? ` · 未解析占位符：${a.trace.unresolvedPlaceholders.join(', ')}` : ''}
+                              </div>
+                              <div className="muted" style={{ marginTop: 4 }}><b>模型依据</b></div>
+                              <div className="muted">{a.basis ?? '（无）'}</div>
+                              {a.thinking && (
+                                <>
+                                  <div className="muted" style={{ marginTop: 4 }}><b>模型推理过程</b>{!a.thinking && '（该模型未返回）'}</div>
+                                  <pre style={{ whiteSpace: 'pre-wrap', fontSize: 11, maxHeight: 240, overflow: 'auto', margin: 0 }}>{a.thinking}</pre>
+                                </>
+                              )}
+                              {!a.thinking && <div className="muted" style={{ marginTop: 4 }}>（该模型未返回思维链，只给了结论与依据）</div>}
+                            </div>
+                          )}
                           <div style={{ marginTop: 4 }}>
                             <input
                               style={{ width: 92 }}

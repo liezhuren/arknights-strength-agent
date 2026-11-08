@@ -54,7 +54,12 @@ export async function chat({ system, user, json = false, maxTokens = 2048, timeo
     const text = p.kind === 'anthropic'
       ? (j.content ?? []).map((c) => c.text ?? '').join('')
       : j.choices?.[0]?.message?.content ?? ''
-    return { ok: true, text, provider: p.id, model: p.model, ms: Date.now() - t0 }
+    // 推理过程（DeepSeek/部分 OpenAI 兼容提供方会把思维链单独放在 reasoning_content）
+    // 拿它只为"给人看"，不参与解析 —— 解析只用 content 里的 JSON。
+    const reasoning = p.kind === 'anthropic'
+      ? (j.content ?? []).filter((c) => c.type === 'thinking').map((c) => c.thinking ?? '').join('')
+      : (j.choices?.[0]?.message?.reasoning_content ?? j.choices?.[0]?.message?.reasoning ?? '')
+    return { ok: true, text, reasoning: reasoning || null, provider: p.id, model: p.model, ms: Date.now() - t0, usage: j.usage ?? null }
   } catch (e) {
     return { ok: false, error: `调用失败：${e.message}`, provider: p.id, model: p.model }
   }
@@ -467,6 +472,8 @@ export async function judgeEvaluation(ctx) {
       basis: parsed.basis ?? null,
       confidence: parsed.confidence ?? null,
     },
+    // 模型的思维链（若提供方返回）：给人看，判断它的推理靠不靠谱
+    thinking: r.reasoning ?? null,
     provider: r.provider, model: r.model, ms: r.ms,
   }
 }
