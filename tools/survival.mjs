@@ -136,6 +136,27 @@ function survivalFromBb(bb, desc, parsedCondition = null) {
     out.healPctMax += Math.abs(bb.hp_recovery_per_sec_by_max_hp_ratio)
     out.notes.push(`每秒回复${(Math.abs(bb.hp_recovery_per_sec_by_max_hp_ratio) * 100).toFixed(1)}%最大生命`)
   }
+  // atk_to_hp_recovery_ratio：**同一个键对应两种机制**，必须读描述区分
+  //   ① 「造成伤害的 X% 转化为生命」 → 吸血（依赖输出）
+  //   ② 「每秒恢复相当于攻击力 X% 的生命」 → 治疗光环（依赖 ATK，不依赖伤害）
+  // 且要看目标：调香师是"全体友方单位"、絮雨是"范围内友方" → 属团队增益，不算自身生存。
+  // 早期一律当吸血并计入自身 → 标签与口径双错（本轮实测发现）。
+  {
+    const ls = bb.atk_to_hp_recovery_ratio ?? bb['attack@atk_to_hp_recovery_ratio']
+    if (typeof ls === 'number' && ls > 0) {
+      const isLifesteal = /造成伤害|转化为/.test(d)
+      const toAlly = /友方|友军/.test(d) && !/自身|自己/.test(d)
+      if (isLifesteal) {
+        out.lifestealPct = (out.lifestealPct ?? 0) + ls
+        out.notes.push(`吸血 ${(ls * 100).toFixed(0)}%（按造成伤害折算，需配合输出估算）`)
+      } else if (toAlly) {
+        out.notes.push(`友方每秒回复攻击力 ${(ls * 100).toFixed(1)}%（**团队增益**，不计入自身承伤）`)
+      } else {
+        out.healAtkPct = (out.healAtkPct ?? 0) + ls
+        out.notes.push(`每秒回复攻击力 ${(ls * 100).toFixed(1)}% 的生命`)
+      }
+    }
+  }
   if (typeof bb.hp_recovery_per_sec === 'number') {
     out.healFlat += Math.abs(bb.hp_recovery_per_sec)
     out.notes.push(`每秒回复${Math.abs(bb.hp_recovery_per_sec)}点`)

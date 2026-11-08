@@ -21,6 +21,13 @@ const PANEL_FOLDED_TALENT_KEYS = new Set([
   'sp_recovery_per_sec', 'attack@atk', 'attack@attack_speed', 'attack@def',
   // 面板字段，不是机制（否则会给几乎所有人加一条无意义的"未折算"噪声）
   'respawn_time', 'base_attack_time', 'position', 'mass',
+  // 穿透类：由 extractTalentPenetrate 消费并合进 engine.penetrate（此前漏登记 →
+  // 迷迭香「无视175防御」明明生效了却被报成"未折算"，是假阴性）
+  'def_penetrate_fixed', 'def_penetrate', 'magic_resist_penetrate_fixed',
+  // 元素累积：由 extractElement 消费
+  'ep_damage_ratio', 'ep_damage_scale',
+  // 概率倍率/追加段：由 extractTalentBonuses 的期望值折算消费
+  'prob', 'prob_normal', 'prob_special', 'damage_scale',
 ])
 
 /** 技能/天赋文本里表示"会造成伤害"的键。 */

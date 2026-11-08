@@ -150,8 +150,23 @@ export function extractTalentBonuses(op) {
       const toEnemy = bb.attack_speed < 0 && /敌人|敌军|目标/.test(desc) && !/自身/.test(desc)
       if (toEnemy) note.push(`对敌减速攻${Math.round(-bb.attack_speed)}`)
       else {
-        out.aspd += bb.attack_speed
-        note.push(`攻速${bb.attack_speed >= 0 ? '+' : ''}${bb.attack_speed}`)
+        // ⚠ 给**友方**的攻速不进自身面板（团队增益栏另算，见 audit 的"目标判定"缺口）
+        const toAlly = /友方|友军|范围内.*干员/.test(desc) && !/自身|自己/.test(desc)
+        if (toAlly) note.push(`友方攻速+${bb.attack_speed}（不计入自身）`)
+        else {
+          out.aspd += bb.attack_speed
+          note.push(`攻速${bb.attack_speed >= 0 ? '+' : ''}${bb.attack_speed}`)
+        }
+      }
+    }
+    // 天赋里的**攻击间隔秒差**（白雪/霜叶/子月等）：与 attack_speed 是两种口径，
+    // 早期只读 attack_speed → 这类天赋的加速完全没进模型。
+    if (typeof bb.base_attack_time === 'number') {
+      const toAlly = /友方|友军/.test(desc) && !/自身|自己/.test(desc)
+      if (toAlly) note.push(`友方间隔${bb.base_attack_time}s（不计入自身）`)
+      else {
+        out.aspdSec = (out.aspdSec ?? 0) + bb.base_attack_time
+        note.push(`间隔${bb.base_attack_time >= 0 ? '+' : ''}${bb.base_attack_time}s`)
       }
     }
     if (typeof bb.def === 'number' && !/敌人|敌军|目标/.test(desc)) {
@@ -405,12 +420,14 @@ export function toEngineInput(op, { damageType, skillIndex = 2, masteryLevel = 9
     maxHp: ((panel.maxHp ?? 0) + (talent.hpFlat ?? 0)) * (1 + talent.hpPct),
     def: ((panel.def ?? 0) + (talent.defFlat ?? 0)) * (1 + talent.defPct),
     res: panel.magicResistance ?? 0,
-    baseInterval: (panel.baseAttackTime ?? 1.5) / (1 + (talent.aspd + modAspd) / 100),
+    // 攻速两条来源：百分比（attack_speed）与秒差（base_attack_time）——
+    // 秒差先加到原始间隔上，再统一按百分比折算（与游戏口径一致）。
+    baseInterval: ((panel.baseAttackTime ?? 1.5) + (talent.aspdSec ?? 0)) / (1 + (talent.aspd + modAspd) / 100),
     // 攻速叠加口径（2026-11 修正）：游戏内**所有来源的攻速是加算**的，最后统一除一次。
     // 早期实现是「天赋/模组先折进 baseInterval，技能攻速再乘一层」→ 乘法叠乘，
     // 使同时有两类来源的技能攻击间隔偏短 1.7%~5.6%、DPS 偏高（全库 21 个技能受影响）。
     // 这里把原始间隔与已累计攻速单独暴露，供 skillInterval() 用加算口径重算。
-    baseAttackTimeRaw: panel.baseAttackTime ?? 1.5,
+    baseAttackTimeRaw: (panel.baseAttackTime ?? 1.5) + (talent.aspdSec ?? 0),
     totalAspd: talent.aspd + modAspd,
     blockCount: panel.blockCnt ?? 1,
     cost: panel.cost ?? 0,
