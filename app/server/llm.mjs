@@ -215,11 +215,19 @@ const REVIEW_SYSTEM = `你是《明日方舟》数值模型的审阅者。用户
     }
   ],
   "verdict": "对当前结果的一句话总评（哪里可信、哪里不可信）",
+  "modelEstimate": {
+    "dps": 数字或 null,
+    "survival": "自估结论或 null",
+    "teamBuff": "自估结论或 null",
+    "control": "自估结论或 null",
+    "reasoning": "你是怎么估出来的（一句话）"
+  },
   "confidence": "high|medium|low"
 }
 
 硬性规则：
-1. **只提参数建议，不要直接给最终 DPS 数字**——数字由引擎算。
+1. **suggestions 只提参数**，不要在里面写最终 DPS 数字——数字由引擎算。
+   你自己的估值请放在 modelEstimate（那是你的判断，会与引擎数值并列展示，标注来源）。
 2. 每个建议必须有 evidence，逐字摘自输入的技能/天赋/特性原文；编造会被剔除。
 3. 引擎已经算对的部分不要提建议（宁缺勿滥）。
 4. 四栏都可以提：输出（通道/倍率/元素）、生存（减伤/闪避/自回/屏障）、
@@ -297,6 +305,8 @@ export async function reviewEvaluation(ctx) {
     ok: true,
     suggestions,
     verdict: parsed.verdict ?? null,
+    // 模型自估值：**不是引擎结果**，界面上必须与引擎数值并列且标注来源
+    modelEstimate: parsed.modelEstimate ?? null,
     confidence: parsed.confidence ?? null,
     provider: r.provider, model: r.model, ms: r.ms,
     ...(dropped.length ? { droppedEvidence: dropped } : {}),

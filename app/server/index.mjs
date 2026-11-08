@@ -308,18 +308,35 @@ const routes = {
     })
     if (!rev.ok) return rev
 
-    // 建议沉淀：并入该 (干员, 技能) 的解析记录，供人工审阅后启用
+    // 建议沉淀：**累积**而不是覆盖（早期实现整体覆盖 → 第二次审阅返回空建议时
+    // 把上一次的 3 条建议全冲掉了）。同一 (column, field) 视为同一条建议，新值覆盖旧值；
+    // 其余历史保留，并记录状态与时间，供人工接受/拒绝。
+    // 注意：**引擎不会消费这些建议** —— 引擎保持确定性；建议由人/agent 审阅后
+    // 落到 overrides.mjs 或引擎代码里才生效。
+    const prev = parsed?.patches ?? {}
+    const prevSugs = Array.isArray(prev.suggestions) ? prev.suggestions : []
+    const stamp = new Date().toISOString()
+    const fresh = rev.suggestions.map((s) => ({ ...s, status: 'proposed', at: stamp, model: rev.model }))
+    const merged = [
+      ...prevSugs.filter((p) => !fresh.some((f) => f.column === p.column && f.field === p.field)),
+      ...fresh,
+    ]
     saveParse({
       opId: op.id,
       skillIdx: si,
       form: parsed?.form ?? null,
-      patches: { ...(parsed?.patches ?? {}), suggestions: rev.suggestions, verdict: rev.verdict },
+      patches: {
+        ...prev,
+        suggestions: merged,
+        verdict: rev.verdict ?? prev.verdict ?? null,
+        modelEstimate: rev.modelEstimate ?? prev.modelEstimate ?? null,
+      },
       reasoning: rev.verdict ?? parsed?.reasoning ?? null,
       confidence: rev.confidence ?? parsed?.confidence ?? null,
       provider: rev.provider,
       model: rev.model,
     })
-    return { ...rev, params, results }
+    return { ...rev, mergedCount: merged.length, params, results }
   },
   'GET /api/llm/parses': ({ url }) => listParses(Math.min(Number(url.searchParams.get('limit')) || 100, 500)),
   'DELETE /api/llm/parses': async ({ url }) => {
